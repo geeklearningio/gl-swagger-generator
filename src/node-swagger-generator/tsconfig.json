@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "target": "es6",
+        "sourceMap": false,
+        "declaration": true,
+        "outDir": "./lib"
+    },
+    "filesGlob": [
+        "src/**/*.ts"
+    ],
+    "exclude":[
+        "lib",
+        "node_modules",
+        "templates",
+        "typings"
+    ]
+}

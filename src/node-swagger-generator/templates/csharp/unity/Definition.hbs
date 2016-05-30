@@ -1,0 +1,11 @@
+
+/*{{pascalCase rawName}}*/
+public class {{pascalCase rawName}} {{#ancestor}}: {{pascalCase rawName}}{{/ancestor}} {
+
+{{#properties}}
+    /*{{description}}*/
+    [JsonProperty("{{name}}")]
+    public {{> Type }} {{pascalCase name}} {get; set;}
+
+{{/properties}}
+}

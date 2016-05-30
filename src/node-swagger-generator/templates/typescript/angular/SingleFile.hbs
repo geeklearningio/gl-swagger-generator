@@ -1,0 +1,24 @@
+{{#if options.module}}
+module {{options.module}} {
+{{/if}}
+    "use strict";
+{{#api.definitions}}
+    {{> Definition }}
+{{/api.definitions}}
+
+{{#if options.generateInterface}}
+    {{> Interface }}
+{{/if}}
+
+{{#if options.arguments.asInterface}}
+    {{> ArgumentInterface }}
+{{/if}}
+
+    {{> Client }}
+
+{{#if options.generateMock}}
+    {{> Mock }}
+{{/if}}
+{{#if options.module}}
+}
+{{/if}}

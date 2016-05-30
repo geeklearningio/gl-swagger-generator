@@ -1,0 +1,6 @@
+{{#getType this }}{{#isBuiltin}}{{name}}{{/isBuiltin}}{{#isDefinition}}{{pascalCase definition.rawName}}{{/isDefinition}}{{#isAnonymous}} {
+    {{#definition.properties}}
+        /*{{description}}*/
+        {{name}} : {{> Type }};
+    {{/definition.properties}}
+    }{{/isAnonymous}}{{#isArray}}[]{{/isArray}}{{#isDictionary}}{{name}}<{{#with keyType}}{{> Type}}{{/with}},{{> Type valueType}}>{{/isDictionary}}{{/getType}}

@@ -1,0 +1,22 @@
+namespace {{options.namespace}} {
+    using UnityEngine;
+    using System.Collections;
+    using System.Net;
+    using System.IO;
+    using Newtonsoft.Json;
+    using System;
+    using System.Linq;
+    using System.Collections.Generic;
+    using System.Text;
+
+{{#api.definitions}}
+    {{> Definition }}
+{{/api.definitions}}
+
+{{#if options.generateInterface}}
+    {{> Interface }}
+{{/if}}
+
+    {{> Client }}
+
+}

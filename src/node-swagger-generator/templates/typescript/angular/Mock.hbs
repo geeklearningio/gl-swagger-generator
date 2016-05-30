@@ -1,0 +1,62 @@
+export class {{clientName}}Mock{{#if options.generateInterface}} implements I{{clientName}}{{/if}} {
+
+    /* @ngInject */
+    constructor(
+        private $q: angular.IQService,
+        private $timeout: any
+    ) {
+
+    }
+
+{{#api.operations}}
+    /**
+    * {{description}}
+    {{#args}}
+        * @param { {{> Type}} } {{camlCase name}} {{description}}
+    {{/args}}
+    * @return { {{> Type successsResponse}} } {{successResponse.title}}
+    */
+    {{lowerCase verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}}(
+    {{#if @root.options.arguments.asInterface}}
+        args: I{{pascalCaseOverwriteCasing verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}}Args,
+    {{/if}}
+{{#unless @root.options.arguments.asInterface}}
+    {{#args}}
+        {{camlCase name}}{{#if optional}}?{{/if}}: {{> Type}},
+    {{/args}}
+{{/unless}}
+        canceller?: angular.IDeferred<any>
+        ) : angular.IHttpPromise<{{> Type successResponse}}> {
+
+            var data: {{> Type successResponse}} = null;
+
+            {{#isJsonResponse}}{{#mapLookup successSamples 'application/json'}}
+            data = <any>{{json .}};
+            {{/mapLookup}}{{/isJsonResponse}}
+        {{#unless @root.options.mock.delay}}
+            return <any>this.$q.when<angular.IHttpPromiseCallbackArg<{{> Type successResponse}}>>({
+                data: data,
+                status: 200,
+            });
+        {{/unless}}
+        {{#if @root.options.mock.delay}}
+            return <any>this.delayResponse<angular.IHttpPromiseCallbackArg<{{> Type successResponse}}>>({
+            data: data,
+            status: 200,
+            });
+        {{/if}}
+        }
+
+{{/api.operations}}
+{{#if options.mock.delay}}
+    private delayResponse<T>(data: T): angular.IHttpPromise<T>{
+        var deferral = this.$q.defer<T>();
+
+        this.$timeout(()=>{
+            deferral.resolve(data);
+        }, {{options.mock.delay}});
+
+        return <any>deferral.promise;
+    }
+{{/if}}
+}

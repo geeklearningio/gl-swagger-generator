@@ -1,0 +1,25 @@
+{
+  "name": "typescript-angular",
+  "language": {
+    "name": "typescript",
+    "defaultExtension": ".ts"
+  },
+  "modes" : {
+    "singleFile" : {
+      "entries": [
+        {
+          "file": "SingleFile.hbs",
+          "callingMode": "root"
+        }
+      ]
+    },
+    "threeFiles": {
+
+    },
+    "multipleFiles" : {
+      "entries": [
+
+      ]
+    }
+  }
+}

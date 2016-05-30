@@ -1,0 +1,28 @@
+{
+  "name": "node-swagger-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Cyprien Autexier",
+  "license": "ISC",
+  "files": [
+    "lib",
+    "templates"
+  ],
+  "dependencies": {
+    "async": "^1.4.2",
+    "bluebird": "^2.10.0",
+    "chalk": "^1.1.1",
+    "lodash": "^3.10.1",
+    "swagger-parser": "^3.0.0-alpha.5"
+  },
+  "devDependencies": {
+    "json-schema-to-typescript": "^0.1.1",
+    "typescript": "1.8.9",
+    "typings": "0.7.12"
+  }
+}

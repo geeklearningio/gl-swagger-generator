@@ -1,0 +1,19 @@
+public interface I{{clientName}}  {
+
+{{#api.operations}}
+    /**
+    * {{description}}
+    {{#args}}
+        * @param { {{> Type}} } {{camlCase name}} {{description}}
+    {{/args}}
+    * @return { {{> Type successsResponse}} } {{successResponse.title}}
+    */
+    Task<{{> Type successResponse}}> {{pascalCaseOverwriteCasing verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}}(
+    {{#args}}
+        {{> Type}} {{camlCase name}}{{#if optional}} = default({{> Type}}){{/if}},
+    {{/args}}
+        CancellationToken cancellationToken = default(CancellationToken)
+        );
+{{/api.operations}}
+
+}
