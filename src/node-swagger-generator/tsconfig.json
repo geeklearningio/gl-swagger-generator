@@ -7,16 +7,14 @@
         "preserveConstEnums": true,
         "target": "es6",
         "sourceMap": false,
-        "declaration": true,
-        "outDir": "./lib"
+        "declaration": true
     },
     "filesGlob": [
-        "src/**/*.ts"
+        "./lib/*.ts",
+        "./tests/*.ts"
     ],
     "exclude":[
-        "lib",
         "node_modules",
-        "templates",
-        "typings"
+        "templates"
     ]
 }
