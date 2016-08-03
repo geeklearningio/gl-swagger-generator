@@ -244,5 +244,5 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 /src/node-swagger-generator/.idea
-/src/node-swagger-generator/lib/*.d.ts
-/src/node-swagger-generator/lib/*.js
+/src/node-swagger-generator/lib/**/*.d.ts
+/src/node-swagger-generator/lib/**/*.js
