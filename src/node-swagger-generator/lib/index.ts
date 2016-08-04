@@ -5,16 +5,12 @@ import parser = require('swagger-parser');
 import path = require('path');
 var Promise = require('bluebird');
 
-
-
 export interface ISwaggerGeneratorOptions extends IProvideGenerationFilters {
     language: string;
     framework: string;
     version: string;
 
     mode: string;
-    //operationFilters?: IOperationFilter[];
-    //definitionFilters?: IDefinitionFilter[];
 
     contentTypes? : {
         preferred? : string[];
@@ -28,19 +24,19 @@ export interface ISwaggerGeneratorOptions extends IProvideGenerationFilters {
     renameDefinitions?: {[from: string]: string}
 }
 
-interface  IParserResult {
+export interface  IParserResult {
     api: parser.IApi,
     metadata: parser.IMetadata
 }
 
-export async function generateFromJson(swaggerJson:string, options:ISwaggerGeneratorOptions, sink:ISink):Promise<void> {
+export async function generateFromJsonOrYaml(swaggerJsonOrYaml:string, options:ISwaggerGeneratorOptions, sink:ISink):Promise<void> {
     var generator  = new Generator([]);
-    await generator.Generate(await parse(swaggerJson), options, sink);
+    await generator.generate(await parse(swaggerJsonOrYaml), options, sink);
 }
 
-function parse(swaggerJson:string):Promise<IParserResult> {
+function parse(swaggerJsonOrYaml:string):Promise<IParserResult> {
     var deferral = Promise.defer();
-    parser.parse(swaggerJson, {}, (err, api, metadata) => {
+    parser.parse(swaggerJsonOrYaml, {}, (err, api, metadata) => {
         if (err) {
             deferral.reject(err);
         } else {
@@ -68,7 +64,7 @@ export class Generator {
         };
     }
 
-    async Generate(swaggerJson:IParserResult, options:ISwaggerGeneratorOptions, sink:ISink):Promise<void> {
+    async generate(swaggerJson:IParserResult, options:ISwaggerGeneratorOptions, sink:ISink):Promise<void> {
         var template = await this.templateStore.FindTemplate(options.language, options.framework, options.version);
         var mode = template.modes[options.mode];
         var language: ILanguageFilter = null;

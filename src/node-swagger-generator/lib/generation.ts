@@ -89,12 +89,13 @@ export class ContextBuilder {
     }
 }
 
-export interface IOperationFilter {
 
+export interface IOperationFilter {
+    apply(operation: Operation, builder: ContextBuilder): Operation;
 }
 
 export  interface IDefinitionFilter {
-
+    apply(definition: Definition, builder: ContextBuilder): Definition;
 }
 
 export interface  ILanguageFilter {

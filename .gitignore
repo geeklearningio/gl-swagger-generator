@@ -246,3 +246,5 @@ ModelManifest.xml
 /src/node-swagger-generator/.idea
 /src/node-swagger-generator/lib/**/*.d.ts
 /src/node-swagger-generator/lib/**/*.js
+/src/node-swagger-generator/tests/**/*.d.ts
+/src/node-swagger-generator/tests/**/*.js

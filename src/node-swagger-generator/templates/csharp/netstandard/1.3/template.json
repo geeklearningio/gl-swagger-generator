@@ -1,8 +1,8 @@
 {
-  "name": "typescript-angular",
+  "name": "csharp-netstandard-1.3",
   "language": {
-    "name": "typescript",
-    "defaultExtension": ".ts"
+    "name": "csharp",
+    "defaultExtension": ".cs"
   },
   "modes" : {
     "singleFile" : {
