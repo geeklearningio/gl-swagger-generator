@@ -6,6 +6,8 @@
 import path = require('path');
 import fs = require('../../lib/filesystem');
 import {generateFromJsonOrYaml} from '../../lib/index';
+import {ISink} from '../../lib/sink';
+
 
 describe("Sample Apis", () => {
 
@@ -16,32 +18,43 @@ describe("Sample Apis", () => {
         };
     });
 
-
-    // beforeEach(()=>{
-
-    // });
-
-    specs.forEach((spec) => {
-        var sink = {
+    var outputs: {[key:string]: string};
+    var outputedFiles : number;
+    var sink: ISink = {
             push: (name:string, content:string): void => {
-
+                outputs[name] = content;
+                outputedFiles++;
             },
             complete: (): void => {
-
+                
             }
-        };
+    };
+
+    beforeEach(()=>{
+      outputs = {};
+      outputedFiles = 0;
+    });
+
+    specs.forEach((spec) => {
         
         it("should successfully generate typescript definitions for api : " + spec.name, async (done) => {
-            await generateFromJsonOrYaml(await fs.readAsync(spec.path), {
-                    language: "typescript",
-                    framework: "angular",
-                    version: "1.5",
+          try{
+            await generateFromJsonOrYaml(spec.path, {
+                    language: "mock",
+                    framework: "mock",
+                    version: "0.1",
                     mode: "singleFile",
                     templateOptions : {
                         
                     },
             }, sink);
+
+            expect(outputedFiles).toBeGreaterThan(0);
             done();
-        });
+          }
+          catch(err){
+            done.fail(err);
+          }
+        }, 5000);
     });
 });

@@ -95,7 +95,7 @@ export class Generator {
     }
 
     private selectObjects(api: IGenerationContext, selector: string): any[] {
-        var segments = selector.split('.');
+        var segments = selector ? selector.split('.'): [];
         var currentNode: any = api;
         for(var i = 0; i < segments.length; i++){
             var segment = segments[i];

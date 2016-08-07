@@ -1,8 +1,8 @@
 {
-  "name": "typescript-angular-1.5",
+  "name": "mock-mock-1.5",
   "language": {
-    "name": "typescript",
-    "defaultExtension": ".ts"
+    "name": "mock",
+    "defaultExtension": ".txt"
   },
   "modes" : {
     "singleFile" : {
@@ -12,16 +12,6 @@
           "naming": "{{options.clientName}}{{language.defaultExtension}}",
           "selector": ""
         }
-      ]
-    },
-    "threeFiles": {
-      "entries": [
-
-      ]
-    },
-    "multipleFiles" : {
-      "entries": [
-
       ]
     }
   }

@@ -8,8 +8,9 @@
     "singleFile" : {
       "entries": [
         {
-          "file": "SingleFile.hbs",
-          "callingMode": "root"
+          "template": "SingleFile.hbs",
+          "naming": "{{options.clientName}}{{language.defaultExtension}}",
+          "selector": ""
         }
       ]
     },
