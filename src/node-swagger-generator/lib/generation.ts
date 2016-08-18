@@ -7,116 +7,221 @@ import _ = require('lodash');
 
 
 export interface IGenerationContext {
-    definitions?: any[];
-    definitionsMap?: {[ref: string]: any};
-    operations?: any[];
+    definitions?: Definition[];
+    definitionsMap?: { [ref: string]: Definition };
+    operations?: Operation[];
     host?: string;
     basePath?: string;
     defaultConsumes?: string[];
     defaultProduces?: string[];
+    dependencies?: IDependency[];
+    ambientTypes?: IImportedType[];
 }
 
 var verbs: string[] = ["get", "head", "options", "delete", "post", "patch", "put"];
 
 export class ContextBuilder {
+    context: IGenerationContext = {};
+
     constructor(
         private api: swagger.IApi,
-        private languageFilter:ILanguageFilter,
-        private operationFilters:IOperationFilter[],
-        private definitionFilters:IDefinitionFilter[]) {
+        private languageFilter: ILanguageFilter,
+        private operationFilters: IOperationFilter[],
+        private definitionFilters: IDefinitionFilter[],
+        private dependencies: IDependency[],
+        private ambientTypes: IImportedType[]) {
     }
 
-    Build():IGenerationContext {
+    GetType(ref: string): IType {
+        return this.languageFilter.getCustomType(this.GetOrCreateDefinition(ref), this);
+    }
 
-        var context: IGenerationContext = {};
+    GetTypeFromSchema(schema: swagger.ISchema): IType {
+        if (schema.$ref) {
+            return this.GetType(schema.$ref);
+        } else {
+            throw new Error('Anonymous return type are not yet supported');
+        }
+    }
 
-        context.definitions = [];
+    GetTypeFromTypeInformation(typeInfo: swagger.IHasTypeInformation): IType {
+        if (typeInfo.$ref) {
+            return this.GetType(typeInfo.$ref);
+        } else {
+            var type = this.languageFilter.getType(typeInfo, this);
+            if (type) {
+                return type;
+            } else {
+                throw new Error('Anonymous types are not yet supported');
+            }
+        }
+    }
 
-        context.definitionsMap = {};
+    GetOrCreateDefinition(ref: string): Definition {
 
-        context.operations = [];
+        let definition = this.context.definitionsMap[ref];
 
-        context.host = this.api.host;
-        context.basePath = this.api.basePath;
+        if (!definition) {
+            definition = new Definition();
+            this.context.definitions.push(definition);
+            this.context.definitionsMap[ref] = definition
+        }
+        return definition;
+    }
 
-        context.defaultConsumes = this.api.consumes ? this.api.consumes : [];
-        context.defaultProduces = this.api.produces ? this.api.produces : [];
+    GetOrCreateDefinitionFromSchema(definitionName: string, schema: swagger.ISchema) {
+        var ref = '#\/definitions\/' + definitionName.replace(/\//g, '~1');
 
-        _.forEach(this.api.definitions, (definition: swagger.ISchema, definitionName: string) => {
+        let definition = this.context.definitionsMap[ref];
 
-            var ref = '#\/definitions\/' + definitionName.replace(/\//g, '~1');
+        if (!definition) {
+            definition = new Definition();
 
-            //var renameTo = renameDefinitions[definitionName];
-            //gutil.log(definitionName);
-            //if (renameTo) {
-            //    definitionName = renameTo;
-            //    gutil.log('renaming : ' + renameTo);
-            //}
+            this.context.definitions.push(definition);
+            this.context.definitionsMap[ref] = definition
+        }
 
-
-            let definitionContext = new Definition(definitionName, definition);
+        if (!definition.isInitialized) {
+            definition.initFromSchema(definitionName, schema, this);
 
             _.forEach(this.definitionFilters, (filter) => {
-              definitionContext = filter.apply(definitionContext, this);
+                filter.apply(definition, this);
             });
 
-            context.definitions.push(definitionContext);
-            context.definitionsMap[ref] = definitionContext
-        });
+            //console.log(this.context.definitionsMap[ref]);
+        }
 
-        _.forEach(context.definitions, (definition: Definition) => {
-            if (definition.ancestorRef) {
-                definition.ancestor = context.definitionsMap[definition.ancestorRef];
+        return definition;
+    }
+
+    GetOrCreateAnonymous(schema: swagger.IHasTypeInformation, parents: string[]) {
+        throw new Error("Not implemented exception");
+    }
+
+    Build(): IGenerationContext {
+        this.context = {};
+
+        this.context.ambientTypes = [].concat(this.ambientTypes);
+
+        _.forEach(this.dependencies, (dependency) => {
+            if (dependency.types) {
+                this.context.ambientTypes = this.context.ambientTypes.concat(dependency.types);
             }
         });
 
+        this.context.definitions = [];
+        this.context.dependencies = this.dependencies;
+        this.context.definitionsMap = {};
+
+        this.context.operations = [];
+
+        this.context.host = this.api.host;
+        this.context.basePath = this.api.basePath;
+
+        this.context.defaultConsumes = this.api.consumes ? this.api.consumes : [];
+        this.context.defaultProduces = this.api.produces ? this.api.produces : [];
+
+        _.forEach(this.api.definitions, (definition: swagger.ISchema, definitionName: string) => {
+            var ref = '#\/definitions\/' + definitionName.replace(/\//g, '~1');
+            this.GetOrCreateDefinitionFromSchema(definitionName, definition);
+        });
+
+        _.forEach(this.context.definitions, (definition: Definition) => {
+            if (definition.ancestorRef) {
+                definition.ancestor = this.context.definitionsMap[definition.ancestorRef];
+            }
+        });
 
         _.forEach(this.api.paths, (path: swagger.IPath, pathName: string) => {
             for (var i = 0; i < verbs.length; i++) {
                 var verb = verbs[i];
                 let operation: swagger.IOperation = (<any>path)[verb];
                 if (operation) {
-                    var operationContext = new Operation(pathName, verb.toUpperCase(), path, operation, context);
+                    var operationContext = new Operation(pathName, verb.toUpperCase(), path, operation, this);
                     _.forEach(this.operationFilters, (filter) => {
                         operationContext = filter.apply(operationContext, this);
                     });
-                    context.operations.push(operationContext);
+                    this.context.operations.push(operationContext);
                 }
             }
         });
 
-        return context;
+        return this.context;
     }
 }
-
 
 export interface IOperationFilter {
     apply(operation: Operation, builder: ContextBuilder): Operation;
 }
 
-export  interface IDefinitionFilter {
+export interface IDefinitionFilter {
     apply(definition: Definition, builder: ContextBuilder): Definition;
 }
 
-export interface  ILanguageFilter {
-
+export interface ILanguageFilter {
+    getCustomType(definition: Definition, contextBuilder: ContextBuilder): IType
+    getType(source: swagger.IHasTypeInformation, context: ContextBuilder): IType
 }
 
-export interface  IProvideGenerationFilters {
+export interface IType {
+    name: () => string;
+    definition?: Definition;
+    isAnonymous?: boolean;
+    isBuiltin?: boolean;
+    isDefinition?: boolean;
+    isArray?: boolean;
+    isFile?: boolean;
+    asArray(): IType;
+}
+
+export interface ITyped {
+    type: IType;
+}
+
+export interface IProvideGenerationFilters {
     operationFilters?: IOperationFilter[];
     definitionFilters?: IDefinitionFilter[];
 }
 
+export interface IImportedType {
+    typeName: string;
+    namespace: string;
+}
 
+export interface IDependency {
+    name?: string;
+    version?: string;
+    types: IImportedType[];
+}
 
-export class Operation {
+export interface IProvideDependencies {
+    dependencies?: { [key: string]: IDependency };
+    ambientTypes?: IImportedType[];
+    ambientNamespaces?: string[];
+}
+
+export class Extensible {
+    public ext: { [key: string]: any };
+}
+
+export class Response extends Extensible {
+    public type: IType;
+    public status: number;
+
+    constructor(status: string, response: swagger.IResponse, contextBuilder: ContextBuilder) {
+        super();
+        this.type = contextBuilder.GetTypeFromSchema(response.schema);
+    }
+}
+
+export class Operation extends Extensible {
     public name: string;
     public rawPath: string;
-    public pathSegments: {name: string, isParam: boolean}[];
+    public pathSegments: { name: string, isParam: boolean }[];
     public verb: string;
     public requestBody: any;
-    public successResponse: any;
-    public errorResponse: any;
+    public successResponse: Response[];
+    public errorResponse: Response[];
     public headers: Argument[];
     public query: Argument[];
     public formData: Argument[];
@@ -133,23 +238,31 @@ export class Operation {
     public description: string;
     public consumes: string[];
     public produces: string[];
-    public successSamples: {[contentType: string]: any};
+    public successSamples: { [contentType: string]: any };
 
     public security: string;
 
-    constructor(pathName: string, verb: string, path: swagger.IPath, method: swagger.IOperation, context: IGenerationContext) {
-        this.name = method.operationId ? method.operationId : this.verb + "/" + this.rawPath;
+    public hasUniqueResponseType: boolean;
+    public responses: Response[];
+
+    constructor(pathName: string, verb: string, path: swagger.IPath, method: swagger.IOperation, contextBuilder: ContextBuilder) {
+        super();
         this.rawPath = pathName;
         this.verb = verb;
         this.pathSegments = [];
+        this.responses = [];
+        this.successResponse = [];
+        this.errorResponse = [];
         this.description = method.description;
+        this.hasUniqueResponseType = true;
+        this.name = method.operationId ? method.operationId : this.verb + this.rawPath;
 
-        _.forEach(pathName.split('/'), (segment)=> {
+        _.forEach(pathName.split('/'), (segment) => {
             if (segment.length) {
                 if (segment[0] == '{') {
-                    this.pathSegments.push({name: segment.substring(1, segment.length - 1), isParam: true});
+                    this.pathSegments.push({ name: segment.substring(1, segment.length - 1), isParam: true });
                 } else {
-                    this.pathSegments.push({name: segment, isParam: false})
+                    this.pathSegments.push({ name: segment, isParam: false })
                 }
             }
         });
@@ -157,25 +270,24 @@ export class Operation {
         this.args = [];
 
         _.forEach(method.parameters, (parameter: swagger.IParameterOrReference, index: number) => {
-            var argument = new Argument(parameter);
+            var argument = new Argument(parameter, contextBuilder);
             this.args.push(argument);
         });
 
-        var bodyArg = _.filter(this.args, (arg)=> arg.in === "body");
+        var bodyArg = _.filter(this.args, (arg) => arg.in === "body");
         if (bodyArg.length) {
             this.requestBody = bodyArg[0];
         }
 
-        this.headers = _.filter(this.args, (arg)=> arg.in === "header");
-        this.query = _.filter(this.args, (arg)=> arg.in === "query");
-        this.formData = _.filter(this.args, (arg)=> arg.in === "formData");
-        this.pathParams = _.filter(this.args, (arg)=> arg.in === "path");
+        this.headers = _.filter(this.args, (arg) => arg.in === "header");
+        this.query = _.filter(this.args, (arg) => arg.in === "query");
+        this.formData = _.filter(this.args, (arg) => arg.in === "formData");
+        this.pathParams = _.filter(this.args, (arg) => arg.in === "path");
 
         this.args = this.args.sort(optionalThenAlpha);
 
-
-        this.consumes = method.consumes ? method.consumes : context.defaultConsumes;
-        this.produces = method.produces ? method.produces : context.defaultProduces;
+        this.consumes = method.consumes ? method.consumes : contextBuilder.context.defaultConsumes;
+        this.produces = method.produces ? method.produces : contextBuilder.context.defaultProduces;
 
         if (!this.consumes || !this.consumes.length) {
             this.consumes = ["application/json"];
@@ -185,20 +297,22 @@ export class Operation {
             this.produces = ["application/json"];
         }
 
-        this.isJsonRequest = this.consumes.filter(x=> x === "application/json").length > 0;
-        this.isJsonResponse = this.produces.filter(x=> x === "application/json").length > 0;
+        this.isJsonRequest = this.consumes.filter(x => x === "application/json").length > 0;
+        this.isJsonResponse = this.produces.filter(x => x === "application/json").length > 0;
         this.isBinaryResponse = !this.isJsonResponse;
-        this.isFormDataRequest = this.consumes.filter(x=> x === "multipart/form-data").length > 0;
+        this.isFormDataRequest = this.consumes.filter(x => x === "multipart/form-data").length > 0;
 
         this.security = method.security ? _.keys(method.security[0])[0] : null;
 
         _.forEach(method.responses, (response: swagger.IResponse, status: string) => {
+            var responseContext = new Response(status, response, contextBuilder);
             if (status.indexOf('20') === 0) {
-                this.successResponse = response.schema;
-                this.successSamples = response.examples;
+                this.successResponse.push(responseContext);
+            } else {
+                this.errorResponse.push(responseContext);
             }
+            this.responses.push(responseContext);
         });
-
     }
 }
 
@@ -210,31 +324,24 @@ var optionalThenAlpha = (a: any, b: any): number => {
     }
 };
 
-export class Argument implements swagger.IHasTypeInformation {
+export class Argument extends Extensible implements ITyped {
     name: string;
     in: string;
-    type: string;
-    format: string;
-    $ref: string;
-    items: swagger.IHasTypeInformation;
     description: string;
     optional: boolean;
-    additionalProperties: swagger.IHasTypeInformation;
+    type: IType;
 
-    constructor(parameter: swagger.IParameterOrReference) {
+    constructor(parameter: swagger.IParameterOrReference, contextBuilder: ContextBuilder) {
+        super();
         this.name = parameter.name;
         this.in = parameter.in;
-        this.type = parameter.type;
-        this.format = parameter.format;
-        this.items = parameter.items;
-        this.$ref = (parameter.schema && parameter.schema.$ref) ? parameter.schema.$ref : parameter.$ref;
         this.description = parameter.description;
         this.optional = !parameter.required;
-        this.additionalProperties = parameter.additionalProperties;
+        this.type = contextBuilder.GetTypeFromTypeInformation(parameter);
     }
 }
 
-export class Definition {
+export class Definition extends Extensible {
     public name: string;
     public rawName: string;
     public nameParts: string[];
@@ -243,17 +350,27 @@ export class Definition {
     public ancestorRef: string;
     public ancestor: Definition;
 
-    constructor(name: string, schema: swagger.ISchema) {
-        if (name && schema) {
+    public isInitialized: boolean;
+
+    constructor() {
+        super();
+        this.isInitialized = false;
+    }
+
+    initFromSchema(name: string, schema: swagger.ISchema, contextBuilder: ContextBuilder) {
+        if (name) {
             this.name = name;
             this.rawName = name;
             this.nameParts = name.split(/[^\w]/g);
+        }
+
+        if (schema) {
             this.properties = [];
 
-            var injectProperties = (schemaProperties: any)=> {
+            var injectProperties = (schemaProperties: any) => {
                 if (schemaProperties) {
                     _.forEach(schemaProperties, (property: swagger.IProperty, propertyName: string) => {
-                        let propertyContext = new Property(propertyName, property);
+                        let propertyContext = new Property(propertyName, property, contextBuilder);
                         this.properties.push(propertyContext);
                     });
                 }
@@ -272,30 +389,20 @@ export class Definition {
                 });
             }
         }
+
+        this.isInitialized = true;
     }
 }
 
-export class Property implements swagger.IHasTypeInformation {
+export class Property extends Extensible implements ITyped {
     public name: string;
-    public type: string;
-    public format: string;
-    public $ref: string;
+    public type: IType;
     public description: string;
-    public items: swagger.IHasTypeInformation;
-    public definition: Definition;
-    public additionalProperties: swagger.IHasTypeInformation;
 
-    constructor(name: string, schema: swagger.IProperty) {
+    constructor(name: string, schema: swagger.IProperty, contextBuilder: ContextBuilder) {
+        super();
         this.name = name;
-        this.$ref = schema.$ref;
-        this.format = schema.format;
-        this.type = schema.type;
         this.description = schema.description;
-        this.items = schema.items;
-        this.additionalProperties = schema.additionalProperties;
-
-        if (schema.properties) {
-            this.definition = new Definition(name, schema);
-        }
+        this.type = contextBuilder.GetTypeFromTypeInformation(schema);
     }
 }

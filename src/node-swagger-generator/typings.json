@@ -5,6 +5,7 @@
     "fs-extra": "registry:dt/fs-extra#0.0.0+20160517121359",
     "handlebars": "registry:dt/handlebars#3.0.3+20160317120654",
     "jasmine": "registry:dt/jasmine#2.2.0+20160505161446",
-    "node": "registry:env/node#4.0.0+20160507210304"
+    "node": "registry:env/node#4.0.0+20160507210304",
+    "xregexp": "registry:dt/xregexp#3.0.0+20160317120654"
   }
 }

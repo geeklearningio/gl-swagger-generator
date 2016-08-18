@@ -1,1 +1,5 @@
-this is a mock !
+{{#api}}
+{{#operations}}
+-> {{name}} : {{rawPath}} ({{#args}}{{name}}: {{type}}{{$ref}}{{#unless @last}}, {{/unless}}{{/args}}) => {{successResponse.$ref}}
+{{/operations}}
+{{/api}}

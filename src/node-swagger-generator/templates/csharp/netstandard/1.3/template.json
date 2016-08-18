@@ -4,22 +4,39 @@
     "name": "csharp",
     "defaultExtension": ".cs"
   },
-  "modes" : {
-    "singleFile" : {
+  "dependencies": {
+    "NETStandard.Library": {
+      "version": "1.6.0"
+    },
+    "Newtonsoft.Json": {
+      "version": "9.0.1"
+    }
+  },
+  "definitionFilters" : [],
+  "operationFilters" : [],
+  "modes": {
+    "project": {
       "entries": [
         {
-          "template": "SingleFile.hbs",
-          "naming": "{{options.clientName}}{{language.defaultExtension}}",
+          "template": "project.hbs",
+          "naming": "project.json",
           "selector": ""
+        },
+        {
+          "template": "xproj.hbs",
+          "naming": "{{options.clientName}}.xproj",
+          "selector": ""
+        },
+        {
+          "template": "client.hbs",
+          "naming": "{{options.clientName}}.cs",
+          "selector": ""
+        },
+        {
+          "template": "definition.hbs",
+          "naming": "{{data.name}}.cs",
+          "selector": "definitions"
         }
-      ]
-    },
-    "threeFiles": {
-
-    },
-    "multipleFiles" : {
-      "entries": [
-
       ]
     }
   }

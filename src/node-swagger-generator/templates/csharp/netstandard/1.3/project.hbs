@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0-*",
+
+  "dependencies": {
+  {{#api.dependencies}}
+    "{{name}}" : "{{version}}"{{#unless @last}},{{/unless}}
+  {{/api.dependencies}}
+  },
+
+  "frameworks": {
+    "net452": {},
+    "netstandard1.3": {
+      "dependencies": {
+        "System.Runtime.Extensions": "4.1.0"
+      }
+    }
+  }
+}

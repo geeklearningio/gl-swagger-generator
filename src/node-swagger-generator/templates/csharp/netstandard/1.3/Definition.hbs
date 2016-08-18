@@ -1,11 +1,20 @@
+namespace {{options.rootNamespace}} {
+    using Newtonsoft.Json;
 
-/*{{pascalCase rawName}}*/
-public class {{pascalCase rawName}} {{#ancestor}}: {{pascalCase rawName}}{{/ancestor}} {
+    {{#with data}}
+    /// <summary>
+    /// {{description}}
+    /// </summary>
+    public class {{pascalCase rawName}} {{#ancestor}}: {{pascalCase rawName}}{{/ancestor}} {
 
-{{#properties}}
-    /*{{description}}*/
-    [JsonProperty("{{name}}")]
-    public {{> Type }} {{pascalCase name}} {get; set;}
+    {{#properties}}
+        /// <summary>
+        /// {{description}}
+        /// </summary>
+        [JsonProperty("{{name}}")]
+        public {{> type }} {{pascalCase name}} {get; set;}
 
-{{/properties}}
+    {{/properties}}
+    }
+    {{/with}}
 }
