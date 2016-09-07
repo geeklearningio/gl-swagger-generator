@@ -48,7 +48,7 @@ namespace {{options.rootNamespace}} {
         {{/args}}
         /// <returns>{{successResponse.title}}</returns>
         /// </summary>
-        public async Task<{{> type successResponse}}> {{pascalCaseOverwriteCasing verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}}(
+        public async Task<{{> type successResponse.[0]}}> {{pascalCaseOverwriteCasing verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}}(
         {{#args}}
             {{> type}} {{camlCase name}}{{#if optional}} = default({{> type}}){{/if}},
         {{/args}}
@@ -100,10 +100,10 @@ namespace {{options.rootNamespace}} {
 
             if (response.IsSuccessStatusCode){
             {{#isJsonRequest}}
-                return JsonConvert.DeserializeObject<{{> type successResponse}}>(content, this.settings);
+                return JsonConvert.DeserializeObject<{{> type successResponse.[0]}}>(content, this.settings);
             {{/isJsonRequest}}
             } else {
-                return JsonConvert.DeserializeObject<{{> type successResponse}}>(content, this.settings);
+                return JsonConvert.DeserializeObject<{{> type successResponse.[0]}}>(content, this.settings);
             }
         }
 

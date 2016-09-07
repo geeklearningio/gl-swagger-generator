@@ -16,6 +16,9 @@
     "lib",
     "templates"
   ],
+  "bin": {
+    "swaggen" : "bin/swagger-gen"
+  },
   "dependencies": {
     "async": "2.0.1",
     "bluebird": "3.4.1",

@@ -8,6 +8,13 @@ import _ = require('lodash');
 import * as visitor from './swaggerVisitor';
 var Promise = require('bluebird');
 
+export interface IPlugin {
+    languages: { [key: string]: () => ILanguageFilter };
+    operationFilters: { [key: string]: () => IOperationFilter };
+    definitionFilters: { [key: string]: () => IDefinitionFilter };
+    contextVisitors: { [key: string]: () => IDefinitionFilter };
+}
+
 export interface ISwaggerGeneratorOptions extends IProvideGenerationFilters, IProvideDependencies {
     language: string;
     framework: string;
@@ -52,16 +59,16 @@ function parse(swaggerJsonOrYaml: string): Promise<IParserResult> {
 class LoggerVisitor extends visitor.ScopedSwaggerVisitorBase implements visitor.ISwaggerVisitor {
 
     visitDefinition(name: string, schema: parser.ISchema) {
-        console.log('Definition : ' + name + ', ' + this.stack.map(x=>x.name).join('/'));
+        console.log('Definition : ' + name + ', ' + this.stack.map(x => x.name).join('/'));
     }
 
     visitAnonymousDefinition(schema: parser.IHasTypeInformation) {
-        console.log('Anonymous : ' + this.stack.map(x=>x.name).join('/'));
+        console.log('Anonymous : ' + this.stack.map(x => x.name).join('/'));
     }
 
     visitOperation(verb: string, operation: parser.IOperation) {
-        console.log(verb.toUpperCase() + ' : ' + this.stack.map(x=>x.name).join('/'));
-        
+        console.log(verb.toUpperCase() + ' : ' + this.stack.map(x => x.name).join('/'));
+
     }
 }
 

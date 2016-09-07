@@ -4,10 +4,25 @@ import _ = require('lodash');
 var verbs: string[] = ["get", "head", "options", "delete", "post", "patch", "put"];
 
 export class ScopedSwaggerVisitorBase implements ISwaggerVisitor {
-    stack: { name: string, data: any }[] = [];
+    stack: { name: string, data: any, bag: { [key: string]: any } }[] = [];
 
     beginScope(name: string, data: any): void {
-        this.stack.push({ name: name, data: data });
+        this.stack.push({ name: name, data: data, bag: {} });
+    }
+
+    push<T>(key: string, value: T): void {
+        this.stack[this.stack.length - 1].bag[key] = value;
+    }
+
+    get<T>(key: string): T {
+        for (var index = this.stack.length - 1; index > 0; index--) {
+            var element = this.stack[index];
+            var value = element.bag[key]
+            if (value) {
+                return <T>value;
+            }
+        }
+        return null;
     }
 
     closeScope(): void {
