@@ -127,7 +127,7 @@ class VisitableSwagger implements IVisitableSwagger {
             if (visitor.visitPath) {
                 visitor.visitPath(pathTemplate, path);
             }
-            this.beginScope(visitor, pathTemplate.substring(1), path);
+            this.beginScope(visitor, pathTemplate, path);
 
             for (var i = 0; i < verbs.length; i++) {
                 var verb = verbs[i];

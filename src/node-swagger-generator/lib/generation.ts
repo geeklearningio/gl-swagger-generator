@@ -4,8 +4,21 @@
 import * as swaggerVisitor from './swaggerVisitor';
 import * as swagger from 'swagger-parser';
 import _ = require('lodash');
+import XRegExp = require('xregexp');
+
+import {
+    IExtensible,
+    IAbstractedType, IType, ITyped, IImportedType,
+    IDefinition, IProperty,
+    IAbstractedTypeConverter,
+    SchemaLessAbstractedType, ArrayAbstractedType, BuiltinAbstractedType, CustomAbstractedType, FileAbstractedType, MapAbstractedType, GenericAbstractedType, ImportedAbstractedType
+} from './typing';
+
 //import servicesVersion = ts.servicesVersion;
 
+
+var pathParamRegex = XRegExp('({.*})|([^{}]*)')
+var genericRegex = XRegExp('(?<genericName>\\w+)\\[(?<genericArgs>.+)\\]');
 
 export interface IGenerationContext {
     definitions?: Definition[];
@@ -37,30 +50,30 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         super();
     }
 
-    GetType(ref: string): IType {
-        return this.languageFilter.getCustomType(this.GetOrCreateDefinition(ref), this);
-    }
+    // GetType(ref: string): IType {
+    //     return this.languageFilter.getCustomType(this.GetOrCreateDefinition(ref), this);
+    // }
 
-    GetTypeFromSchema(schema: swagger.ISchema): IType {
-        if (schema.$ref) {
-            return this.GetType(schema.$ref);
-        } else {
-            throw new Error('Anonymous return type are not yet supported');
-        }
-    }
+    // GetTypeFromSchema(schema: swagger.ISchema): IType {
+    //     if (schema.$ref) {
+    //         return this.GetType(schema.$ref);
+    //     } else {
+    //         throw new Error('Anonymous return type are not yet supported');
+    //     }
+    // }
 
-    GetTypeFromTypeInformation(typeInfo: swagger.IHasTypeInformation): IType {
-        if (typeInfo.$ref) {
-            return this.GetType(typeInfo.$ref);
-        } else {
-            var type = this.languageFilter.getType(typeInfo, this);
-            if (type) {
-                return type;
-            } else {
-                throw new Error('Anonymous types are not yet supported');
-            }
-        }
-    }
+    // GetTypeFromTypeInformation(typeInfo: swagger.IHasTypeInformation): IType {
+    //     if (typeInfo.$ref) {
+    //         return this.GetType(typeInfo.$ref);
+    //     } else {
+    //         var type = this.languageFilter.getType(typeInfo, this);
+    //         if (type) {
+    //             return type;
+    //         } else {
+    //             throw new Error('Anonymous types are not yet supported');
+    //         }
+    //     }
+    // }
 
     GetOrCreateDefinition(ref: string): Definition {
 
@@ -99,8 +112,36 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         return definition;
     }
 
-    GetOrCreateAnonymous(schema: swagger.IHasTypeInformation, parents: string[]) {
-        throw new Error("Not implemented exception");
+    // GetOrCreateAnonymous(schema: swagger.IHasTypeInformation, parents: string[]) {
+    //     throw new Error("Not implemented exception");
+    // }
+
+    GetTypeAbstraction(source: swagger.IHasTypeInformation): IAbstractedType {
+        if (!source) {
+            return new SchemaLessAbstractedType();
+        }
+        if (source.$ref) {
+            return new CustomAbstractedType(this.GetOrCreateDefinition(source.$ref));
+        } else {
+            let type = source.type;
+            if (type === 'object') {
+                if ((<any>source).definition) {
+                    return new CustomAbstractedType(this.GetOrCreateDefinitionFromSchema((<any>source).definition.name, (<any>source).definition));
+                } else if (source.additionalProperties) {
+                    return new MapAbstractedType(new BuiltinAbstractedType('string'), this.GetTypeAbstraction(source.additionalProperties));
+                } else {
+                    return new SchemaLessAbstractedType();
+                }
+            } else if (type === 'array') {
+                return new ArrayAbstractedType(this.GetTypeAbstraction(source.items));
+            } else if (type === 'file') {
+                return new FileAbstractedType();
+            } else if (type) {
+                return new BuiltinAbstractedType(type, source.format);
+            } else {
+                return new SchemaLessAbstractedType();
+            }
+        }
     }
 
     visitRoot(root: swagger.IApi): void {
@@ -128,7 +169,11 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         operationContext.hasUniqueResponseType = true;
 
         //TODO
-        _.forEach(path.name.split('/'), (segment) => {
+
+        console.log(path.name);
+        XRegExp.forEach(path.name, pathParamRegex, match => {
+            var segment = match[0];
+            console.log(segment);
             if (segment.length) {
                 if (segment[0] == '{') {
                     operationContext.pathSegments.push({ name: segment.substring(1, segment.length - 1), isParam: true });
@@ -137,6 +182,16 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
                 }
             }
         });
+
+        // _.forEach(path.name.split('/'), (segment) => {
+        //     if (segment.length) {
+        //         if (segment[0] == '{') {
+        //             operationContext.pathSegments.push({ name: segment.substring(1, segment.length - 1), isParam: true });
+        //         } else {
+        //             operationContext.pathSegments.push({ name: segment, isParam: false })
+        //         }
+        //     }
+        // });
 
         // default naming rule can be overrident using an operation filter, default may be provided by language filters
         operationContext.name = operation.operationId ? operation.operationId : verb + path.name;
@@ -203,6 +258,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         argument.description = parameter.description;
         argument.optional = !parameter.required;
         argument.sourceParameter = parameter;
+        argument.abstractedType = this.GetTypeAbstraction(parameter.schema);
 
         operation.args.push(argument);
 
@@ -227,7 +283,8 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
     }
 
     // visitDefinitionAncestor?(ref: string): void;
-    // visitProperty?(name: string, schema: swagger.IProperty): void;
+    // visitProperty?(name: string, schema: swagger.IProperty): void{
+    // }
     // visitSecurityDefinition?(name: string, definition: swagger.ISecurityScheme): void;
     visitOperationResponse(status: string, response: swagger.IResponse): void {
         var operation = this.get<Operation>("operation");
@@ -235,6 +292,8 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
 
         responseContext.status = parseInt(status);
         responseContext.sourceResponse = response;
+
+        responseContext.abstractedType = this.GetTypeAbstraction(response.schema);
 
         console.log(operation);
 
@@ -290,6 +349,10 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         //     }
         // });
 
+        if (this.languageFilter.supportsGenerics()) {
+            this.context.visit(new GenericTypeMapper(this));
+        }
+
         this.context.visit(new LanguageTypeMapper(this.languageFilter, this));
 
         return this.context;
@@ -307,23 +370,8 @@ export interface IDefinitionFilter {
 }
 
 export interface ILanguageFilter {
-    getCustomType(definition: Definition, contextBuilder: ContextBuilder): IType
-    getType(source: swagger.IHasTypeInformation, context: ContextBuilder): IType
-}
-
-export interface IType {
-    name: () => string;
-    definition?: Definition;
-    isAnonymous?: boolean;
-    isBuiltin?: boolean;
-    isDefinition?: boolean;
-    isArray?: boolean;
-    isFile?: boolean;
-    asArray(): IType;
-}
-
-export interface ITyped {
-    type: IType;
+    createAbstractedTypeConverter(generationContext: IGenerationContext): IAbstractedTypeConverter<IType>;
+    supportsGenerics(): boolean;
 }
 
 export interface IProvideGenerationFilters {
@@ -331,10 +379,6 @@ export interface IProvideGenerationFilters {
     definitionFilters?: IDefinitionFilter[];
 }
 
-export interface IImportedType {
-    typeName: string;
-    namespace: string;
-}
 
 export interface IDependency {
     name?: string;
@@ -348,12 +392,13 @@ export interface IProvideDependencies {
     ambientNamespaces?: string[];
 }
 
-export class Extensible {
+export class Extensible implements IExtensible {
     public ext: { [key: string]: any };
 }
 
 export class Response extends Extensible {
     public type: IType;
+    public abstractedType: IAbstractedType;
     public status: number;
     public sourceResponse: swagger.IResponse;
 
@@ -484,6 +529,7 @@ export class Argument extends Extensible implements ITyped {
     in: string;
     description: string;
     optional: boolean;
+    abstractedType: IAbstractedType;
     type: IType;
     sourceParameter: swagger.IParameterOrReference
 
@@ -492,20 +538,22 @@ export class Argument extends Extensible implements ITyped {
     }
 }
 
-export class Definition extends Extensible {
+export class Definition extends Extensible implements IDefinition {
     public name: string;
     public rawName: string;
     public nameParts: string[];
 
-    public properties: Property[];
+    public properties: IProperty[];
     public ancestorRef: string;
-    public ancestor: Definition;
+    public ancestor: IDefinition;
 
     public isInitialized: boolean;
+    public shouldIgnore: boolean;
 
     constructor() {
         super();
         this.isInitialized = false;
+        this.shouldIgnore = false;
     }
 
     initFromSchema(name: string, schema: swagger.ISchema, contextBuilder: ContextBuilder) {
@@ -522,6 +570,7 @@ export class Definition extends Extensible {
                 if (schemaProperties) {
                     _.forEach(schemaProperties, (property: swagger.IProperty, propertyName: string) => {
                         let propertyContext = new Property(propertyName, property, contextBuilder);
+                        propertyContext.abstractedType = contextBuilder.GetTypeAbstraction(property);
                         this.properties.push(propertyContext);
                     });
                 }
@@ -545,9 +594,10 @@ export class Definition extends Extensible {
     }
 }
 
-export class Property extends Extensible implements ITyped {
+export class Property extends Extensible implements IProperty {
     public name: string;
     public type: IType;
+    public abstractedType: IAbstractedType;
     public description: string;
 
     public sourceSchema: swagger.IProperty;
@@ -620,7 +670,17 @@ class GenerationContext implements IGenerationContext {
     }
 }
 
+export interface IGenerationContextVisitor {
+    beginScope?(name: string, data: any): void;
+    closeScope?(): void;
 
+    visitRoot?(root: IGenerationContext): void;
+    visitOperation?(operation: Operation): void;
+    visitDefinition?(definition: IDefinition): void;
+    visitDefinitionProperty?(property: IProperty): void;
+    visitOperationArgument?(arg: Argument): void;
+    visitOperationResponse?(response: Response): void;
+}
 
 export class ScopedGenerationContextVisitorBase implements IGenerationContextVisitor {
     stack: { name: string, data: any, bag: { [key: string]: any } }[] = [];
@@ -650,34 +710,96 @@ export class ScopedGenerationContextVisitorBase implements IGenerationContextVis
 }
 
 class LanguageTypeMapper extends ScopedGenerationContextVisitorBase {
+    private typeConverter: IAbstractedTypeConverter<IType>;
 
     constructor(private languageFilter: ILanguageFilter, private contextBuilder: ContextBuilder) {
         super();
+        this.typeConverter = languageFilter.createAbstractedTypeConverter(contextBuilder.context);
     }
 
     //  visitRoot?(root: IGenerationContext): void;
     visitOperation(operation: Operation): void {
     }
-    // visitDefinition?(definition: Definition): void;
-    visitDefinitionProperty(property: Property): void{
-        property.type = this.languageFilter.getType(property.sourceSchema, this.contextBuilder);
+    // visitDefinition?(definition: IDefinition): void;
+    visitDefinitionProperty(property: IProperty): void {
+        property.type = property.abstractedType.convert(this.typeConverter);
     }
     visitOperationArgument(arg: Argument): void {
-        arg.type = this.languageFilter.getType(arg.sourceParameter, this.contextBuilder);
+        arg.type = arg.abstractedType.convert(this.typeConverter);
     }
     visitOperationResponse(response: Response): void {
-        response.type = this.languageFilter.getType(response.sourceResponse.schema, this.contextBuilder)
+        response.type = response.abstractedType.convert(this.typeConverter);
     }
 }
 
-export interface IGenerationContextVisitor {
-    beginScope?(name: string, data: any): void;
-    closeScope?(): void;
+class GenericTypeMapper extends ScopedGenerationContextVisitorBase {
+    private typeConverter: GenericTypeConverter;
 
-    visitRoot?(root: IGenerationContext): void;
-    visitOperation?(operation: Operation): void;
-    visitDefinition?(definition: Definition): void;
-    visitDefinitionProperty?(property: Property): void;
-    visitOperationArgument?(arg: Argument): void;
-    visitOperationResponse?(response: Response): void;
+    constructor(private contextBuilder: ContextBuilder) {
+        super();
+        this.typeConverter = new GenericTypeConverter(this.contextBuilder);
+    }
+
+    //  visitRoot?(root: IGenerationContext): void;
+    visitOperation(operation: Operation): void {
+    }
+
+    visitDefinition(definition: IDefinition): void {
+        if (definition.rawName.indexOf('[]') >= 0) {
+            //definition.shouldIgnore = true;
+        }
+    }
+    visitDefinitionProperty(property: IProperty): void {
+        property.abstractedType = property.abstractedType.convert(this.typeConverter);
+    }
+    visitOperationArgument(arg: Argument): void {
+        arg.abstractedType = arg.abstractedType.convert(this.typeConverter);
+    }
+    visitOperationResponse(response: Response): void {
+        response.abstractedType = response.abstractedType.convert(this.typeConverter);
+    }
+}
+
+class GenericTypeConverter implements IAbstractedTypeConverter<IAbstractedType>{
+    constructor(private contextBuilder: ContextBuilder) {
+    }
+
+    schemaLessTypeConvert(type: SchemaLessAbstractedType): IAbstractedType {
+        return type;
+    }
+    mapTypeConvert(type: MapAbstractedType): IAbstractedType {
+        return new MapAbstractedType(type.keyType.convert(this), type.valueType.convert(this));
+    }
+    builtinTypeConvert(type: BuiltinAbstractedType): IAbstractedType {
+        return type;
+    }
+    customTypeConvert(type: CustomAbstractedType): IAbstractedType {
+        var parts = <any>XRegExp.exec(type.definition.rawName, genericRegex);
+        if (parts) {
+            var genericName = parts.genericName;
+            var genericArgs = parts.genericArgs;
+            var matchingTypes = this.contextBuilder.context.ambientTypes.filter((importedType: IImportedType) => importedType.typeName == genericName + '<>');
+
+            if (matchingTypes.length == 1) {
+                return new GenericAbstractedType(
+                    new ImportedAbstractedType(matchingTypes[0]),
+                    [new CustomAbstractedType(this.contextBuilder.GetOrCreateDefinition('#/definitions/' + genericArgs))]
+                );
+            }
+        }
+
+        return type;
+    }
+    arrayTypeConvert(type: ArrayAbstractedType): IAbstractedType {
+        return new ArrayAbstractedType(type.itemType.convert(this));
+    }
+    fileTypeConvert(type: FileAbstractedType): IAbstractedType {
+        return type;
+    }
+    genericTypeConvert(type: GenericAbstractedType): IAbstractedType {
+        return type;
+    }
+    importedTypeConvert(type: ImportedAbstractedType): IAbstractedType {
+        return type;
+    }
 }

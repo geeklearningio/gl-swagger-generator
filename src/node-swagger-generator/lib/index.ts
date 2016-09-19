@@ -6,6 +6,10 @@ import path = require('path');
 import {wrapArray} from './collection';
 import _ = require('lodash');
 import * as visitor from './swaggerVisitor';
+
+import pascalCaseFilters = require('./filters/pascalCaseFilters');
+pascalCaseFilters.register();
+
 var Promise = require('bluebird');
 
 export interface IPlugin {
@@ -84,14 +88,20 @@ export class Generator {
     }
 
     private mergeFilters(filtersProviders: IProvideGenerationFilters[]): IProvideGenerationFilters {
-        return {
-            definitionFilters: _.concat.call(
-                _.concat,
-                filtersProviders.filter(source => !!source.definitionFilters).map(source => source.definitionFilters)),
-            operationFilters: _.concat.call(
-                _.concat,
-                filtersProviders.filter(source => !!source.definitionFilters).map(source => source.operationFilters)),
+        var result: IProvideGenerationFilters = {
+            definitionFilters: [],
+            operationFilters: []
         };
+
+        _.forEach(filtersProviders, (provider) => {
+            if (provider.definitionFilters) {
+                result.definitionFilters = result.definitionFilters.concat(provider.definitionFilters)
+            }
+            if (provider.operationFilters) {
+                result.operationFilters = result.operationFilters.concat(provider.operationFilters)
+            }
+        });
+        return result;
     }
 
 
@@ -101,7 +111,7 @@ export class Generator {
         var language: ILanguageFilter = template.language.filter;
         var mergedFilters = this.mergeFilters([template, mode, options]);
         // console.log('merged filters');
-        // console.log(mergedFilters);
+        console.log(mergedFilters);
         var mergedDependencies = _.transform(_.merge(options.dependencies, template.dependencies), (result, value, key) => {
             var dep = _.clone(value);
             dep.name = key;
@@ -157,9 +167,9 @@ export class Generator {
             }
         }
         if (Array.isArray(currentNode)) {
-            return currentNode;
+            return currentNode.filter((x: any) => !x.shouldIgnore);
         } else {
-            return [currentNode];
+            return currentNode.shouldIgnore ? [] : [currentNode];
         }
     }
 }

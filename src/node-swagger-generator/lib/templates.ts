@@ -7,6 +7,7 @@ import {ILanguageProvider} from "./language";
 import * as fs from "./filesystem";
 
 import handlebars = require("handlebars");
+import {filtersLoader} from './filtersLoader';
 
 import path = require('path');
 
@@ -70,13 +71,13 @@ export class TemplateStore {
                             environement.registerPartial(baseName.substring(1), templateContent);
                         } else {
                             templates[file] = environement.compile(templateContent, {
-                                noEscape : true
+                                noEscape: true
                             });
                         }
                     }
                 }
 
-                console.log( JSON.stringify( Object.keys(templates)));
+                console.log(JSON.stringify(Object.keys(templates)));
 
                 var modes: { [key: string]: ITemplateMode } = {};
 
@@ -86,7 +87,7 @@ export class TemplateStore {
                         var mode: ITemplateMode = {
                             entries: (<any[]>element.entries).map(e => {
                                 console.log(JSON.stringify(e));
-                                console.log( templates[e.template]);
+                                console.log(templates[e.template]);
                                 return {
                                     selector: e.selector,
                                     template: templates[e.template],
@@ -100,12 +101,14 @@ export class TemplateStore {
                 return {
                     name: manifest.name,
                     language: {
-                        name : manifest.language.name,
-                        filter: (manifest.language.filter? require(manifest.language.filter) : require('./languages/' + manifest.language.name)).create()
+                        name: manifest.language.name,
+                        filter: (manifest.language.filter ? require(manifest.language.filter) : require('./languages/' + manifest.language.name)).create()
                     },
                     dependencies: manifest.dependencies,
                     modes: modes,
-                    handlebars: environement
+                    handlebars: environement,
+                    operationFilters: manifest.definitionFilters ? manifest.definitionFilters.map((name: string) => filtersLoader.getOperationFilter(name)) : [],
+                    definitionFilters: manifest.definitionFilters ? manifest.definitionFilters.map((name: string) => filtersLoader.getDefinitionFilter(name)) : [],
                 };
             }
         }
@@ -169,7 +172,7 @@ function registerBuiltinHelpers(handlebars: Handlebars.IHandlebarsEnvironment) {
             for (var key in map) {
                 if (map.hasOwnProperty(key)) {
                     var element = map[key];
-                    result += options.fn({key: key, value: element});
+                    result += options.fn({ key: key, value: element });
                 }
             }
             return result;
@@ -181,7 +184,7 @@ function registerBuiltinHelpers(handlebars: Handlebars.IHandlebarsEnvironment) {
 
 
 function camlCasePreserve(words: string[]): string {
-    return words.map((x: string, index: number)=> {
+    return words.map((x: string, index: number) => {
         if (index) {
             return firstLetterUpperCasePreserveCasing(x);
         } else {
@@ -191,14 +194,14 @@ function camlCasePreserve(words: string[]): string {
 }
 
 function pascalCasePreserve(words: string[]): string {
-    return words.map((x: string, index: number)=> {
+    return words.map((x: string, index: number) => {
         return firstLetterUpperCasePreserveCasing(x);
     }).join('');
 }
 
 
 function pascalCase(words: string[]): string {
-    return words.map((x: string, index: number)=> {
+    return words.map((x: string, index: number) => {
         return firstLetterUpperCase(x);
     }).join('');
 }
