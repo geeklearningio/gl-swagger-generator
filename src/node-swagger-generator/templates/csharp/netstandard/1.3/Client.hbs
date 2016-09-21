@@ -1,4 +1,6 @@
 namespace {{options.rootNamespace}} {
+    using GeekLearning.RestKit.Core;
+    using Microsoft.Extensions.Options;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
@@ -7,11 +9,10 @@ namespace {{options.rootNamespace}} {
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    {{> using}}
 
-    public class {{options.clientName}}{{#if options.generateInterface}}: I{{options.clientName}}{{/if}} {
+    public class {{options.clientName}}: ClientBase<{{options.clientName}}Options>{{#if options.generateInterface}}, I{{options.clientName}}{{/if}} {
         private string baseUri;
-        private string hostName;
-        private string scheme;
         private HttpClient httpClient;
         private JsonSerializerSettings settings;
 
@@ -20,22 +21,17 @@ namespace {{options.rootNamespace}} {
     {{/options.inject}}
 
     public {{options.clientName}}(
-    {{#options.inject}}
-        {{type}} {{name}}{{#unless @last}},{{/unless}}
+        IOptions<{{options.clientName}}Options> options,
+        IMediaFormatterProvider mediaFormatterProvider
+    {{#options.inject}},
+        {{type}} {{name}}
     {{/options.inject}}
-    ) {
+    ) : base(options, mediaFormatterProvider) {
     {{#options.inject}}
         this.{{name}} = {{name}};
     {{/options.inject}}
         this.httpClient = new HttpClient();
-        this.hostName = "{{#options.host.override}}{{.}}{{/options.host.override}}{{#unless options.host.override}}{{api.host}}{{/unless}}";
-    {{#options.host.set}}
-        if (!string.IsNullOrEmpty({{.}})) {
-        this.hostName = {{.}};
-        }
-    {{/options.host.set}}
-        this.scheme = "{{#options.scheme}}{{.}}{{/options.scheme}}{{#unless options.scheme}}'http'{{/unless}}";
-        this.baseUri = string.Concat(this.scheme, "://", this.hostName {{#api.basePath}}, "{{.}}"{{/api.basePath}});
+        this.baseUri = string.Concat(this.Options.Scheme, "://", this.Options.HostName {{#api.basePath}}, "{{.}}"{{/api.basePath}});
         this.settings = new JsonSerializerSettings();
         this.settings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
     }
@@ -55,7 +51,7 @@ namespace {{options.rootNamespace}} {
             CancellationToken cancellationToken = default(CancellationToken)
             ) {
 
-            var uri = this.baseUri + {{#pathSegments}}{{#isParam}}{{#if @first}}"/" + {{/if}}{{#unless @first}}" + {{/unless}}{{name}}.ToString(){{#unless @last}} + "{{/unless}}{{/isParam}}{{#unless isParam}}{{#if @first}}"/{{/if}}{{name}}{{#unless @last}}/{{/unless}}{{#if @last}}"{{/if}}{{/unless}}{{/pathSegments}};
+            var uri = this.baseUri + {{#pathSegments}}{{#isParam}}{{#unless @first}}" + {{/unless}}{{name}}.ToString(){{#unless @last}} + "{{/unless}}{{/isParam}}{{#unless isParam}}{{#if @first}}"{{/if}}{{name}}{{#if @last}}"{{/if}}{{/unless}}{{/pathSegments}};
 
         {{#if query}}
             uri = AddQueryString(uri, new Dictionary<string, object>() {
@@ -69,16 +65,10 @@ namespace {{options.rootNamespace}} {
             var message = new HttpRequestMessage();
             message.RequestUri = new Uri(uri, UriKind.Absolute);
             message.Method = new HttpMethod("{{verb}}");
-        {{#isJsonResponse}}
-            message.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-        {{/isJsonResponse}}
-        {{#isJsonRequest}}
+            message.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("{{produces.[0]}}"));
         {{#requestBody}}
-            message.Content = new StringContent(JsonConvert.SerializeObject({{camlCase name}}), Encoding.UTF8, "application/json");
+            message.Content = this.TransformRequestBody({{camlCase name}}, "{{../consumes.[0]}}");
         {{/requestBody}}
-        {{/isJsonRequest}}
-
-
 
         {{#headers}}
             message.Headers.Add("{{name}}", SafeToString({{camlCase name}}));
@@ -99,64 +89,11 @@ namespace {{options.rootNamespace}} {
             var content = await response.Content.ReadAsStringAsync();
 
             if (response.IsSuccessStatusCode){
-            {{#isJsonRequest}}
-                return JsonConvert.DeserializeObject<{{> type successResponse.[0]}}>(content, this.settings);
-            {{/isJsonRequest}}
+                return await this.TransformResponseAsync<{{> type successResponse.[0]}}>(response);
             } else {
-                return JsonConvert.DeserializeObject<{{> type successResponse.[0]}}>(content, this.settings);
+                throw new UnhandledApiException(response);
             }
         }
-
     {{/api.operations}}
-
-            private static string SafeToString(object value) {
-                if (value == null)
-                    return null;
-                return value.ToString();
-            }
-
-        /// <summary>
-            /// Append the given query keys and values to the uri.
-            /// </summary>
-        /// <param name="uri">The base uri.</param>
-        /// <param name="queryString">A collection of name value query pairs to append.</param>
-        /// <returns>The combined result.</returns>
-        public static string AddQueryString(
-            string uri,
-            IEnumerable<KeyValuePair<string, object>> queryString)
-        {
-            var anchorIndex = uri.IndexOf('#');
-            var uriToBeAppended = uri;
-            var anchorText = "";
-            // If there is an anchor, then the query string must be inserted before its first occurance.
-            if (anchorIndex != -1)
-            {
-                anchorText = uri.Substring(anchorIndex);
-                uriToBeAppended = uri.Substring(0, anchorIndex);
-            }
-
-            var queryIndex = uriToBeAppended.IndexOf('?');
-            var hasQuery = queryIndex != -1;
-
-            var sb = new StringBuilder();
-            sb.Append(uriToBeAppended);
-            foreach (var parameter in queryString)
-            {
-                if (parameter.Value == null)
-                    continue;
-                sb.Append(hasQuery ? '&' : '?');
-                sb.Append(WebUtility.UrlEncode(parameter.Key));
-                sb.Append('=');
-                sb.Append(WebUtility.UrlEncode(parameter.Value.ToString()));
-                hasQuery = true;
-            }
-
-            sb.Append(anchorText);
-            return sb.ToString();
-        }
-
-        public class FoodbieClientException<T>: Exception{
-            public T Response { get; set; }
-        }
     }
 }

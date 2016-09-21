@@ -1,7 +1,8 @@
 namespace {{options.rootNamespace}} {
-    using Newtonsoft.Json;
-
     {{#with data}}
+    using Newtonsoft.Json;
+    {{> using}}
+
     /// <summary>
     /// {{description}}
     /// </summary>

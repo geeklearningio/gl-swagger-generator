@@ -10,29 +10,7 @@ export function run() {
     fs.ensureDirSync(outputPath);
 
     generator.generateFromJsonOrYaml(
-        argv.schema, {
-            language: "csharp",
-            framework: "netstandard",
-            version: "1.3",
-            mode: "project",
-            dependencies: {
-                "Microsoft.AspNetCore.JsonPatch": {
-                    version: "1.0.0",
-                    types: [
-                        { typeName: "JsonPatchDocument<>", namespace: "Microsoft.AspNetCore.JsonPatch" },
-                        { typeName: "Operation<>", namespace: "Microsoft.AspNetCore.JsonPatch" }
-                    ]
-                }
-            },
-            ambientTypes: [
-                { typeName: "Reponse<>", namespace: null },
-            ],
-            templateOptions: {
-                clientName: "Client",
-                projectGuid: "ea07d308-9141-472b-91da-ca109903e186",
-                rootNamespace: 'Example'
-            },
-        }, {
+        argv.schema, fs.readJSONSync(argv.options), {
             push: (name: string, content: string): void => {
                 console.log('generating : ' + name);
                 fs.writeFileSync(path.join(outputPath, name), content, { encoding: 'utf8' });

@@ -1,6 +1,1 @@
-{{#with type}}{{#isBuiltin}}{{name}}{{/isBuiltin}}{{#isDefinition}}{{name}}{{/isDefinition}}{{#isAnonymous}} {
-    {{#definition.properties}}
-        /*{{description}}*/
-        {{name}} : {{> Type }};
-    {{/definition.properties}}
-    }{{/isAnonymous}}{{#isArray}}{{> type itemType}}[]{{/isArray}}{{#isDictionary}}{{name}}<{{#with keyType}}{{> type}}{{/with}},{{> type valueType}}>{{/isDictionary}}{{/with}}
+{{> typeCore type}}

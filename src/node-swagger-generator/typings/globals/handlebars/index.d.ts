@@ -46,6 +46,7 @@ declare namespace Handlebars {
         registerHelper(name: string, fn: Function, inverse?: boolean): void;
         registerHelper(name: Object): void;
         registerPartial(name: string, str: any): void;
+        registerDecorator(name: string, fn: (program?: (context?: any, options?: any) => any, props?: any, container?: any, context?: any, data?: any, blockParams?: any, depths?: any) => Function): void;
         unregisterHelper(name: string): void;
         unregisterPartial(name: string): void;
         createFrame(object: any): any;
@@ -137,7 +138,7 @@ declare namespace hbs {
             blockParams: string[];
         }
 
-        interface Statement extends Node {}
+        interface Statement extends Node { }
 
         interface MustacheStatement extends Statement {
             path: PathExpression | Literal;
@@ -176,7 +177,7 @@ declare namespace hbs {
             strip: StripFlags;
         }
 
-        interface Expression extends Node {}
+        interface Expression extends Node { }
 
         interface SubExpression extends Expression {
             path: PathExpression;
@@ -191,7 +192,7 @@ declare namespace hbs {
             original: string;
         }
 
-        interface Literal extends Expression {}
+        interface Literal extends Expression { }
         interface StringLiteral extends Literal {
             value: string;
             original: string;
@@ -207,9 +208,9 @@ declare namespace hbs {
             original: number;
         }
 
-        interface UndefinedLiteral extends Literal {}
+        interface UndefinedLiteral extends Literal { }
 
-        interface NullLiteral extends Literal {}
+        interface NullLiteral extends Literal { }
 
         interface Hash extends Node {
             pairs: HashPair[];

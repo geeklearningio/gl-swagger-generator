@@ -30,6 +30,7 @@ export interface IGenerationContext {
     defaultProduces?: string[];
     dependencies?: IDependency[];
     ambientTypes?: IImportedType[];
+    allNamespaces?: string[];
 
     visit(visitor: IGenerationContextVisitor): void;
 }
@@ -46,7 +47,9 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         private operationFilters: IOperationFilter[],
         private definitionFilters: IDefinitionFilter[],
         private dependencies: IDependency[],
-        private ambientTypes: IImportedType[]) {
+        private ambientTypes: IImportedType[],
+        private mediaTypesPriorities?: { [from: string]: number }
+    ) {
         super();
     }
 
@@ -120,6 +123,9 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         if (!source) {
             return new SchemaLessAbstractedType();
         }
+        if (source.schema) {
+            return this.GetTypeAbstraction(source.schema);
+        }
         if (source.$ref) {
             return new CustomAbstractedType(this.GetOrCreateDefinition(source.$ref));
         } else {
@@ -170,10 +176,10 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
 
         //TODO
 
-        console.log(path.name);
+        //console.log(path.name);
         XRegExp.forEach(path.name, pathParamRegex, match => {
             var segment = match[0];
-            console.log(segment);
+            //console.log(segment);
             if (segment.length) {
                 if (segment[0] == '{') {
                     operationContext.pathSegments.push({ name: segment.substring(1, segment.length - 1), isParam: true });
@@ -183,36 +189,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
             }
         });
 
-        // _.forEach(path.name.split('/'), (segment) => {
-        //     if (segment.length) {
-        //         if (segment[0] == '{') {
-        //             operationContext.pathSegments.push({ name: segment.substring(1, segment.length - 1), isParam: true });
-        //         } else {
-        //             operationContext.pathSegments.push({ name: segment, isParam: false })
-        //         }
-        //     }
-        // });
-
-        // default naming rule can be overrident using an operation filter, default may be provided by language filters
         operationContext.name = operation.operationId ? operation.operationId : verb + path.name;
-
-
-
-
-        // _.forEach(operation.parameters, (parameter: swagger.IParameterOrReference, index: number) => {
-        //     var argument = new Argument();
-        //     this.args.push(argument);
-        // });
-
-        // var bodyArg = _.filter(this.args, (arg) => arg.in === "body");
-        // if (bodyArg.length) {
-        //     this.requestBody = bodyArg[0];
-        // }
-
-        // this.headers = _.filter(this.args, (arg) => arg.in === "header");
-        // this.query = _.filter(this.args, (arg) => arg.in === "query");
-        // this.formData = _.filter(this.args, (arg) => arg.in === "formData");
-        // this.pathParams = _.filter(this.args, (arg) => arg.in === "path");
 
         // TODO Move this to an operation filter provided by the template or language, preserving swagger spec order is the better approach
         // this.args = this.args.sort(optionalThenAlpha);
@@ -220,21 +197,23 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
 
         // TODO This need lots of improvments both on generation context and on template/client sdk side. 
         // This should rely on an open ended content types and formatters (with recommended support for json & multipart formData)
-        // this.consumes = method.consumes ? method.consumes : contextBuilder.context.defaultConsumes;
-        // this.produces = method.produces ? method.produces : contextBuilder.context.defaultProduces;
+        operationContext.consumes = operation.consumes ? operation.consumes : this.context.defaultConsumes;
+        operationContext.produces = operation.produces ? operation.produces : this.context.defaultProduces;
 
-        // if (!this.consumes || !this.consumes.length) {
-        //     this.consumes = ["application/json"];
+        if (operationContext.consumes && this.mediaTypesPriorities) {
+            operationContext.consumes = operationContext.consumes.sort((a, b) => this.mediaTypesPriorities[b] | 0 - this.mediaTypesPriorities[a] | 0);
+        }
+        if (operationContext.produces && this.mediaTypesPriorities) {
+            operationContext.produces = operationContext.produces.sort((a, b) => this.mediaTypesPriorities[b] | 0 - this.mediaTypesPriorities[a] | 0);
+        }
+
+        // if (!operationContext.consumes || !operationContext.consumes.length) {
+        //     operationContext.consumes = ["application/json"];
         // }
 
-        // if (!this.produces || !this.produces.length) {
-        //     this.produces = ["application/json"];
+        // if (!operationContext.produces || !operationContext.produces.length) {
+        //     operationContext.produces = ["application/json"];
         // }
-
-        // this.isJsonRequest = this.consumes.filter(x => x === "application/json").length > 0;
-        // this.isJsonResponse = this.produces.filter(x => x === "application/json").length > 0;
-        // this.isBinaryResponse = !this.isJsonResponse;
-        // this.isFormDataRequest = this.consumes.filter(x => x === "multipart/form-data").length > 0;
 
         // TODO : this is currently very handy but only the first is handled further definitions are ignored. must read the spec and choose a new approach 
         // this.security = method.security ? _.keys(method.security[0])[0] : null;
@@ -258,7 +237,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         argument.description = parameter.description;
         argument.optional = !parameter.required;
         argument.sourceParameter = parameter;
-        argument.abstractedType = this.GetTypeAbstraction(parameter.schema);
+        argument.abstractedType = this.GetTypeAbstraction(parameter);
 
         operation.args.push(argument);
 
@@ -273,6 +252,9 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         }
         if (argument.in === "path") {
             operation.pathParams.push(argument);
+        }
+        if (argument.in === "body") {
+            operation.requestBody = argument;
         }
     }
 
@@ -295,7 +277,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
 
         responseContext.abstractedType = this.GetTypeAbstraction(response.schema);
 
-        console.log(operation);
+        //console.log(operation);
 
         if (status.indexOf('20') === 0) {
             operation.successResponse.push(responseContext);
@@ -315,6 +297,15 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
                 this.context.ambientTypes = this.context.ambientTypes.concat(dependency.types);
             }
         });
+
+        var namespacesMap: any = {};
+        _.forEach(this.context.ambientTypes, type => {
+            if (type.namespace) {
+                namespacesMap[type.namespace] = type.namespace;
+            }
+        });
+
+        this.context.allNamespaces = Object.keys(namespacesMap);
 
         this.context.dependencies = this.dependencies;
 

@@ -120,7 +120,10 @@ class CSharpAbstractedTypeConverter implements IAbstractedTypeConverter<IType> {
     }
 
     arrayTypeConvert(type: ArrayAbstractedType): CSharpType {
-        return CSharpType.array(type.itemType.convert(this));
+        console.log(type.itemType);
+        var innerType = type.itemType.convert(this);
+        console.log(innerType);
+        return CSharpType.array(innerType);
     }
 
     fileTypeConvert(type: FileAbstractedType): CSharpType {
@@ -178,7 +181,7 @@ class CSharpType implements IType {
     public static dateTimeOffset: CSharpType = new CSharpType('DateTimeOffset', null, true, false, false, false, false);
 
     public static ambient(name: string, namespace: string): CSharpType {
-        var type = new CSharpType(name, null, true, false, false, false, false);
+        var type = new CSharpType(name.replace('<>', ""), null, true, false, false, false, false);
         type.namespace = namespace;
         return type;
     }
@@ -216,10 +219,10 @@ class CSharpType implements IType {
     }
 
     public static array(type: CSharpType): CSharpType {
-        var type = new CSharpType(null, null, false, false, false, true, false);
-        type.itemType = type;
-        type.namespace = null;
-        return type;
+        let arrayType = new CSharpType(null, null, false, false, false, true, false);
+        arrayType.itemType = type;
+        arrayType.namespace = null;
+        return arrayType;
     }
 
     public asArray(): IType {
@@ -227,10 +230,10 @@ class CSharpType implements IType {
     }
 
     public static generic(type: CSharpType, args: CSharpType[]): CSharpType {
-        var type = new CSharpType(null, null, false, false, false, false, false);
-        type.isGeneric = true;
-        type.itemType = type;
-        type.genericArguments = args;
-        return type;
+        let genericType = new CSharpType(null, null, false, false, false, false, false);
+        genericType.isGeneric = true;
+        genericType.itemType = type;
+        genericType.genericArguments = args;
+        return genericType;
     }
 }

@@ -35,7 +35,9 @@ export interface ISwaggerGeneratorOptions extends IProvideGenerationFilters, IPr
 
     templateOptions: any;
     handlerbarsExtensions?: any
-    renameDefinitions?: { [from: string]: string }
+    renameDefinitions?: { [from: string]: string };
+
+    mediaTypesPriorities?: { [from: string]: number };
 }
 
 export interface IParserResult {
@@ -72,7 +74,6 @@ class LoggerVisitor extends visitor.ScopedSwaggerVisitorBase implements visitor.
 
     visitOperation(verb: string, operation: parser.IOperation) {
         console.log(verb.toUpperCase() + ' : ' + this.stack.map(x => x.name).join('/'));
-
     }
 }
 
@@ -111,7 +112,7 @@ export class Generator {
         var language: ILanguageFilter = template.language.filter;
         var mergedFilters = this.mergeFilters([template, mode, options]);
         // console.log('merged filters');
-        console.log(mergedFilters);
+        // console.log(mergedFilters);
         var mergedDependencies = _.transform(_.merge(options.dependencies, template.dependencies), (result, value, key) => {
             var dep = _.clone(value);
             dep.name = key;
@@ -128,7 +129,8 @@ export class Generator {
             mergedFilters.operationFilters,
             mergedFilters.definitionFilters,
             mergedDependencies,
-            options.ambientTypes
+            options.ambientTypes,
+            options.mediaTypesPriorities
         );
 
         var context = contextBuilder.Build();

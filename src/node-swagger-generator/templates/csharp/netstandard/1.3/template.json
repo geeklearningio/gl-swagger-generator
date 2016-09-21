@@ -10,6 +10,15 @@
     },
     "Newtonsoft.Json": {
       "version": "9.0.1"
+    },
+    "Microsoft.Extensions.Options": {
+      "version": "1.0.0"
+    },
+    "GeekLearning.RestKit.Core": {
+      "version": "*"
+    },
+    "GeekLearning.RestKit.Json": {
+      "version": "*"
     }
   },
   "definitionFilters": [
@@ -35,6 +44,16 @@
         {
           "template": "client.hbs",
           "naming": "{{options.clientName}}.cs",
+          "selector": ""
+        },
+        {
+          "template": "clientOptions.hbs",
+          "naming": "{{options.clientName}}Options.cs",
+          "selector": ""
+        },
+         {
+          "template": "clientExtensions.hbs",
+          "naming": "{{options.clientName}}Extensions.cs",
           "selector": ""
         },
         {
