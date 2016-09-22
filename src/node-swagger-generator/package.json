@@ -17,7 +17,7 @@
     "templates"
   ],
   "bin": {
-    "swaggen" : "bin/swagger-gen"
+    "swaggen" : "bin/swaggen"
   },
   "dependencies": {
     "async": "2.0.1",
