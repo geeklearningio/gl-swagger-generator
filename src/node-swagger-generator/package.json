@@ -14,7 +14,8 @@
   "license": "ISC",
   "files": [
     "lib",
-    "templates"
+    "templates",
+    "bin"
   ],
   "bin": {
     "swaggen" : "bin/swaggen"
