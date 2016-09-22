@@ -15,10 +15,10 @@
   "files": [
     "lib",
     "templates",
-    "bin"
+    "run"
   ],
   "bin": {
-    "swaggen" : "bin/swaggen"
+    "swaggen" : "./run/swaggen"
   },
   "dependencies": {
     "async": "2.0.1",
