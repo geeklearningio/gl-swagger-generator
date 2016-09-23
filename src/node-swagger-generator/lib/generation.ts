@@ -83,7 +83,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         let definition = this.context.definitionsMap[ref];
 
         if (!definition) {
-            console.log("Uinitialized definition : " + ref);
+            //console.log("Uinitialized definition : " + ref);
             definition = new Definition();
             this.context.definitions.push(definition);
             this.context.definitionsMap[ref] = definition
@@ -773,6 +773,7 @@ class GenericTypeConverter implements IAbstractedTypeConverter<IAbstractedType>{
             var matchingTypes = this.contextBuilder.context.ambientTypes.filter((importedType: IImportedType) => importedType.typeName == genericName + '<>');
 
             if (matchingTypes.length == 1) {
+                type.definition.shouldIgnore = true;
                 return new GenericAbstractedType(
                     new ImportedAbstractedType(matchingTypes[0]),
                     [new CustomAbstractedType(this.contextBuilder.GetOrCreateDefinition('#/definitions/' + genericArgs))]
