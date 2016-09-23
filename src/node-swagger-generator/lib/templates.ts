@@ -70,7 +70,7 @@ export class TemplateStore {
                             //console.log('registering partial :' + baseName);
                             environement.registerPartial(baseName.substring(1), templateContent);
                         } else {
-                            templates[file] = environement.compile(templateContent, {
+                            templates[file.toLowerCase()] = environement.compile(templateContent, {
                                 noEscape: true
                             });
                         }
@@ -90,7 +90,7 @@ export class TemplateStore {
                                 //console.log(templates[e.template]);
                                 return {
                                     selector: e.selector,
-                                    template: templates[e.template],
+                                    template: templates[e.template.toLowerCase()],
                                     naming: environement.compile(e.naming)
                                 }
                             })
