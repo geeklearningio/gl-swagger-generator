@@ -10,7 +10,7 @@ import * as visitor from './swaggerVisitor';
 import pascalCaseFilters = require('./filters/pascalCaseFilters');
 pascalCaseFilters.register();
 
-var Promise = require('bluebird');
+var bluebird = require('bluebird');
 
 export interface IPlugin {
     languages: { [key: string]: () => ILanguageFilter };
@@ -51,7 +51,7 @@ export async function generateFromJsonOrYaml(swaggerJsonOrYaml: string, options:
 }
 
 function parse(swaggerJsonOrYaml: string): Promise<IParserResult> {
-    var deferral = Promise.defer();
+    var deferral = bluebird.defer();
     parser.parse(swaggerJsonOrYaml, {}, (err, api, metadata) => {
         if (err) {
             deferral.reject(err);
