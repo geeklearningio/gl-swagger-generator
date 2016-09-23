@@ -102,12 +102,14 @@ class CSharpAbstractedTypeConverter implements IAbstractedTypeConverter<IType> {
     builtinTypeConvert(type: BuiltinAbstractedType): CSharpType {
         if (type.name === 'integer' || type.name === 'number') {
             return CSharpType.number(type.format);
-        } else if (type.name == 'string') {
+        } else if (type.name === 'string') {
             if (type.format === "date" || type.format === "date-time") {
                 return CSharpType.dateTimeOffset;
+            } else if (type.format === "uuid") {
+                return CSharpType.guid;
             }
             return CSharpType.string;
-        } else if (type.name == 'boolean') {
+        } else if (type.name === 'boolean') {
             return CSharpType.boolean;
         } else if (type.name === 'date') {
             return CSharpType.dateTimeOffset;
@@ -120,9 +122,9 @@ class CSharpAbstractedTypeConverter implements IAbstractedTypeConverter<IType> {
     }
 
     arrayTypeConvert(type: ArrayAbstractedType): CSharpType {
-        console.log(type.itemType);
+        //console.log(type.itemType);
         var innerType = type.itemType.convert(this);
-        console.log(innerType);
+        //console.log(innerType);
         return CSharpType.array(innerType);
     }
 
@@ -175,6 +177,7 @@ class CSharpType implements IType {
 
     public static string: CSharpType = new CSharpType('string', null, true, false, false, false, false);
     public static byte: CSharpType = new CSharpType('byte', null, true, false, false, false, false);
+    public static guid: CSharpType = new CSharpType('Guid', null, true, false, false, false, false);
     public static boolean: CSharpType = new CSharpType('bool', null, true, false, false, false, false);
     public static any: CSharpType = new CSharpType('object', null, true, false, false, false, false);
     public static file: CSharpType = new CSharpType('string', null, true, false, false, false, true);

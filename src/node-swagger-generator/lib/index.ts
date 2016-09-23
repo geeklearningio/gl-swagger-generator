@@ -147,8 +147,10 @@ export class Generator {
                     data: match
                 };
 
-                var content = entry.template(handlebarsContext);
                 var name = entry.naming(handlebarsContext);
+                console.log("Starting Generation (" + entry.selector + "): " + name);
+                //console.log(handlebarsContext.data);
+                var content = entry.template(handlebarsContext);
                 sink.push(name, content);
             }
         }

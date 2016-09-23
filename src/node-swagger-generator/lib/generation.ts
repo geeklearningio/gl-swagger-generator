@@ -83,6 +83,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         let definition = this.context.definitionsMap[ref];
 
         if (!definition) {
+            console.log("Uinitialized definition : " + ref);
             definition = new Definition();
             this.context.definitions.push(definition);
             this.context.definitionsMap[ref] = definition
