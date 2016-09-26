@@ -219,6 +219,8 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         // TODO : this is currently very handy but only the first is handled further definitions are ignored. must read the spec and choose a new approach 
         // this.security = method.security ? _.keys(method.security[0])[0] : null;
 
+        operationContext.security = operation.security ? _.keys(operation.security[0]) : []
+
         // _.forEach(method.responses, (response: swagger.IResponse, status: string) => {
 
         // });
@@ -425,7 +427,7 @@ export class Operation extends Extensible {
     public produces: string[];
     public successSamples: { [contentType: string]: any };
 
-    public security: string;
+    public security: string[];
 
     public hasUniqueResponseType: boolean;
     public responses: Response[];

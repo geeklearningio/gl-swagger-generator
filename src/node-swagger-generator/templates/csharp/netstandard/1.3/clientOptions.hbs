@@ -1,6 +1,7 @@
 namespace {{options.rootNamespace}} {
+    using GeekLearning.RestKit.Core;
 
-    public class {{options.clientName}}Options {
+    public class {{options.clientName}}Options : ClientOptionsBase {
         public string Scheme { get; set; } = "{{#options.scheme}}{{.}}{{/options.scheme}}{{#unless options.scheme}}http{{/unless}}";
         public string HostName { get; set; } = "{{#options.host.override}}{{.}}{{/options.host.override}}{{#unless options.host.override}}{{api.host}}{{/unless}}";
     }
