@@ -15,10 +15,10 @@
       "version": "1.0.0"
     },
     "GeekLearning.RestKit.Core": {
-      "version": "0.1.0-*"
+      "version": "0.1.1-*"
     },
     "GeekLearning.RestKit.Json": {
-      "version": "0.1.0-*"
+      "version": "0.1.1-*"
     }
   },
   "definitionFilters": [
