@@ -8,7 +8,9 @@ import _ = require('lodash');
 import * as visitor from './swaggerVisitor';
 
 import pascalCaseFilters = require('./filters/pascalCaseFilters');
+import arrayNameFilters = require('./filters/arrayNameFilter');
 pascalCaseFilters.register();
+arrayNameFilters.register();
 
 var bluebird = require('bluebird');
 

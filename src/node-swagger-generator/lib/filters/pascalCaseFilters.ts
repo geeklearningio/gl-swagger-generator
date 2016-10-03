@@ -19,7 +19,8 @@ class PascalCaseDefinitionNameFilter implements IDefinitionFilter {
     }
 
     apply(definition: Definition): Definition {
-        definition.name = this.pascalCase(splitString(definition.rawName));
+        var baseName = definition.name ? definition.name : definition.rawName;
+        definition.name = this.pascalCase(splitString(baseName));
         return definition;
     }
 }
