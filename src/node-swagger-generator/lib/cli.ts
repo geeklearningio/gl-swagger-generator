@@ -4,7 +4,7 @@ import fs = require('fs-extra');
 
 export function run() {
     var argv = require('yargs').argv;
-    
+
     var outputPath = argv.outputPath
 
     fs.ensureDirSync(outputPath);
@@ -12,8 +12,9 @@ export function run() {
     generator.generateFromJsonOrYaml(
         argv.schema, fs.readJSONSync(argv.options), {
             push: (name: string, content: string): void => {
-                console.log('generating : ' + name);
-                fs.writeFileSync(path.join(outputPath, name), content, { encoding: 'utf8' });
+                var targetPath = path.join(outputPath, name);
+                console.log('writing : ' + targetPath);
+                fs.writeFileSync(targetPath, content, { encoding: 'utf8' });
             },
             complete: (): void => {
 
@@ -21,6 +22,10 @@ export function run() {
         }
     ).then(() => {
         console.log('generation complete');
+    }).catch((err) => {
+        console.error(err);
+        console.error(err.stack);
+        process.exit(1);
     });
 }
 

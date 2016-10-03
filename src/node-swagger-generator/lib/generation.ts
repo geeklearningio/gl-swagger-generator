@@ -264,6 +264,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
 
     // visitAnonymousDefinition?(schema: swagger.IHasTypeInformation): void;
     visitDefinition(name: string, schema: swagger.ISchema): void {
+        //console.log("Preparing :" + name);
         this.GetOrCreateDefinitionFromSchema(name, schema);
     }
 
@@ -293,7 +294,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
     Build(): IGenerationContext {
         this.context = new GenerationContext();
 
-
+        console.log("listing ambient types");
         this.context.ambientTypes = [].concat(this.ambientTypes);
         _.forEach(this.dependencies, (dependency) => {
             if (dependency.types) {
@@ -301,6 +302,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
             }
         });
 
+        console.log("listing namespaces");
         var namespacesMap: any = {};
         _.forEach(this.context.ambientTypes, type => {
             if (type.namespace) {
@@ -317,8 +319,10 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
 
         // execute custom api visitors;
 
+        console.log("Base context generation");
         visitable.visit(this);
 
+        console.log("mapping ancestors");
         // execute ancestore mapper (should become a generation context visitor)
         _.forEach(this.context.definitions, (definition: Definition) => {
             if (definition.ancestorRef) {
@@ -344,9 +348,11 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         // });
 
         if (this.languageFilter.supportsGenerics()) {
+            console.log("Mapping generics (limited support)");
             this.context.visit(new GenericTypeMapper(this));
         }
 
+        console.log("Mapping language types");
         this.context.visit(new LanguageTypeMapper(this.languageFilter, this));
 
         return this.context;

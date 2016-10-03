@@ -125,6 +125,7 @@ export class Generator {
 
         visitable.visit(new LoggerVisitor());
 
+        console.log("Preparing Generation Context");
         var contextBuilder = new ContextBuilder(
             swaggerJson.api,
             language,
@@ -136,7 +137,7 @@ export class Generator {
         );
 
         var context = contextBuilder.Build();
-
+        console.log("Finished Generetion Context preparation")
         for (var i = 0; i < mode.entries.length; i++) {
             var entry = mode.entries[i];
 
