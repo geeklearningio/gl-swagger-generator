@@ -1,0 +1,9 @@
+{{#api.operations}}
+    /*{{pascalCase name}} operation arguments. */
+    export interface I{{pascalCase name}}Args {
+    {{#args}}
+        /*{{description}}*/
+        {{camlCase name}}{{#if optional}}?{{/if}}: {{> type}};
+    {{/args}}
+    }
+{{/api.operations}}

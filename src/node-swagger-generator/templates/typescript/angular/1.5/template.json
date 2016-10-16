@@ -4,24 +4,37 @@
     "name": "typescript",
     "defaultExtension": ".ts"
   },
-  "modes" : {
-    "singleFile" : {
+  "dependencies": {},
+  "definitionFilters": [
+    "arrayName",
+    "pascalCaseName"
+  ],
+  "operationFilters": [
+    "camlCaseName",
+    "camlCaseArgumentName"
+  ],
+  "modes": {
+    "singleFile": {
       "entries": [
         {
           "template": "singleFile.hbs",
-          "naming": "{{options.clientName}}{{language.defaultExtension}}",
+          "naming": "{{options.clientName}}.ts",
           "selector": ""
         }
       ]
     },
-    "threeFiles": {
+    "multipleFiles": {
       "entries": [
-
-      ]
-    },
-    "multipleFiles" : {
-      "entries": [
-
+        {
+          "template": "client.hbs",
+          "naming": "{{options.clientName}}.cs",
+          "selector": ""
+        },
+        {
+          "template": "definition.hbs",
+          "naming": "{{data.name}}.cs",
+          "selector": "definitions"
+        }
       ]
     }
   }

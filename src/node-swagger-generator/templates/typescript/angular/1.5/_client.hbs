@@ -29,21 +29,14 @@ export class {{clientName}}{{#if options.generateInterface}} implements I{{clien
     /**
     * {{description}}
     {{#args}}
-    * @param { {{> Type}} } {{camlCase name}} {{description}}
+    * @param { {{> type}} } {{camlCase name}} {{description}}
     {{/args}}
-    * @return { {{> Type successsResponse}} } {{successResponse.title}}
+    * @return { {{> type successsResponse}} } {{successResponse.title}}
     */
-    {{lowerCase verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}}(
-    {{#if @root.options.arguments.asInterface}}
-        args: I{{pascalCaseOverwriteCasing verb}}{{#pathSegments}}{{#isParam}}By{{/isParam}}{{pascalCase name}}{{/pathSegments}}Args,
-    {{/if}}
-    {{#unless @root.options.arguments.asInterface}}
-        {{#args}}
-            {{camlCase name}}{{#if optional}}?{{/if}}: {{> Type}},
-        {{/args}}
-    {{/unless}}
+    {{name}}(
+        args: I{{pascalCase name}}Args,
         canceller?: angular.IDeferred<any>
-    ) : angular.IHttpPromise<{{> Type successResponse}}> {
+    ) : angular.IHttpPromise<{{> Type successResponse.[0]}}> {
 
         var uri = this.baseUri + {{#pathSegments}}{{#isParam}}{{#if @first}}'/' + {{/if}}{{#unless @first}}' + {{/unless}}String({{#if @root.options.arguments.asInterface}}args.{{/if}}{{camlCase name}}){{#unless @last}} + '/{{/unless}}{{/isParam}}{{#unless isParam}}{{#if @first}}'/{{/if}}{{name}}{{#unless @last}}/{{/unless}}{{#if @last}}'{{/if}}{{/unless}}{{/pathSegments}};
 
@@ -54,19 +47,19 @@ export class {{clientName}}{{#if options.generateInterface}} implements I{{clien
             json: true,
             {{/isJsonResponse}}
             {{#requestBody}}
-            data: {{#if @root.options.arguments.asInterface}}args.{{/if}}{{camlCase name}},
+            data: args{{camlCase name}},
             {{/requestBody}}
             {{#if @root.options.defaultTimeout}}
             timeout: {{@root.options.defaultTimeout}},
             {{/if}}
             params: {
             {{#query}}
-                '{{name}}': {{#if @root.options.arguments.asInterface}}args.{{/if}}{{camlCase name}}{{#unless @last}},{{/unless}}
+                '{{name}}': args.{{camlCase name}}{{#unless @last}},{{/unless}}
             {{/query}}
             },
             headers: {
             {{#headers}}
-                '{{name}}': {{#if @root.options.arguments.asInterface}}args.{{/if}}{{camlCase name}}{{#unless @last}},{{/unless}}
+                '{{name}}': args.{{camlCase name}}{{#unless @last}},{{/unless}}
             {{/headers}}
             }
         };
@@ -76,10 +69,10 @@ export class {{clientName}}{{#if options.generateInterface}} implements I{{clien
     {{#formData}}
         {{#getType this}}
         {{#if isFile}}
-        formData.append('{{../name}}', new Blob([ {{#if @root.options.arguments.asInterface}}args.{{/if}}{{camlCase ../name }} ], {type: 'application/octet-stream'}));
+        formData.append('{{../name}}', new Blob([ args.{{camlCase ../name }} ], {type: 'application/octet-stream'}));
         {{/if}}
         {{#unless isFile}}
-        formData.append('{{../name}}', {{#if @root.options.arguments.asInterface}}args.{{/if}}{{camlCase ../name}});
+        formData.append('{{../name}}', args.{{camlCase ../name}});
         {{/unless}}
         {{/getType}}
     {{/formData}}

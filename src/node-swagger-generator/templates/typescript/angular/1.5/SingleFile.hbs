@@ -3,21 +3,19 @@ module {{options.module}} {
 {{/if}}
     "use strict";
 {{#api.definitions}}
-    {{> Definition }}
+    {{> definition }}
 {{/api.definitions}}
 
 {{#if options.generateInterface}}
-    {{> Interface }}
+    {{> interface }}
 {{/if}}
 
-{{#if options.arguments.asInterface}}
-    {{> ArgumentInterface }}
-{{/if}}
+    {{> argumentInterface }}
 
-    {{> Client }}
+    {{> client }}
 
 {{#if options.generateMock}}
-    {{> Mock }}
+    {{> mock }}
 {{/if}}
 {{#if options.module}}
 }

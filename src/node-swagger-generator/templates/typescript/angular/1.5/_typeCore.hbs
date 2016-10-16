@@ -1,0 +1,6 @@
+{{#isBuiltin}}{{name}}{{/isBuiltin}}{{#isDefinition}}{{name}}{{/isDefinition}}{{#isAnonymous}} {
+    {{#definition.properties}}
+        /*{{description}}*/
+        {{name}} : {{> Type }};
+    {{/definition.properties}}
+    }{{/isAnonymous}}{{#isArray}}{{> type itemType}}[]{{/isArray}}
