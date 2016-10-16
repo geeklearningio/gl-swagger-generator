@@ -7,8 +7,11 @@ import {wrapArray} from './collection';
 import _ = require('lodash');
 import * as visitor from './swaggerVisitor';
 
+import camlCaseFilters = require('./filters/camlCaseFilters');
 import pascalCaseFilters = require('./filters/pascalCaseFilters');
 import arrayNameFilters = require('./filters/arrayNameFilter');
+
+camlCaseFilters.register();
 pascalCaseFilters.register();
 arrayNameFilters.register();
 
