@@ -10,10 +10,12 @@ import * as visitor from './swaggerVisitor';
 import camlCaseFilters = require('./filters/camlCaseFilters');
 import pascalCaseFilters = require('./filters/pascalCaseFilters');
 import arrayNameFilters = require('./filters/arrayNameFilter');
+import optionalArgsOrderFilters = require('./filters/optionalArgsOrderFilter');
 
 camlCaseFilters.register();
 pascalCaseFilters.register();
 arrayNameFilters.register();
+optionalArgsOrderFilters.register();
 
 var bluebird = require('bluebird');
 

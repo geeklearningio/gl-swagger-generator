@@ -27,7 +27,8 @@
   ],
   "operationFilters": [
     "pascalCaseName",
-    "pascalCaseArgumentName"
+    "pascalCaseArgumentName",
+    "optionalArgsOrder"
   ],
   "modes": {
     "project": {
