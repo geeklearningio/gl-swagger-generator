@@ -17,7 +17,7 @@ import {
 //import servicesVersion = ts.servicesVersion;
 
 
-var pathParamRegex = XRegExp('({.*})|([^{}]*)')
+var pathParamRegex = XRegExp('({.*?})|([^{}]*)')
 var genericRegex = XRegExp('(?<genericName>\\w+)\\[(?<genericArgs>.+)\\]');
 
 export interface IGenerationContext {
