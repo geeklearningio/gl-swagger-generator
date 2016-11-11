@@ -27,7 +27,7 @@
   ],
   "operationFilters": [
     "pascalCaseName",
-    "pascalCaseArgumentName",
+    "camlCaseArgumentName",
     "optionalArgsOrder"
   ],
   "modes": {

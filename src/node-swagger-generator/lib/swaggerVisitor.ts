@@ -38,6 +38,7 @@ export interface ISwaggerVisitor {
     visitApiInfo?(apiInfo: swagger.IApiInfo): void;
     visitPath?(pathTemplate: string, path: swagger.IPath): void;
     visitOperation?(verb: string, operation: swagger.IOperation): void;
+    visitOperationPost?(verb: string, operation: swagger.IOperation): void;
     visitAnonymousDefinition?(schema: swagger.IHasTypeInformation): void;
     visitDefinition?(name: string, schema: swagger.ISchema): void;
     visitDefinitionAncestor?(ref: string): void;
@@ -164,7 +165,12 @@ class VisitableSwagger implements IVisitableSwagger {
                         }
                         this.closeScope(visitor);
                     });
+
+                    if (visitor.visitOperationPost) {
+                        visitor.visitOperationPost(verb, operation);
+                    }
                     this.closeScope(visitor);
+                    
                 }
             }
             this.closeScope(visitor);

@@ -19,15 +19,15 @@ class OptionalArgsOrderFilter implements IOperationFilter {
 
         for(var i = 0; i < operation.args.length; i++){
             var arg = operation.args[i];
-            if (arg.optional){
-                optional.push(arg);
-            }else {
+            if (arg.sourceParameter.required){
                 mandatory.push(arg);
+            }else {
+                optional.push(arg);
             }
         }
 
         operation.args = mandatory.concat(optional);
-        //console.log(operation.args.map(a=> a.name).join(", "));
+        //console.log("Ordered args : " + operation.args.map(a=> a.sourceParameter.name).join(", "));
         return operation;
     }
 }

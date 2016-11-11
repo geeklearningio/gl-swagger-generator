@@ -224,17 +224,33 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         // _.forEach(method.responses, (response: swagger.IResponse, status: string) => {
 
         // });
-
-        _.forEach(this.operationFilters, (filter) => {
-            operationContext = filter.apply(operationContext, this);
-        });
-        this.context.operations.push(operationContext);
+        
         this.push("operation", operationContext);
+    }
+
+    visitOperationPost(verb: string, operation: swagger.IOperation): void {
+        try{
+            //console.log(this.stack);
+            //console.log("visitOperationPost");
+            var operationContext = this.get<Operation>("operation");
+            //console.log(operationContext)
+
+            _.forEach(this.operationFilters, (filter) => {
+                operationContext = filter.apply(operationContext, this);
+            });
+
+            this.context.operations.push(operationContext);
+        }
+        catch(err){
+            console.log(err);
+            console.log(err.stack);
+        }
     }
 
     visitOperationParameter(parameter: swagger.IParameterOrReference, index: number): void {
         var operation = this.get<Operation>("operation");
         var argument = new Argument();
+        argument.rawName = parameter.name;
         argument.name = parameter.name;
         argument.in = parameter.in;
         argument.description = parameter.description;
