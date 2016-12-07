@@ -22,12 +22,13 @@ namespace {{options.rootNamespace}} {
 
     public {{options.clientName}}(
         IOptions<{{options.clientName}}Options> options,
+        IHttpClientFactory httpClientFactory,
         IMediaFormatterProvider mediaFormatterProvider,
         IServiceProvider serviceProvider
     {{#options.inject}},
         {{type}} {{name}}
     {{/options.inject}}
-    ) : base(options, mediaFormatterProvider, serviceProvider) {
+    ) : base(options, httpClientFactory, mediaFormatterProvider, serviceProvider) {
     {{#options.inject}}
         this.{{name}} = {{name}};
     {{/options.inject}}
