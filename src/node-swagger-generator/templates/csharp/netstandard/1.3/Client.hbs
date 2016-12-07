@@ -31,7 +31,7 @@ namespace {{options.rootNamespace}} {
     {{#options.inject}}
         this.{{name}} = {{name}};
     {{/options.inject}}
-        this.httpClient = new HttpClient();
+        this.httpClient = base.GetClient();
         this.baseUri = string.Concat(this.Options.Scheme, "://", this.Options.HostName {{#api.basePath}}, "{{.}}"{{/api.basePath}});
         this.settings = new JsonSerializerSettings();
         this.settings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
