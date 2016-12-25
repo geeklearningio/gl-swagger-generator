@@ -28,62 +28,6 @@ export class CsharpFilter implements ILanguageFilter {
     supportsGenerics(): boolean {
         return true;
     }
-
-    // getCustomType(definition: Definition, contextBuilder: ContextBuilder): IType {
-    //     //console.log('get custom type : ' + definition.rawName + ' ' + definition.isInitialized);
-    //     var match = XRegExp.exec(definition.rawName, this.genericRegex);
-    //     //console.log(match);
-    //     if (match) {
-    //         var genericType = (<any>match).genericType;
-    //         //console.log('genericType :' + genericType);
-    //         var type = _.find(contextBuilder.context.ambientTypes, type => type.typeName == (genericType + '<>'));
-    //         if (type) {
-    //             return CSharpType.ambient(genericType + '<>');
-    //         }
-    //     }
-    //     return CSharpType.fromDefinition(definition);
-    // }
-
-    // getType(source: swagger.IHasTypeInformation, contextBuilder: ContextBuilder): IType {
-    //     if (!source) {
-    //         return CSharpType.any;
-    //     }
-    //     if ((<any>source).isLanguageType) {
-    //         return (<any>source);
-    //     }
-    //     if (source.$ref) {
-    //         return this.getCustomType(contextBuilder.GetOrCreateDefinition(source.$ref), contextBuilder);
-    //     } else {
-    //         let type = source.type;
-    //         if (type === 'integer' || type === 'number') {
-    //             return CSharpType.number(source.format);
-    //         } else if (type == 'string') {
-    //             if (source.format === "date" || source.format === "date-time") {
-    //                 return CSharpType.dateTimeOffset;
-    //             }
-    //             return CSharpType.string;
-    //         } else if (type == 'boolean') {
-    //             return CSharpType.boolean;
-    //         } else if (type === 'object') {
-    //             if ((<any>source).definition) {
-    //                 return CSharpType.anonymous((<any>source).definition);
-    //             }
-    //             if (source.additionalProperties) {
-    //                 return CSharpType.dictionary(CSharpType.string, <CSharpType>this.getType(source.additionalProperties, contextBuilder));
-    //             }
-    //             return CSharpType.any;
-    //         } else if (type === 'array') {
-    //             //console.log(JSON.stringify(source.items));
-    //             return this.getType(source.items, contextBuilder).asArray();
-    //         } else if (type === 'file') {
-    //             return CSharpType.file;
-    //         } else if (type === 'date') {
-    //             return CSharpType.file;
-    //         } else {
-    //             return CSharpType.any;
-    //         }
-    //     }
-    // }
 }
 
 class CSharpAbstractedTypeConverter implements IAbstractedTypeConverter<IType> {
@@ -122,9 +66,7 @@ class CSharpAbstractedTypeConverter implements IAbstractedTypeConverter<IType> {
     }
 
     arrayTypeConvert(type: ArrayAbstractedType): CSharpType {
-        //console.log(type.itemType);
         var innerType = type.itemType.convert(this);
-        //console.log(innerType);
         return CSharpType.array(innerType);
     }
 

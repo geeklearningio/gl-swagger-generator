@@ -27,7 +27,6 @@ class OptionalArgsOrderFilter implements IOperationFilter {
         }
 
         operation.args = mandatory.concat(optional);
-        //console.log("Ordered args : " + operation.args.map(a=> a.sourceParameter.name).join(", "));
         return operation;
     }
 }

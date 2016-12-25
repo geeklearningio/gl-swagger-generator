@@ -53,31 +53,6 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         super();
     }
 
-    // GetType(ref: string): IType {
-    //     return this.languageFilter.getCustomType(this.GetOrCreateDefinition(ref), this);
-    // }
-
-    // GetTypeFromSchema(schema: swagger.ISchema): IType {
-    //     if (schema.$ref) {
-    //         return this.GetType(schema.$ref);
-    //     } else {
-    //         throw new Error('Anonymous return type are not yet supported');
-    //     }
-    // }
-
-    // GetTypeFromTypeInformation(typeInfo: swagger.IHasTypeInformation): IType {
-    //     if (typeInfo.$ref) {
-    //         return this.GetType(typeInfo.$ref);
-    //     } else {
-    //         var type = this.languageFilter.getType(typeInfo, this);
-    //         if (type) {
-    //             return type;
-    //         } else {
-    //             throw new Error('Anonymous types are not yet supported');
-    //         }
-    //     }
-    // }
-
     GetOrCreateDefinition(ref: string): Definition {
 
         let definition = this.context.definitionsMap[ref];
@@ -115,10 +90,6 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
 
         return definition;
     }
-
-    // GetOrCreateAnonymous(schema: swagger.IHasTypeInformation, parents: string[]) {
-    //     throw new Error("Not implemented exception");
-    // }
 
     GetTypeAbstraction(source: swagger.IHasTypeInformation): IAbstractedType {
         if (!source) {
@@ -163,8 +134,10 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         this.context.defaultProduces = this.api.produces ? this.api.produces : [];
 
     }
+
     // visitApiInfo?(apiInfo: swagger.IApiInfo): void;
     // visitPath?(pathTemplate: string, path: swagger.IPath): void;
+
     visitOperation(verb: string, operation: swagger.IOperation): void {
         var path = this.stack[this.stack.length - 1];
         var operationContext = new Operation();
@@ -175,12 +148,8 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         operationContext.description = operation.description;
         operationContext.hasUniqueResponseType = true;
 
-        //TODO
-
-        //console.log(path.name);
         XRegExp.forEach(path.name, pathParamRegex, match => {
             var segment = match[0];
-            //console.log(segment);
             if (segment.length) {
                 if (segment[0] == '{') {
                     operationContext.pathSegments.push({ name: segment.substring(1, segment.length - 1), isParam: true });
@@ -192,12 +161,6 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
 
         operationContext.name = operation.operationId ? operation.operationId : verb + path.name;
 
-        // TODO Move this to an operation filter provided by the template or language, preserving swagger spec order is the better approach
-        // this.args = this.args.sort(optionalThenAlpha);
-
-
-        // TODO This need lots of improvments both on generation context and on template/client sdk side. 
-        // This should rely on an open ended content types and formatters (with recommended support for json & multipart formData)
         operationContext.consumes = operation.consumes ? operation.consumes : this.context.defaultConsumes;
         operationContext.produces = operation.produces ? operation.produces : this.context.defaultProduces;
 
@@ -208,32 +171,14 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
             operationContext.produces = operationContext.produces.sort((a, b) => this.mediaTypesPriorities[b] | 0 - this.mediaTypesPriorities[a] | 0);
         }
 
-        // if (!operationContext.consumes || !operationContext.consumes.length) {
-        //     operationContext.consumes = ["application/json"];
-        // }
-
-        // if (!operationContext.produces || !operationContext.produces.length) {
-        //     operationContext.produces = ["application/json"];
-        // }
-
-        // TODO : this is currently very handy but only the first is handled further definitions are ignored. must read the spec and choose a new approach 
-        // this.security = method.security ? _.keys(method.security[0])[0] : null;
-
         operationContext.security = operation.security ? _.keys(operation.security[0]) : []
 
-        // _.forEach(method.responses, (response: swagger.IResponse, status: string) => {
-
-        // });
-        
         this.push("operation", operationContext);
     }
 
     visitOperationPost(verb: string, operation: swagger.IOperation): void {
         try{
-            //console.log(this.stack);
-            //console.log("visitOperationPost");
             var operationContext = this.get<Operation>("operation");
-            //console.log(operationContext)
 
             _.forEach(this.operationFilters, (filter) => {
                 operationContext = filter.apply(operationContext, this);
@@ -456,53 +401,23 @@ export class Operation extends Extensible {
 
     constructor() {
         super();
-        // this.rawPath = pathName;
-        // this.verb = verb;
         this.pathSegments = [];
         this.responses = [];
         this.successResponse = [];
         this.errorResponse = [];
-        // this.description = method.description;
-        this.hasUniqueResponseType = true;
-        // this.name = method.operationId ? method.operationId : this.verb + this.rawPath;
 
-        // _.forEach(pathName.split('/'), (segment) => {
-        //     if (segment.length) {
-        //         if (segment[0] == '{') {
-        //             this.pathSegments.push({ name: segment.substring(1, segment.length - 1), isParam: true });
-        //         } else {
-        //             this.pathSegments.push({ name: segment, isParam: false })
-        //         }
-        //     }
-        // });
+        this.hasUniqueResponseType = true;
 
         this.args = [];
-
-        // _.forEach(method.parameters, (parameter: swagger.IParameterOrReference, index: number) => {
-        //     var argument = new Argument(parameter, contextBuilder);
-        //     this.args.push(argument);
-        // });
-
-        // var bodyArg = _.filter(this.args, (arg) => arg.in === "body");
-        // if (bodyArg.length) {
-        //     this.requestBody = bodyArg[0];
-        // }
-
-        // this.headers = _.filter(this.args, (arg) => arg.in === "header");
-        // this.query = _.filter(this.args, (arg) => arg.in === "query");
-        // this.formData = _.filter(this.args, (arg) => arg.in === "formData");
-        // this.pathParams = _.filter(this.args, (arg) => arg.in === "path");
-
-        // this.args = this.args.sort(optionalThenAlpha);
-
         this.headers = [];
         this.query = [];
         this.formData = [];
         this.pathParams = [];
         this.args = [];
 
-        // this.consumes = method.consumes ? method.consumes : contextBuilder.context.defaultConsumes;
-        // this.produces = method.produces ? method.produces : contextBuilder.context.defaultProduces;
+        // TODO : #15 those defaults hardcoded mimetypes should not be usefull except in case of uncomplete swagger
+        // definitions. We should consider dropping them as there is an better way to handler those cases 
+        // using a custom swagger visitor if need be.
 
         if (!this.consumes || !this.consumes.length) {
             this.consumes = ["application/json"];
@@ -511,23 +426,6 @@ export class Operation extends Extensible {
         if (!this.produces || !this.produces.length) {
             this.produces = ["application/json"];
         }
-
-        // this.isJsonRequest = this.consumes.filter(x => x === "application/json").length > 0;
-        // this.isJsonResponse = this.produces.filter(x => x === "application/json").length > 0;
-        // this.isBinaryResponse = !this.isJsonResponse;
-        // this.isFormDataRequest = this.consumes.filter(x => x === "multipart/form-data").length > 0;
-
-        // this.security = method.security ? _.keys(method.security[0])[0] : null;
-
-        // _.forEach(method.responses, (response: swagger.IResponse, status: string) => {
-        //     var responseContext = new Response(status, response, contextBuilder);
-        //     if (status.indexOf('20') === 0) {
-        //         this.successResponse.push(responseContext);
-        //     } else {
-        //         this.errorResponse.push(responseContext);
-        //     }
-        //     this.responses.push(responseContext);
-        // });
     }
 }
 
@@ -623,7 +521,6 @@ export class Property extends Extensible implements IProperty {
         this.name = name;
         this.description = schema.description;
         this.sourceSchema = schema;
-        //this.type = contextBuilder.GetTypeFromTypeInformation(schema);
     }
 }
 

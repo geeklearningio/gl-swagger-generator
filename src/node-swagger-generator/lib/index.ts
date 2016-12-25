@@ -52,8 +52,8 @@ export interface IParserResult {
     metadata: parser.IMetadata
 }
 
-export async function generateFromJsonOrYaml(swaggerJsonOrYaml: string, options: ISwaggerGeneratorOptions, sink: ISink): Promise<void> {
-    var generator = new Generator([]);
+export async function generateFromJsonOrYaml(swaggerJsonOrYaml: string, options: ISwaggerGeneratorOptions, sink: ISink, templateStores?: string[]): Promise<void> {
+    var generator = new Generator(templateStores);
     await generator.generate(await parse(swaggerJsonOrYaml), options, sink);
 }
 

@@ -67,7 +67,6 @@ export class TemplateStore {
                     if (ext == ".hbs") {
                         var templateContent = await fs.readAsync(path.join(directory, file));
                         if (baseName[0] === '_') {
-                            //console.log('registering partial :' + baseName);
                             environement.registerPartial(baseName.substring(1), templateContent);
                         } else {
                             templates[file.toLowerCase()] = environement.compile(templateContent, {
@@ -77,8 +76,6 @@ export class TemplateStore {
                     }
                 }
 
-                //console.log(JSON.stringify(Object.keys(templates)));
-
                 var modes: { [key: string]: ITemplateMode } = {};
 
                 for (var key in manifest.modes) {
@@ -86,8 +83,6 @@ export class TemplateStore {
                         var element = manifest.modes[key];
                         var mode: ITemplateMode = {
                             entries: (<any[]>element.entries).map(e => {
-                                //console.log(JSON.stringify(e));
-                                //console.log(templates[e.template]);
                                 return {
                                     selector: e.selector,
                                     template: templates[e.template.toLowerCase()],
@@ -119,31 +114,6 @@ export class TemplateStore {
 
 
 function registerBuiltinHelpers(handlebars: Handlebars.IHandlebarsEnvironment) {
-
-    // handlebars.registerDecorator("importScope", (fn, props, container, decoratorContext, data) => {
-    //     props.importScope = {};
-    //     console.log(container);
-    //     let ret = (context: any, options: any) => {
-    //         let executionResult = fn(context, options);
-    //         console.log("requesting partial : " + decoratorContext.args[0]);
-    //         console.log(container.partials[decoratorContext.args[0]]);
-    //         console.log(Object.keys(props.importScope))
-    //         // let partialResult = (<any>handlebars).VM.invokePartial(container.partials[decoratorContext.args[0]], decoratorContext.args[0], Object.keys(props.importScope), container.helpers, container.partials, data);
-    //         let partialResult = container.invokePartial(decoratorContext.args[0], decoratorContext, options);
-    //         props.importScope = null;
-    //         return partialResult + executionResult;
-    //     };
-    //     return ret;
-    // });
-
-    // handlebars.registerDecorator("import", (fn, props, container, context) => {
-    //         console.log('import decorator');
-    //     if (props.importScope && context) {
-    //         console.log('pushing import to scope : ' + context);
-    //         props.importScope[String(context)] = context;
-    //     }
-    //     return fn;
-    // });
 
     handlebars.registerHelper('json', (context: any) => {
         return JSON.stringify(context, null, 4);
