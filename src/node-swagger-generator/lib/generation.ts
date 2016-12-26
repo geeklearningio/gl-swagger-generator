@@ -213,12 +213,14 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         }
         if (argument.in === "formData") {
             operation.formData.push(argument);
+            operation.hasRequestContent = true;
         }
         if (argument.in === "path") {
             operation.pathParams.push(argument);
         }
         if (argument.in === "body") {
             operation.requestBody = argument;
+            operation.hasRequestContent = true;
         }
     }
 
@@ -374,6 +376,7 @@ export class Operation extends Extensible {
     public pathSegments: { name: string, isParam: boolean }[];
     public verb: string;
     public requestBody: Argument;
+    public hasRequestContent: boolean;
     public successResponse: Response[];
     public errorResponse: Response[];
     public headers: Argument[];
@@ -414,6 +417,7 @@ export class Operation extends Extensible {
         this.formData = [];
         this.pathParams = [];
         this.args = [];
+        this.hasRequestContent = false;
 
         // TODO : #15 those defaults hardcoded mimetypes should not be usefull except in case of uncomplete swagger
         // definitions. We should consider dropping them as there is an better way to handler those cases 

@@ -63,14 +63,27 @@ namespace {{options.rootNamespace}} {
             });
         {{/if}}
 
+        var formData = null; 
+        {{#if formData}}
+        formData = new Dictionary<string, IFormData>() {
+            {{#query}}
+                ["{{name}}"] = this.GetFormData({{camlCase name}}){{#unless @last}},{{/unless}}
+            {{/query}}
+        });
+        {{/if}}
+
 
             var message = new HttpRequestMessage();
             message.RequestUri = new Uri(uri, UriKind.Absolute);
             message.Method = new HttpMethod("{{verb}}");
             message.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("{{produces.[0]}}"));
-        {{#requestBody}}
-            message.Content = this.TransformRequestBody({{camlCase name}}, "{{../consumes.[0]}}");
-        {{/requestBody}}
+        {{#if hasRequestContent}}
+            message.Content = this.TransformRequestBody(
+                {{#if requestBody}}{{camlCase name}}{{/if}}{{#unless requestBody}}null{{/unless}}, 
+                formData, 
+                "{{../consumes.[0]}}"
+            );
+        {{/if}}
 
         {{#headers}}
             message.Headers.Add("{{name}}", SafeToString({{camlCase name}}));
@@ -89,7 +102,18 @@ namespace {{options.rootNamespace}} {
             if (response.IsSuccessStatusCode){
                 return await this.TransformResponseAsync<{{> type successResponse.[0]}}>(response);
             } else {
-                throw new UnhandledApiException(response);
+                {{#if @root.options.operation.onError.useOKSchema}}
+                    await this.OnFailure<{{> type successResponse.[0]}}>(response);
+                {{/if}}
+                {{#unless @root.options.operation.onError.useOKSchema}}
+                    {{#errorResponse}}
+                    {{#unless @first}}else {{/unless}}if (this.MatchStatus(response, {{#intOrString status}}))
+                    {
+                        await this.OnFailure<{{> type .}}>(response);
+                    }
+                    {{/errorResponse}}
+                    this.OnFailure(response);
+                {{/unless}} 
             }
         }
     {{/api.operations}}

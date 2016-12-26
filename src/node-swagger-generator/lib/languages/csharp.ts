@@ -122,7 +122,7 @@ class CSharpType implements IType {
     public static guid: CSharpType = new CSharpType('Guid', null, true, false, false, false, false);
     public static boolean: CSharpType = new CSharpType('bool', null, true, false, false, false, false);
     public static any: CSharpType = new CSharpType('object', null, true, false, false, false, false);
-    public static file: CSharpType = new CSharpType('string', null, true, false, false, false, true);
+    public static file: CSharpType = new CSharpType('IFile', null, true, false, false, false, true);
     public static dateTimeOffset: CSharpType = new CSharpType('DateTimeOffset', null, true, false, false, false, false);
 
     public static ambient(name: string, namespace: string): CSharpType {
