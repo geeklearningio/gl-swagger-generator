@@ -1,13 +1,13 @@
 /**
  * Created by autex on 5/20/2016.
  */
-import {IOperationFilter, IProvideDependencies, ILanguageFilter, IDefinitionFilter} from './generation';
-import {IProvideGenerationFilters} from "./generation";
-import {ILanguageProvider} from "./language";
+import { IOperationFilter, IProvideDependencies, ILanguageFilter, IDefinitionFilter } from './generation';
+import { IProvideGenerationFilters } from "./generation";
+import { ILanguageProvider } from "./language";
 import * as fs from "./filesystem";
 
 import handlebars = require("handlebars");
-import {filtersLoader} from './filtersLoader';
+import { filtersLoader } from './filtersLoader';
 
 import path = require('path');
 
@@ -173,6 +173,14 @@ function registerBuiltinHelpers(handlebars: Handlebars.IHandlebarsEnvironment) {
             return result;
         }
         return options.fn({});
+    });
+
+    handlebars.registerHelper('intOrString', (context: any) => {
+        if (isNaN(context)) {
+            return "\"" + String(context) + "\"";
+        } else {
+            return context;
+        }
     });
 
 }
