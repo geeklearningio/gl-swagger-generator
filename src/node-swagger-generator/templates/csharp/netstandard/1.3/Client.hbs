@@ -107,7 +107,7 @@ namespace {{options.rootNamespace}} {
                 {{/if}}
                 {{#unless @root.options.operation.onError.useOKSchema}}
                     {{#errorResponse}}
-                    {{#unless @first}}else {{/unless}}if (this.MatchStatus(response, {{#intOrString status}}))
+                    {{#unless @first}}else {{/unless}}if (this.MatchStatus(response, {{intOrString status}}))
                     {
                         await this.OnFailure<{{> type .}}>(response);
                     }
