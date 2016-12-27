@@ -65,21 +65,20 @@ namespace {{options.rootNamespace}} {
             });
         {{/if}}
 
-            Dictionary<string, IFormData> formData = null; 
-        {{#if formData}}
-            formData = new Dictionary<string, IFormData>() {
-                {{#formData}}
-                    ["{{name}}"] = this.GetFormData({{camlCase name}}){{#unless @last}},{{/unless}}
-                {{/formData}}
-            };
-        {{/if}}
-
-
             var message = new HttpRequestMessage();
             message.RequestUri = new Uri(uri, UriKind.Absolute);
             message.Method = new HttpMethod("{{verb}}");
             message.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("{{produces.[0]}}"));
         {{#if hasRequestContent}}
+            Dictionary<string, IFormData> formData = null; 
+            {{#if formData}}
+            formData = new Dictionary<string, IFormData>() {
+                {{#formData}}
+                    ["{{name}}"] = this.GetFormData({{camlCase name}}){{#unless @last}},{{/unless}}
+                {{/formData}}
+            };
+            {{/if}}
+
             message.Content = this.TransformRequestBody(
                 {{#if requestBody}}{{camlCase requestBody.name}}{{/if}}{{#unless requestBody}}null{{/unless}}, 
                 formData, 
@@ -90,10 +89,6 @@ namespace {{options.rootNamespace}} {
         {{#headers}}
             message.Headers.Add("{{name}}", SafeToString({{camlCase name}}));
         {{/headers}}
-
-        {{#isFormDataRequest}}
-
-        {{/isFormDataRequest}}
 
             message = this.ApplyFilters(message{{#security}}, "{{this}}"{{/security}});
 
