@@ -2,6 +2,7 @@ namespace {{options.rootNamespace}} {
     using GeekLearning.RestKit.Core;
     using Microsoft.Extensions.Options;
     using Newtonsoft.Json;
+    using Polly;
     using System;
     using System.Collections.Generic;
     using System.Net;
@@ -50,7 +51,8 @@ namespace {{options.rootNamespace}} {
         {{#args}}
             {{> type}} {{camlCase name}}{{#if optional}} = default({{> type}}){{/if}},
         {{/args}}
-            CancellationToken cancellationToken = default(CancellationToken)
+            CancellationToken cancellationToken = default(CancellationToken),
+            Policy policy = null
             ) {
 
             var uri = this.baseUri + {{#pathSegments}}{{#isParam}}{{#unless @first}}" + {{/unless}}{{name}}.ToString(){{#unless @last}} + "{{/unless}}{{/isParam}}{{#unless isParam}}{{#if @first}}"{{/if}}{{name}}{{#if @last}}"{{/if}}{{/unless}}{{/pathSegments}};
@@ -95,25 +97,40 @@ namespace {{options.rootNamespace}} {
 
             message = this.ApplyFilters(message{{#security}}, "{{this}}"{{/security}});
 
-            var response = await httpClient.SendAsync(message, cancellationToken);
+            Func<Task<{{> type successResponse.[0]}}>> executeRequest = async () =>
+            {
 
-            var content = await response.Content.ReadAsStringAsync();
+                var response = await httpClient.SendAsync(message, cancellationToken);
 
-            if (response.IsSuccessStatusCode){
-                return await this.TransformResponseAsync<{{> type successResponse.[0]}}>(response);
-            } else {
-                {{#if @root.options.operation.onError.useOKSchema}}
-                    throw await this.MapToException<{{> type successResponse.[0]}}>(response);
-                {{/if}}
-                {{#unless @root.options.operation.onError.useOKSchema}}
-                    {{#errorResponse}}
-                    {{#unless @first}}else {{/unless}}if (this.MatchStatus(response, {{intOrString status}}))
-                    {
-                        throw await this.MapToException<{{> type .}}>(response);
-                    }
-                    {{/errorResponse}}
-                    throw this.MapToException(response);
-                {{/unless}} 
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode){
+                    return await this.TransformResponseAsync<{{> type successResponse.[0]}}>(response);
+                } else {
+                    {{#if @root.options.operation.onError.useOKSchema}}
+                        throw await this.MapToException<{{> type successResponse.[0]}}>(response);
+                    {{/if}}
+                    {{#unless @root.options.operation.onError.useOKSchema}}
+                        {{#errorResponse}}
+                        {{#unless @first}}else {{/unless}}if (this.MatchStatus(response, {{intOrString status}}))
+                        {
+                            throw await this.MapToException<{{> type .}}>(response);
+                        }
+                        {{/errorResponse}}
+                        throw this.MapToException(response);
+                    {{/unless}} 
+                }
+            };
+
+            var finalPolicy = policy ?? this.Options.Policy;
+
+            if (finalPolicy != null)
+            {
+                return await policy.ExecuteAsync(executeRequest);
+            }
+            else
+            {
+                return await executeRequest();
             }
         }
     {{/api.operations}}
