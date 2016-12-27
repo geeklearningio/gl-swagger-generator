@@ -69,7 +69,7 @@ namespace {{options.rootNamespace}} {
                 {{#query}}
                     ["{{name}}"] = this.GetFormData({{camlCase name}}){{#unless @last}},{{/unless}}
                 {{/query}}
-            });
+            };
         {{/if}}
 
 
