@@ -71,7 +71,7 @@ class CSharpAbstractedTypeConverter implements IAbstractedTypeConverter<IType> {
     }
 
     fileTypeConvert(type: FileAbstractedType): CSharpType {
-        return CSharpType.array(CSharpType.byte);
+        return CSharpType.file;
     }
 
     genericTypeConvert(type: GenericAbstractedType): CSharpType {

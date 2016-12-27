@@ -66,9 +66,9 @@ namespace {{options.rootNamespace}} {
             Dictionary<string, IFormData> formData = null; 
         {{#if formData}}
             formData = new Dictionary<string, IFormData>() {
-                {{#query}}
+                {{#formData}}
                     ["{{name}}"] = this.GetFormData({{camlCase name}}){{#unless @last}},{{/unless}}
-                {{/query}}
+                {{/formData}}
             };
         {{/if}}
 
