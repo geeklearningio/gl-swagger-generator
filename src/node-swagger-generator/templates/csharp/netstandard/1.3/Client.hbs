@@ -63,13 +63,13 @@ namespace {{options.rootNamespace}} {
             });
         {{/if}}
 
-        var formData = null; 
+            Dictionary<string, IFormData> formData = null; 
         {{#if formData}}
-        formData = new Dictionary<string, IFormData>() {
-            {{#query}}
-                ["{{name}}"] = this.GetFormData({{camlCase name}}){{#unless @last}},{{/unless}}
-            {{/query}}
-        });
+            formData = new Dictionary<string, IFormData>() {
+                {{#query}}
+                    ["{{name}}"] = this.GetFormData({{camlCase name}}){{#unless @last}},{{/unless}}
+                {{/query}}
+            });
         {{/if}}
 
 
@@ -79,9 +79,9 @@ namespace {{options.rootNamespace}} {
             message.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("{{produces.[0]}}"));
         {{#if hasRequestContent}}
             message.Content = this.TransformRequestBody(
-                {{#if requestBody}}{{camlCase name}}{{/if}}{{#unless requestBody}}null{{/unless}}, 
+                {{#if requestBody}}{{camlCase requestBody.name}}{{/if}}{{#unless requestBody}}null{{/unless}}, 
                 formData, 
-                "{{../consumes.[0]}}"
+                "{{consumes.[0]}}"
             );
         {{/if}}
 
@@ -103,16 +103,16 @@ namespace {{options.rootNamespace}} {
                 return await this.TransformResponseAsync<{{> type successResponse.[0]}}>(response);
             } else {
                 {{#if @root.options.operation.onError.useOKSchema}}
-                    await this.OnFailure<{{> type successResponse.[0]}}>(response);
+                    throw await this.MapToException<{{> type successResponse.[0]}}>(response);
                 {{/if}}
                 {{#unless @root.options.operation.onError.useOKSchema}}
                     {{#errorResponse}}
                     {{#unless @first}}else {{/unless}}if (this.MatchStatus(response, {{intOrString status}}))
                     {
-                        await this.OnFailure<{{> type .}}>(response);
+                        throw await this.MapToException<{{> type .}}>(response);
                     }
                     {{/errorResponse}}
-                    this.OnFailure(response);
+                    throw this.MapToException(response);
                 {{/unless}} 
             }
         }
