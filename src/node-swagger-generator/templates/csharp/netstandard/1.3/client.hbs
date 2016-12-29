@@ -92,10 +92,10 @@ namespace {{options.rootNamespace}} {
 
             message = this.ApplyFilters(message{{#security}}, "{{this}}"{{/security}});
 
-            Func<Task<{{> type successResponse.[0]}}>> executeRequest = async () =>
+            Func<CancellationToken, Task<{{> type successResponse.[0]}}>> executeRequest = async (ct) =>
             {
 
-                var response = await httpClient.SendAsync(message, cancellationToken);
+                var response = await httpClient.SendAsync(message, ct);
 
                 if (response.IsSuccessStatusCode){
                     return await this.TransformResponseAsync<{{> type successResponse.[0]}}>(response);
@@ -127,7 +127,7 @@ namespace {{options.rootNamespace}} {
             }
             else
             {
-                return await executeRequest();
+                return await executeRequest(cancellationToken);
             }
         }
     {{/api.operations}}
