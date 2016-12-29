@@ -119,7 +119,11 @@ namespace {{options.rootNamespace}} {
 
             if (finalPolicy != null)
             {
-                return await finalPolicy.ExecuteAsync(executeRequest);
+                return await finalPolicy.ExecuteAsync(
+                    executeRequest,
+                    continueOnCapturedContext: true, 
+                    cancellationToken: cancellationToken
+                );
             }
             else
             {
