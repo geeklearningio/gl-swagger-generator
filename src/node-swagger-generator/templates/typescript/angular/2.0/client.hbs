@@ -1,0 +1,10 @@
+import {Http} from "@angular/http";
+
+export class {{clientName}}{{#if options.generateInterface}} implements I{{clientName}}{{/if}} {
+
+    constructor(
+        private http: Http
+    ) {
+        
+    }
+}
