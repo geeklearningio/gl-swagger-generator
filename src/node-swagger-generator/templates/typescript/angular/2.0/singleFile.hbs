@@ -1,0 +1,71 @@
+import {Injectable} from '@angular/core';
+import {Http, Headers, RequestOptions, RequestMethod} from "@angular/http";
+import {Observable} from "rxjs";
+
+{{#with api}}
+  {{#definitions}}
+{{> definition}}
+  {{/definitions}}
+{{/with}}
+
+export interface IOptions {
+  Scheme: string,
+  HostName: string
+}
+
+@Injectable()
+export class {{options.clientName}}{{#if options.generateInterface}} implements I{{options.clientName}}{{/if}} {
+  private baseUri: string;
+
+  constructor(
+      private http: Http
+  ) {
+      
+  }
+
+  //TODO: do not load params like this
+  loadOptions(options: any) {
+    this.baseUri = options.Scheme + '://' + options.HostName;
+  }
+
+
+{{#api.operations}}
+  /**
+  * {{description}}
+  {{#args}}
+  * @param { {{> type}} } {{camlCase name}} {{description}}
+  {{/args}}
+  * @return { {{> type successsResponse}} } {{successResponse.title}}
+  */
+  {{pascalCase name}}(
+    {{#args}}
+    {{camlCase name}}: {{> type}}{{#if optional}} = undefined{{/if}}{{#unless @last}},{{/unless}}
+    {{/args}}
+  ) : Observable<{{> type successResponse.[0]}}> {
+
+    let uri = this.baseUri + {{#pathSegments}}{{#isParam}}{{#unless @first}}" + {{/unless}}String({{name}}){{#unless @last}} + "{{/unless}}{{/isParam}}{{#unless isParam}}{{#if @first}}"{{/if}}{{name}}{{#if @last}}"{{/if}}{{/unless}}{{/pathSegments}};
+
+    let headers = new Headers({
+      'Content-Type': '{{produces.[0]}};charset=UTF-8',
+      'Accept': 'application/json, text/plain, */*'
+    });
+    let options = new RequestOptions({
+      method: RequestMethod.{{pascalCase verb}},
+      url: uri,
+      {{#requestBody}}
+      body: {{camlCase name}},
+      {{/requestBody}}
+      headers: headers
+    });
+
+    let response = new Observable<{{> type successResponse.[0]}}>(observer => {
+      this.http.request(uri, options)
+      .subscribe(
+        httpResponse => observer.next(<{{> type successResponse.[0]}}>httpResponse.json())
+      )
+    });
+    return response;
+  }
+{{/api.operations}}
+
+}
