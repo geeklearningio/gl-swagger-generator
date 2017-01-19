@@ -35,6 +35,10 @@ class TypescriptAbstractedTypeConverter implements IAbstractedTypeConverter<ITyp
 
     }
 
+    voidTypeConvert(type: SchemaLessAbstractedType): TypescriptType {
+        return TypescriptType.void();
+    }
+
     schemaLessTypeConvert(type: SchemaLessAbstractedType): TypescriptType {
         return TypescriptType.any;
     }
@@ -94,6 +98,7 @@ class TypescriptType implements IType {
     isArray: boolean;
     itemType: TypescriptType;
     isFile: boolean;
+    isVoid: boolean;
     isGeneric: boolean;
     genericArguments: TypescriptType[];
     isDictionary: boolean;
@@ -123,6 +128,15 @@ class TypescriptType implements IType {
     public static boolean: TypescriptType = new TypescriptType('boolean', null, true, false, false, false, false);
     public static any: TypescriptType = new TypescriptType('any', null, true, false, false, false, false);
     public static file: TypescriptType = new TypescriptType('Uint8Array', null, true, false, false, false, true);
+    private static _void: TypescriptType;
+
+    public static void(){
+        if (!TypescriptType._void){
+            TypescriptType._void = new TypescriptType('void', null, true, false, false, false, false);
+            TypescriptType._void.isVoid = true;
+        }
+        return TypescriptType._void;
+    }
 
     public static ambient(name: string, namespace: string): TypescriptType {
         var type = new TypescriptType(name.replace('<>', ""), null, true, false, false, false, false);

@@ -681,6 +681,9 @@ class GenericTypeConverter implements IAbstractedTypeConverter<IAbstractedType>{
     constructor(private contextBuilder: ContextBuilder) {
     }
 
+    voidTypeConvert(type: SchemaLessAbstractedType): IAbstractedType {
+        return type;
+    }
     schemaLessTypeConvert(type: SchemaLessAbstractedType): IAbstractedType {
         return type;
     }

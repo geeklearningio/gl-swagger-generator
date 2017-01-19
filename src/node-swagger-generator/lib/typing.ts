@@ -16,6 +16,7 @@ export interface ITyped {
 }
 
 export interface IAbstractedTypeConverter<T> {
+    voidTypeConvert(type: SchemaLessAbstractedType): T;
     schemaLessTypeConvert(type: SchemaLessAbstractedType): T;
     mapTypeConvert(type: MapAbstractedType): T;
     builtinTypeConvert(type: BuiltinAbstractedType): T;
@@ -61,6 +62,12 @@ export interface IDefinition extends IExtensible {
     shouldIgnore: boolean;
 }
 
+
+export class VoidAbstractedType implements IAbstractedType {
+    convert<T>(converter: IAbstractedTypeConverter<T>): T {
+        return converter.voidTypeConvert(this);
+    }
+}
 
 export class SchemaLessAbstractedType implements IAbstractedType {
     convert<T>(converter: IAbstractedTypeConverter<T>): T {
