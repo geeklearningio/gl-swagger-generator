@@ -20,3 +20,6 @@ Please check the [wiki](https://github.com/geeklearningio/gl-swagger-generator/w
 
 One purpose of this generator is to allow you to write or customize templates if needed. Please check the wiki for more information.
 
+# The story behind this project
+
+Read the [Jane's story](https://github.com/geeklearningio/gl-swagger-generator/wiki/Jane's-story)
