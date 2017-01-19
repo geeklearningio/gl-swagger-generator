@@ -167,5 +167,8 @@ declare module "swagger-parser" {
 
     export function parse(file: string, options: IOptions, callback: (err: Error, api: IApi, metadata: any) => void): void;
     export function parse(file: string, callback: (err: Error, api: IApi, metadata: IMetadata) => void): void;
+
+    export function dereference(file: string, options: IOptions, callback: (err: Error, api: IApi, metadata: any) => void): void;
+    export function dereference(file: string, callback: (err: Error, api: IApi, metadata: IMetadata) => void): void;
 }
 
