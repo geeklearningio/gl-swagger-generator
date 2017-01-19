@@ -65,35 +65,34 @@ namespace {{options.rootNamespace}} {
             });
         {{/if}}
 
-            var message = new HttpRequestMessage();
-            message.RequestUri = new Uri(uri, UriKind.Absolute);
-            message.Method = new HttpMethod("{{verb}}");
-            message.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("{{produces.[0]}}"));
-        {{#if hasRequestContent}}
-            Dictionary<string, IFormData> formData = null; 
-            {{#if formData}}
-            formData = new Dictionary<string, IFormData>() {
-                {{#formData}}
-                    ["{{name}}"] = this.GetFormData({{camlCase name}}){{#unless @last}},{{/unless}}
-                {{/formData}}
-            };
-            {{/if}}
-
-            message.Content = this.TransformRequestBody(
-                {{#if requestBody}}{{camlCase requestBody.name}}{{/if}}{{#unless requestBody}}null{{/unless}}, 
-                formData, 
-                "{{consumes.[0]}}"
-            );
-        {{/if}}
-
-        {{#headers}}
-            message.Headers.Add("{{name}}", SafeToString({{camlCase name}}));
-        {{/headers}}
-
-            message = this.ApplyFilters(message{{#security}}, "{{this}}"{{/security}});
-
             Func<CancellationToken, Task<{{> type successResponse.[0]}}>> executeRequest = async (ct) =>
             {
+                var message = new HttpRequestMessage();
+                message.RequestUri = new Uri(uri, UriKind.Absolute);
+                message.Method = new HttpMethod("{{verb}}");
+                message.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("{{produces.[0]}}"));
+            {{#if hasRequestContent}}
+                Dictionary<string, IFormData> formData = null; 
+                {{#if formData}}
+                formData = new Dictionary<string, IFormData>() {
+                    {{#formData}}
+                        ["{{name}}"] = this.GetFormData({{camlCase name}}){{#unless @last}},{{/unless}}
+                    {{/formData}}
+                };
+                {{/if}}
+
+                message.Content = this.TransformRequestBody(
+                    {{#if requestBody}}{{camlCase requestBody.name}}{{/if}}{{#unless requestBody}}null{{/unless}}, 
+                    formData, 
+                    "{{consumes.[0]}}"
+                );
+            {{/if}}
+
+            {{#headers}}
+                message.Headers.Add("{{name}}", SafeToString({{camlCase name}}));
+            {{/headers}}
+
+                message = this.ApplyFilters(message{{#security}}, "{{this}}"{{/security}});
 
                 var response = await httpClient.SendAsync(message, ct);
 
