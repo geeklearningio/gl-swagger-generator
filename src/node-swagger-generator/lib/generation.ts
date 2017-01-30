@@ -11,7 +11,7 @@ import {
     IAbstractedType, IType, ITyped, IImportedType,
     IDefinition, IProperty,
     IAbstractedTypeConverter,
-    SchemaLessAbstractedType, ArrayAbstractedType, BuiltinAbstractedType, CustomAbstractedType, FileAbstractedType, MapAbstractedType, GenericAbstractedType, ImportedAbstractedType
+    VoidAbstractedType, SchemaLessAbstractedType, ArrayAbstractedType, BuiltinAbstractedType, CustomAbstractedType, FileAbstractedType, MapAbstractedType, GenericAbstractedType, ImportedAbstractedType
 } from './typing';
 
 //import servicesVersion = ts.servicesVersion;
@@ -681,7 +681,7 @@ class GenericTypeConverter implements IAbstractedTypeConverter<IAbstractedType>{
     constructor(private contextBuilder: ContextBuilder) {
     }
 
-    voidTypeConvert(type: SchemaLessAbstractedType): IAbstractedType {
+    voidTypeConvert(type: VoidAbstractedType): IAbstractedType {
         return type;
     }
     schemaLessTypeConvert(type: SchemaLessAbstractedType): IAbstractedType {

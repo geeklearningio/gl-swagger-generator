@@ -4,7 +4,7 @@ import {
     IAbstractedType, IType, ITyped, IImportedType,
     IDefinition, IProperty,
     IAbstractedTypeConverter,
-    SchemaLessAbstractedType, ArrayAbstractedType, BuiltinAbstractedType, CustomAbstractedType, FileAbstractedType, MapAbstractedType, GenericAbstractedType, ImportedAbstractedType
+    VoidAbstractedType, SchemaLessAbstractedType, ArrayAbstractedType, BuiltinAbstractedType, CustomAbstractedType, FileAbstractedType, MapAbstractedType, GenericAbstractedType, ImportedAbstractedType
 } from '../typing';
 import swagger = require('swagger-parser');
 import _ = require('lodash');
@@ -35,7 +35,7 @@ class CSharpAbstractedTypeConverter implements IAbstractedTypeConverter<IType> {
 
     }
 
-    voidTypeConvert(type: SchemaLessAbstractedType): CSharpType {
+    voidTypeConvert(type: VoidAbstractedType): CSharpType {
         return CSharpType.void();
     }
 
