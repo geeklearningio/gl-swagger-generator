@@ -1,0 +1,6 @@
+{{#if type.isVoid}}
+Task
+{{/if}}
+{{#unless type.isVoid}}
+Task<{{> type }}>
+{{/unless}}
