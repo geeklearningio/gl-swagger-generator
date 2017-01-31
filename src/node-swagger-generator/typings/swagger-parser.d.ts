@@ -64,13 +64,25 @@ declare module "swagger-parser" {
     }
 
     export interface IOptions {
-        parseYaml?: boolean;
-        dereference$Refs?: boolean;
-        dereferenceInternal$Refs?: boolean;
-        resolve$Refs?: boolean;
-        resolveExternal$Refs?: boolean;
-        validateSchema?: boolean;
-        strictValidation?: boolean;
+        allow? :{
+            json? : boolean,
+            empty?: boolean,
+            yaml?: boolean
+        }
+        $refs? : {
+            internal?: boolean,
+            external?: boolean,
+            circular?: boolean,
+        }
+        validate?: {
+            schema? : boolean,
+            spec?: boolean,
+        },
+        cache? : {
+            fs?: boolean,
+            http?: boolean,
+            https?: boolean
+        }
     }
 
     export interface IPath {
