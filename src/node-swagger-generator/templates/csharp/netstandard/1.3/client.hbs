@@ -89,7 +89,7 @@ namespace {{options.rootNamespace}} {
             {{/if}}
 
             {{#headers}}
-                message.Headers.Add("{{name}}", SafeToString({{camlCase name}}));
+                message.Headers.Add("{{rawName}}", SafeToString({{camlCase name}}));
             {{/headers}}
 
                 message = this.ApplyFilters(message{{#security}}, "{{this}}"{{/security}});
