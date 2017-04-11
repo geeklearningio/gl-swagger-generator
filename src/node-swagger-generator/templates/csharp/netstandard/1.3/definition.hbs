@@ -6,13 +6,21 @@ namespace {{options.rootNamespace}} {
     {{> using}}
 
     /// <summary>
-    /// {{description}}
+{{#getLines description}}
+    {{#each .}}
+    /// {{.}}
+    {{/each}}
+{{/getLines}}
     /// </summary>
     public class {{pascalCase name}} {{#ancestor}}: {{pascalCase name}}{{/ancestor}} {
 
     {{#properties}}
         /// <summary>
-        /// {{description}}
+    {{#getLines description}}
+        {{#each .}}
+        /// {{.}}
+        {{/each}}
+    {{/getLines}}
         /// </summary>
         [JsonProperty("{{name}}")]
         public {{> type }} {{pascalCase name}} {get; set;}
