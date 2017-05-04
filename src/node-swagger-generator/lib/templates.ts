@@ -162,7 +162,7 @@ function registerBuiltinHelpers(handlebars: Handlebars.IHandlebarsEnvironment) {
     });
 
     handlebars.registerHelper('getLines', function (data: string, options: any): any {
-       return options.fn(data.split(/[\n\r]+/g));
+       return options.fn(data ? data.split(/[\n\r]+/g) : []);
     });
 
     handlebars.registerHelper('forIn', function (map: any, options: any): any {
