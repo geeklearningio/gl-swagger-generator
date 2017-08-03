@@ -1,7 +1,7 @@
-# Jane - An Open Api (formerly Swagger) Client Generator
+# Jane - An OpenAPI Specification (formerly Swagger) Client Generator
 
-Jane is an [Open Api](https://www.openapis.org/) client generator. 
-It uses templates written in handlebars to generate a client code base in various languages.
+Jane is an [OpenAPI Specification](https://www.openapis.org/) client generator. 
+It uses templates written in Handlebars to generate a client code base in various languages.
 
 The initial release is focused on providing a strong support of csharp/netstandard1.3 
 and typescript. 
