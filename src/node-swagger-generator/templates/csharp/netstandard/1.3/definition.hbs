@@ -1,4 +1,5 @@
-namespace {{options.rootNamespace}} {
+namespace {{options.rootNamespace}}
+{
     {{#with data}}
     using Newtonsoft.Json;
     using System;
@@ -12,8 +13,8 @@ namespace {{options.rootNamespace}} {
     {{/each}}
 {{/getLines}}
     /// </summary>
-    public class {{pascalCase name}} {{#ancestor}}: {{pascalCase name}}{{/ancestor}} {
-
+    public class {{pascalCase name}} {{#ancestor}}: {{pascalCase name}}{{/ancestor}}
+    {
     {{#properties}}
         /// <summary>
     {{#getLines description}}
