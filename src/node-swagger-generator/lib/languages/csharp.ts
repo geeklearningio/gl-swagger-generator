@@ -4,7 +4,7 @@ import {
     IAbstractedType, IType, ITyped, IImportedType,
     IDefinition, IProperty,
     IAbstractedTypeConverter,
-    SchemaLessAbstractedType, ArrayAbstractedType, BuiltinAbstractedType, CustomAbstractedType, FileAbstractedType, MapAbstractedType, GenericAbstractedType, ImportedAbstractedType
+    VoidAbstractedType, SchemaLessAbstractedType, ArrayAbstractedType, BuiltinAbstractedType, CustomAbstractedType, FileAbstractedType, MapAbstractedType, GenericAbstractedType, ImportedAbstractedType
 } from '../typing';
 import swagger = require('swagger-parser');
 import _ = require('lodash');
@@ -33,6 +33,10 @@ export class CsharpFilter implements ILanguageFilter {
 class CSharpAbstractedTypeConverter implements IAbstractedTypeConverter<IType> {
     constructor(private generationContext: IGenerationContext) {
 
+    }
+
+    voidTypeConvert(type: VoidAbstractedType): CSharpType {
+        return CSharpType.void();
     }
 
     schemaLessTypeConvert(type: SchemaLessAbstractedType): CSharpType {
@@ -94,6 +98,7 @@ class CSharpType implements IType {
     isArray: boolean;
     itemType: CSharpType;
     isFile: boolean;
+    isVoid: boolean;
     isGeneric: boolean;
     genericArguments: CSharpType[];
     isDictionary: boolean;
@@ -124,6 +129,15 @@ class CSharpType implements IType {
     public static any: CSharpType = new CSharpType('object', null, true, false, false, false, false);
     public static file: CSharpType = new CSharpType('IFile', null, true, false, false, false, true);
     public static dateTimeOffset: CSharpType = new CSharpType('DateTimeOffset', null, true, false, false, false, false);
+    private static _void: CSharpType;
+
+    public static void(){
+        if (!CSharpType._void){
+            CSharpType._void = new CSharpType('void', null, true, false, false, false, false);
+            CSharpType._void.isVoid = true;
+        }
+        return CSharpType._void;
+    }
 
     public static ambient(name: string, namespace: string): CSharpType {
         var type = new CSharpType(name.replace('<>', ""), null, true, false, false, false, false);
