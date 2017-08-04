@@ -1,0 +1,5 @@
+.idea
+lib/**/*.d.ts
+lib/**/*.js
+tests/**/*.d.ts
+tests/**/*.js
