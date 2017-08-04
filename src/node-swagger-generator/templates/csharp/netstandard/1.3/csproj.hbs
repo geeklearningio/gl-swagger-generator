@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net452;netstandard1.3</TargetFrameworks>
+    <AssemblyName>{{options.rootNamespace}}</AssemblyName>
+    <PackageId>{{options.rootNamespace}}</PackageId>
+    <RootNamespace>{{options.rootNamespace}}</RootNamespace>
+    <VersionPrefix>0.0.1</VersionPrefix>
+   {{#options.projectProperties}}
+    <{{name}}>{{value}}</{{name}}>
+   {{/options.projectProperties}}  
+  </PropertyGroup>
+
+  <ItemGroup>
+  {{#api.dependencies}}
+    {{#isnt name 'NETStandard.Library'}}
+    <PackageReference Include="{{../name}}" Version="{{../version}}" />
+    {{/isnt}}
+  {{/api.dependencies}}
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+    <PackageReference Include="System.Runtime.Extensions" Version="4.1.0" />
+  </ItemGroup>
+
+</Project>

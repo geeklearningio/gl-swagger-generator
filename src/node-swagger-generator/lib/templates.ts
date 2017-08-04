@@ -162,7 +162,7 @@ function registerBuiltinHelpers(handlebars: Handlebars.IHandlebarsEnvironment) {
     });
 
     handlebars.registerHelper('getLines', function (data: string, options: any): any {
-       return options.fn(data ? data.split(/[\n\r]+/g) : []);
+        return options.fn(data ? data.split(/[\n\r]+/g) : []);
     });
 
     handlebars.registerHelper('forIn', function (map: any, options: any): any {
@@ -187,6 +187,21 @@ function registerBuiltinHelpers(handlebars: Handlebars.IHandlebarsEnvironment) {
         }
     });
 
+    handlebars.registerHelper("is", (value: any, test: any, options: any) => {
+        if (value && value === test) {
+            return options.fn(this);
+        } else {
+            return options.inverse(this);
+        }
+    });
+
+    handlebars.registerHelper("isnt", (value: any, test: any, options: any) => {
+        if (!value || value !== test) {
+            return options.fn(this);
+        } else {
+            return options.inverse(this);
+        }
+    });
 }
 
 
