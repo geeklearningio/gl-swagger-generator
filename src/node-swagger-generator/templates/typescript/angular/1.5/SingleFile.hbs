@@ -10,13 +10,6 @@ module {{options.module}} {
     {{> interface }}
 {{/if}}
 
-    {{> argumentInterface }}
+{{> argumentInterface }}
 
-    {{> client }}
-
-{{#if options.generateMock}}
-    {{> mock }}
-{{/if}}
-{{#if options.module}}
-}
-{{/if}}
+{{> client }}
