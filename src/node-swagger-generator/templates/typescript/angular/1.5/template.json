@@ -17,6 +17,11 @@
     "singleFile": {
       "entries": [
         {
+          "template": "clientConfigurationService.hbs",
+          "naming": "clientConfigurationService.ts",
+          "selector": ""
+        },
+        {
           "template": "singleFile.hbs",
           "naming": "{{options.clientName}}.ts",
           "selector": ""
@@ -26,14 +31,33 @@
     "multipleFiles": {
       "entries": [
         {
-          "template": "client.hbs",
-          "naming": "{{options.clientName}}.cs",
+          "template": "multipleFilesClient.hbs",
+          "naming": "{{options.clientName}}.ts",
           "selector": ""
         },
         {
-          "template": "definition.hbs",
-          "naming": "{{data.name}}.cs",
-          "selector": "definitions"
+          "template": "multipleFilesInterface.hbs",
+          "naming": "I{{options.clientName}}.d.ts",
+          "selector": ""
+        }
+      ]
+    },
+    "package": {
+      "entries": [
+        {
+          "template": "clientConfigurationService.hbs",
+          "naming": "ClientConfigurationService.ts",
+          "selector": ""
+        },
+        {
+          "template": "packageClient.hbs",
+          "naming": "{{options.clientName}}.ts",
+          "selector": ""
+        },
+        {
+          "template": "package.hbs",
+          "naming": "package.json",
+          "selector": ""
         }
       ]
     }

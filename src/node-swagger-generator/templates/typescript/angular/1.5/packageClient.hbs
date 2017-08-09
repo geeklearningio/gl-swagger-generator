@@ -1,0 +1,19 @@
+"use strict";
+{{#api.definitions}}
+{{> definition }}
+{{/api.definitions}}
+
+{{#if options.generateInterface}}
+{{> interface }}
+{{/if}}
+
+{{> argumentInterface }}
+
+{{> client }}
+
+declare var exports: any;
+
+exports = angular.module("{{#if options.packageName}}{{options.packageName}}{{else}}{{options.clientName}}{{/if}}", [])
+.service("{{options.clientName}}", {{options.clientName}})
+.service("ClientConfigurationService", ClientConfigurationService)
+;

@@ -3,13 +3,17 @@ module {{options.module}} {
 {{/if}}
     "use strict";
 {{#api.definitions}}
-    {{> definition }}
+{{> definition }}
 {{/api.definitions}}
 
 {{#if options.generateInterface}}
-    {{> interface }}
+{{> interface }}
 {{/if}}
 
 {{> argumentInterface }}
 
 {{> client }}
+
+{{#if options.module}}
+    }
+{{/if}}

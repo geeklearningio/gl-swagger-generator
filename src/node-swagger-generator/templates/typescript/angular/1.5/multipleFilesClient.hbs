@@ -1,0 +1,15 @@
+{{#if options.generateInterface}}
+/// <reference path="./I{{options.clientName}}.d.ts" />
+{{/if}}
+
+{{#if options.module}}
+    module {{options.module}} {
+{{/if}}
+"use strict";
+
+{{> client }}
+
+{{#if options.module}}
+    }
+{{/if}}
+

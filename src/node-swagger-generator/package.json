@@ -47,6 +47,10 @@
         {
             "name": "Adrien Siffermann",
             "url": "http://geeklearning.io/author/adrien/"
+        },
+        {
+            "name": "Michel Vidailhet",
+            "url": "http://geeklearning.io/author/michel/"
         }
     ],
     "repository": "geeklearningio/gl-swagger-generator",

@@ -1,22 +1,18 @@
-export interface I{{clientName}}  {
+export interface I{{options.clientName}}  {
 
 {{#api.operations}}
     /**
-    * {{description}}
+    *{{#if description}} {{description}}{{/if}}
     {{#args}}
-        * @param { {{> type}} } {{camlCase name}} {{description}}
+    * @param { {{> type}} } {{camlCase name}}{{#if description}} {{description}}{{/if}}
     {{/args}}
-    * @return { {{> Type successsResponse}} } {{successResponse.title}}
+    * @return { {{> type successsResponse}} }{{#if successResponse.title}} {{successResponse.title}}{{/if}}
     */
-    {{name}}(
+    {{lowerCase verb}}{{#pathSegments}}{{pascalCase name}}{{/pathSegments}}(
     args: I{{pascalCase name}}Args,
-{{#unless @root.options.arguments.asInterface}}
-    {{#args}}
-        {{camlCase name}}{{#if optional}}?{{/if}}: {{> type}},
-    {{/args}}
-{{/unless}}
+        requestParamsHook?: (httpParams: any) => any,
         canceller?: angular.IDeferred<any>
-        ) : angular.IHttpPromise<{{> type successResponse.[0]}}>;
+        ): angular.IHttpPromise<{{> type successResponse.[0]}}>;
 
 {{/api.operations}}
 }

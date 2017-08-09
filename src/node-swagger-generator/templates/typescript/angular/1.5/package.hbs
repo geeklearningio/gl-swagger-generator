@@ -1,0 +1,7 @@
+{
+{{#options.projectProperties}}
+    "{{name}}": "{{value}}",
+{{/options.projectProperties}}
+    "name": "{{#if options.packageName}}{{options.packageName}}{{else}}{{options.clientName}}Package{{/if}}",
+    "version": "0.0.1"
+}
