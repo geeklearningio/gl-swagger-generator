@@ -1,0 +1,18 @@
+export interface I{{options.clientName}}  {
+
+{{#api.operations}}
+    /**
+    *{{#if description}} {{description}}{{/if}}
+    {{#args}}
+    * @param { {{> type}} } {{camlCase name}}{{#if description}} {{description}}{{/if}}
+    {{/args}}
+    * @return { {{> type successsResponse}} }{{#if successResponse.title}} {{successResponse.title}}{{/if}}
+    */
+    {{lowerCase verb}}{{#pathSegments}}{{pascalCase name}}{{/pathSegments}}(
+    args: I{{pascalCase name}}Args,
+        requestParamsHook?: (httpParams: any) => any,
+        canceller?: angular.IDeferred<any>
+        ): angular.IHttpPromise<{{> type successResponse.[0]}}>;
+
+{{/api.operations}}
+}

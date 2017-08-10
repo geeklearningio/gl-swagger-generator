@@ -1,0 +1,30 @@
+'use strict';
+
+export interface IClientConfigurationService {
+    getApiHostname(): string;
+    requestParamsGlobalHook(httpRequestParams: any): any;
+    authenticateRequest(httpRequestParams: any): any;
+}
+
+// Override this service to configure all your request params and specify your api hostname
+export class ClientConfigurationService implements IClientConfigurationService {
+
+    // Edit this function gives the api client the api hostname
+    public getApiHostname(): string {
+        return 'badhostname.com';
+    }
+
+    // Edit this function if you want to modify the requestParams at each api call (optional)
+    // We use it for example to send the app SemVer in the headers to get the right data model for different app versions
+    public requestParamsGlobalHook(httpRequestParams: any): any {
+        return httpRequestParams;
+    }
+
+
+    // Edit this function to authenticate requests that need an authentication (optional)
+    public authenticateRequest(httpRequestParams: any): any {
+        // httpRequestParams.headers['Authorization'] = 'Bearer ' + this.currentAccessToken;
+        console.log("this requests needs an authentication. Override the ClientConfigurationService to configure it");
+        return httpRequestParams;
+    }
+}

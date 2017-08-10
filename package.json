@@ -1,0 +1,63 @@
+{
+    "name": "node-swagger-generator",
+    "version": "0.0.1",
+    "scripts": {
+        "build": "tsc",
+        "test:build": "tsc -p ./tests",
+        "test:chutzpah": "chutzpah.console ./tests/",
+        "test": "jasmine JASMINE_CONFIG_PATH=./tests/jasmine.json",
+        "build:test": "run-s build test"
+    },
+    "dependencies": {
+        "async": "2.0.1",
+        "bluebird": "3.4.6",
+        "chalk": "^1.1.3",
+        "fs-extra": "^0.30.0",
+        "handlebars": "4.0.5",
+        "lodash": "4.16.1",
+        "swagger-parser": "3.4.1",
+        "xregexp": "^3.1.1"
+    },
+    "main": "lib/index.js",
+    "bin": {
+        "swaggen": "./run/swaggen"
+    },
+    "devDependencies": {
+        "jasmine": "2.5.2",
+        "npm-run-all": "3.1.0",
+        "typescript": "2.0.3",
+        "typings": "1.4.0",
+        "yargs": "^5.0.0"
+    },
+    "description": "An OpenAPI Specification (formerly Swagger) Client Generator. It uses templates written in Handlebars to generate a client code base in various languages.",
+    "keywords": [
+        "swagger", "openapi", "codegen", "generator", "handlebars"
+    ],
+    "homepage": "https://github.com/geeklearningio/gl-swagger-generator",
+    "bugs": "https://github.com/geeklearningio/gl-swagger-generator/issues",
+    "license": "MIT",
+    "author": {
+        "name": "Geek Learning",
+        "url": "http://geeklearning.io/"
+    },
+    "contributors": [{
+            "name": "Cyprien Autexier",
+            "url": "http://geeklearning.io/author/cyprien/"
+        },
+        {
+            "name": "Adrien Siffermann",
+            "url": "http://geeklearning.io/author/adrien/"
+        },
+        {
+            "name": "Michel Vidailhet",
+            "url": "http://geeklearning.io/author/michel/"
+        }
+    ],
+    "repository": "geeklearningio/gl-swagger-generator",
+    "files": [
+        "lib/**/*.d.ts",
+        "lib/**/*.js",
+        "templates",
+        "run"
+    ]
+}
