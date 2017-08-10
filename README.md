@@ -3,13 +3,13 @@
 Jane is an [OpenAPI Specification](https://www.openapis.org/) client generator. 
 It uses templates written in Handlebars to generate a client code base in various languages.
 
-The initial release is focused on providing a strong support of csharp/netstandard1.3 
-and typescript. 
+The initial release is focused on providing a strong support of C# .NET Standard 1.3 
+and TypeScript. 
 
 # Basic usage
 
-To generate the api client, you need to give it 2 things:
-- The *swagger json file* of your api, defining all the available methods.
+To generate the API client, you need to give it two things:
+- The *swagger json file* of your API, defining all the available methods.
 - A *configuration json file*, specifying some options for your client generation.
 
 A configuration file looks like this:
@@ -43,8 +43,8 @@ swaggen --outputPath ./outputpath --options ./swaggen-config.json --schema ./api
 
 ## Languages available
 You can generate the client in 2 languages for the moment. Here are the docs:
-- [CSharp Net standard](Csharp-Net-Standard)
-- [Angular 1.5](Angular-1.5)
+- [C# .NET Standard](https://github.com/geeklearningio/gl-swagger-generator/wiki/Csharp-Net-Standard)
+- [TypeScript Angular 1.5](https://github.com/geeklearningio/gl-swagger-generator/wiki/Angular-1.5)
 
 # Documentation
 
