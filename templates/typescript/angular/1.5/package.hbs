@@ -1,7 +1,19 @@
 {
+  "name": "{{#if options.packageName}}{{options.packageName}}{{else}}{{options.clientName}}Package{{/if}}",
+  "version": "0.0.1",
+  "dependencies": {
+{{#api.dependencies}}
+    "{{name}}": "{{version}}"{{#unless @last}},{{/unless}}
+{{/api.dependencies}}
+  },
+  "devDependencies": {
+    "typescript": "2.0.3",
+    "typings": "1.4.0"{{#if api.devDependencies}},{{/if}}
+{{#api.devDependencies}}
+    "{{name}}": "{{version}}"{{#unless @last}},{{/unless}}
+{{/api.devDependencies}}
+  }{{#if options.projectProperties}},{{/if}}
 {{#options.projectProperties}}
-    "{{name}}": "{{value}}",
+  "{{name}}": {{json value}}{{#unless @last}},{{/unless}}
 {{/options.projectProperties}}
-    "name": "{{#if options.packageName}}{{options.packageName}}{{else}}{{options.clientName}}Package{{/if}}",
-    "version": "0.0.1"
 }

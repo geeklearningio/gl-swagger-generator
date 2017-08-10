@@ -100,6 +100,7 @@ export class TemplateStore {
                         filter: (manifest.language.filter ? require(manifest.language.filter) : require('./languages/' + manifest.language.name)).create()
                     },
                     dependencies: manifest.dependencies,
+                    devDependencies: manifest.devDependencies,
                     modes: modes,
                     handlebars: environement,
                     operationFilters: manifest.operationFilters ? manifest.operationFilters.map((name: string) => filtersLoader.getOperationFilter(name)) : [],

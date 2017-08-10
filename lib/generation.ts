@@ -29,6 +29,7 @@ export interface IGenerationContext {
     defaultConsumes?: string[];
     defaultProduces?: string[];
     dependencies?: IDependency[];
+    devDependencies?: IDependency[];
     ambientTypes?: IImportedType[];
     allNamespaces?: string[];
 
@@ -47,6 +48,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         private operationFilters: IOperationFilter[],
         private definitionFilters: IDefinitionFilter[],
         private dependencies: IDependency[],
+        private devDependencies: IDependency[],
         private ambientTypes: IImportedType[],
         private mediaTypesPriorities?: { [from: string]: number }
     ) {
@@ -276,7 +278,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         this.context.allNamespaces = Object.keys(namespacesMap);
 
         this.context.dependencies = this.dependencies;
-
+        this.context.devDependencies = this.devDependencies;
 
         var visitable = swaggerVisitor.get(this.api);
 
@@ -351,6 +353,7 @@ export interface IDependency {
 
 export interface IProvideDependencies {
     dependencies?: { [key: string]: IDependency };
+    devDependencies?: { [key: string]: IDependency };
     ambientTypes?: IImportedType[];
     ambientNamespaces?: string[];
 }
@@ -538,6 +541,7 @@ class GenerationContext implements IGenerationContext {
     defaultConsumes: string[];
     defaultProduces: string[];
     dependencies: IDependency[];
+    devDependencies: IDependency[];
     ambientTypes: IImportedType[];
 
     visit(visitor: IGenerationContextVisitor): void {
