@@ -1,7 +1,5 @@
-{{#if options.module}}
-module {{options.module}} {
-{{/if}}
-    "use strict";
+"use strict";
+
 {{#api.definitions}}
 {{> definition }}
 {{/api.definitions}}
@@ -14,6 +12,3 @@ module {{options.module}} {
 
 {{> client }}
 
-{{#if options.module}}
-    }
-{{/if}}

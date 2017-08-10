@@ -2,6 +2,7 @@
 
 export interface IClientConfigurationService {
     getApiHostname(): string;
+    requestParamsGlobalHook(httpRequestParams: any): any;
     authenticateRequest(httpRequestParams: any): any;
 }
 
