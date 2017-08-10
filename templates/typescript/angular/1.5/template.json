@@ -14,7 +14,7 @@
     "camlCaseArgumentName"
   ],
   "modes": {
-    "singleFile": {
+    "normal": {
       "entries": [
         {
           "template": "clientConfigurationService.hbs",
@@ -24,20 +24,6 @@
         {
           "template": "singleFile.hbs",
           "naming": "{{options.clientName}}.ts",
-          "selector": ""
-        }
-      ]
-    },
-    "multipleFiles": {
-      "entries": [
-        {
-          "template": "multipleFilesClient.hbs",
-          "naming": "{{options.clientName}}.ts",
-          "selector": ""
-        },
-        {
-          "template": "multipleFilesInterface.hbs",
-          "naming": "I{{options.clientName}}.d.ts",
           "selector": ""
         }
       ]
