@@ -1,5 +1,5 @@
 {
-  "name": "typescript-angular-2.",
+  "name": "typescript-angular-2.0",
   "language": {
     "name": "typescript",
     "defaultExtension": ".ts"
@@ -16,6 +16,20 @@
   "modes": {
     "singleFile": {
       "entries": [
+        {
+          "template": "singleFile.hbs",
+          "naming": "{{options.clientName}}.ts",
+          "selector": ""
+        }
+      ]
+    },
+    "package": {
+      "entries": [
+        {
+          "template": "package.hbs",
+          "naming": "package.json",
+          "selector": ""
+        },
         {
           "template": "singleFile.hbs",
           "naming": "{{options.clientName}}.ts",
