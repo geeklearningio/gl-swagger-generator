@@ -128,6 +128,12 @@ export class Generator {
             result.push(dep);
         }, []);
 
+        var mergedDevDependencies = _.transform(_.merge(options.devDependencies, template.devDependencies), (result, value, key) => {
+            var dep = _.clone(value);
+            dep.name = key;
+            result.push(dep);
+        }, []);
+
         var visitable = visitor.get(swaggerJson.api);
 
         visitable.visit(new LoggerVisitor());
@@ -139,6 +145,7 @@ export class Generator {
             mergedFilters.operationFilters,
             mergedFilters.definitionFilters,
             mergedDependencies,
+            mergedDevDependencies,
             options.ambientTypes,
             options.mediaTypesPriorities
         );

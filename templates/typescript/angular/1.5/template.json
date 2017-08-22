@@ -1,51 +1,59 @@
 {
-  "name": "typescript-angular-1.5",
-  "language": {
-    "name": "typescript",
-    "defaultExtension": ".ts"
-  },
-  "dependencies": {},
-  "definitionFilters": [
-    "arrayName",
-    "pascalCaseName"
-  ],
-  "operationFilters": [
-    "camlCaseName",
-    "camlCaseArgumentName"
-  ],
-  "modes": {
-    "normal": {
-      "entries": [
-        {
-          "template": "clientConfigurationService.hbs",
-          "naming": "clientConfigurationService.ts",
-          "selector": ""
-        },
-        {
-          "template": "singleFile.hbs",
-          "naming": "{{options.clientName}}.ts",
-          "selector": ""
-        }
-      ]
+    "name": "typescript-angular-1.5",
+    "language": {
+        "name": "typescript",
+        "defaultExtension": ".ts"
     },
-    "package": {
-      "entries": [
-        {
-          "template": "clientConfigurationService.hbs",
-          "naming": "ClientConfigurationService.ts",
-          "selector": ""
+    "dependencies": {},
+    "definitionFilters": [
+        "arrayName",
+        "pascalCaseName"
+    ],
+    "operationFilters": [
+        "camlCaseName",
+        "camlCaseArgumentName"
+    ],
+    "modes": {
+        "normal": {
+            "entries": [{
+                    "template": "clientConfigurationService.hbs",
+                    "naming": "clientConfigurationService.ts",
+                    "selector": ""
+                },
+                {
+                    "template": "singleFile.hbs",
+                    "naming": "{{options.clientName}}.ts",
+                    "selector": ""
+                }
+            ]
         },
-        {
-          "template": "packageClient.hbs",
-          "naming": "{{options.clientName}}.ts",
-          "selector": ""
-        },
-        {
-          "template": "package.hbs",
-          "naming": "package.json",
-          "selector": ""
+        "package": {
+            "entries": [{
+                    "template": "clientConfigurationService.hbs",
+                    "naming": "ClientConfigurationService.ts",
+                    "selector": ""
+                },
+                {
+                    "template": "packageClient.hbs",
+                    "naming": "{{options.clientName}}.ts",
+                    "selector": ""
+                },
+                {
+                    "template": "package.hbs",
+                    "naming": "package.json",
+                    "selector": ""
+                },
+                {
+                    "template": "tsconfig.hbs",
+                    "naming": "tsconfig.json",
+                    "selector": ""
+                },
+                {
+                    "template": "typings.hbs",
+                    "naming": "typings.json",
+                    "selector": ""
+                }
+            ]
         }
-      ]
     }
-  }
 }
