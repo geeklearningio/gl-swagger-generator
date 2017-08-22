@@ -6,7 +6,7 @@ import { IProvideGenerationFilters } from "./generation";
 import { ILanguageProvider } from "./language";
 import * as fs from "./filesystem";
 
-import handlebars = require("handlebars");
+import * as handlebars from  "handlebars";
 import { filtersLoader } from './filtersLoader';
 
 import path = require('path');
@@ -32,7 +32,7 @@ export interface ITemplate extends IProvideGenerationFilters, IProvideDependenci
     name: string;
     language: ITemplateLanguage;
     modes: { [key: string]: ITemplateMode };
-    handlebars: handlebars.IHandlebarsEnvironment;
+    handlebars: typeof handlebars;
 }
 
 export class TemplateStore {
@@ -114,21 +114,21 @@ export class TemplateStore {
 }
 
 
-function registerBuiltinHelpers(handlebars: Handlebars.IHandlebarsEnvironment) {
+function registerBuiltinHelpers(environment: typeof handlebars) {
 
-    handlebars.registerHelper('json', (context: any) => {
+    environment.registerHelper('json', (context: any) => {
         return JSON.stringify(context, null, 4);
     });
 
-    handlebars.registerHelper('lowerCase', (context: string) => {
+    environment.registerHelper('lowerCase', (context: string) => {
         return context.toLowerCase();
     });
 
-    handlebars.registerHelper('upperCase', (context: string) => {
+    environment.registerHelper('upperCase', (context: string) => {
         return context.toUpperCase();
     });
 
-    handlebars.registerHelper('camlCase', (context: any) => {
+    environment.registerHelper('camlCase', (context: any) => {
         var contextType = typeof context;
         if (contextType === 'string') {
             context = context.split(/[^\w]/g);
@@ -137,7 +137,7 @@ function registerBuiltinHelpers(handlebars: Handlebars.IHandlebarsEnvironment) {
         return camlCasePreserve(<string[]>context);
     });
 
-    handlebars.registerHelper('pascalCase', (context: any) => {
+    environment.registerHelper('pascalCase', (context: any) => {
         var contextType = typeof context;
         if (contextType === 'string') {
             context = context.split(/[^\w]/g);
@@ -146,7 +146,7 @@ function registerBuiltinHelpers(handlebars: Handlebars.IHandlebarsEnvironment) {
         return pascalCasePreserve(<string[]>context);
     });
 
-    handlebars.registerHelper('pascalCaseOverwriteCasing', (context: any) => {
+    environment.registerHelper('pascalCaseOverwriteCasing', (context: any) => {
         var contextType = typeof context;
         if (contextType === 'string') {
             context = context.split(/[^\w]/g);
@@ -155,18 +155,18 @@ function registerBuiltinHelpers(handlebars: Handlebars.IHandlebarsEnvironment) {
         return pascalCase(<string[]>context);
     });
 
-    handlebars.registerHelper('mapLookup', function (map: any, lookupValue: string, options: any): any {
+    environment.registerHelper('mapLookup', function (map: any, lookupValue: string, options: any): any {
         if (map) {
             return options.fn(map[lookupValue]);
         }
         return options.fn({});
     });
 
-    handlebars.registerHelper('getLines', function (data: string, options: any): any {
+    environment.registerHelper('getLines', function (data: string, options: any): any {
         return options.fn(data ? data.split(/[\n\r]+/g) : []);
     });
 
-    handlebars.registerHelper('forIn', function (map: any, options: any): any {
+    environment.registerHelper('forIn', function (map: any, options: any): any {
         if (map) {
             var result: string = "";
             for (var key in map) {
@@ -180,7 +180,7 @@ function registerBuiltinHelpers(handlebars: Handlebars.IHandlebarsEnvironment) {
         return options.fn({});
     });
 
-    handlebars.registerHelper('intOrString', (context: any) => {
+    environment.registerHelper('intOrString', (context: any) => {
         if (isNaN(context)) {
             return "\"" + String(context) + "\"";
         } else {
@@ -188,7 +188,7 @@ function registerBuiltinHelpers(handlebars: Handlebars.IHandlebarsEnvironment) {
         }
     });
 
-    handlebars.registerHelper("is", (value: any, test: any, options: any) => {
+    environment.registerHelper("is", (value: any, test: any, options: any) => {
         if (value && value === test) {
             return options.fn(this);
         } else {
@@ -196,7 +196,7 @@ function registerBuiltinHelpers(handlebars: Handlebars.IHandlebarsEnvironment) {
         }
     });
 
-    handlebars.registerHelper("isnt", (value: any, test: any, options: any) => {
+    environment.registerHelper("isnt", (value: any, test: any, options: any) => {
         if (!value || value !== test) {
             return options.fn(this);
         } else {
