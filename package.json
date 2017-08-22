@@ -23,15 +23,26 @@
         "swaggen": "./run/swaggen"
     },
     "devDependencies": {
+        "@types/fs-extra": "^4.0.0",
+        "@types/handlebars": "^4.0.36",
+        "@types/jasmine": "^2.5.54",
+        "@types/node": "^6.0.0",
+        "@types/xregexp": "^3.0.29",
+        "@types/swagger-parser": "4.0.2",
+        "@types/lodash": "4.14.74",
         "jasmine": "2.5.2",
         "npm-run-all": "3.1.0",
-        "typescript": "2.0.3",
+        "typescript": "2.4.2",
         "typings": "1.4.0",
         "yargs": "^5.0.0"
     },
     "description": "An OpenAPI Specification (formerly Swagger) Client Generator. It uses templates written in Handlebars to generate a client code base in various languages.",
     "keywords": [
-        "swagger", "openapi", "codegen", "generator", "handlebars"
+        "swagger",
+        "openapi",
+        "codegen",
+        "generator",
+        "handlebars"
     ],
     "homepage": "https://github.com/geeklearningio/gl-swagger-generator",
     "bugs": "https://github.com/geeklearningio/gl-swagger-generator/issues",
@@ -40,7 +51,8 @@
         "name": "Geek Learning",
         "url": "http://geeklearning.io/"
     },
-    "contributors": [{
+    "contributors": [
+        {
             "name": "Cyprien Autexier",
             "url": "http://geeklearning.io/author/cyprien/"
         },
