@@ -1,4 +1,4 @@
-import {IClientConfigurationService, ClientConfigurationService} from "./clientConfigurationService";
+import {IClientConfigurationService, ClientConfigurationService} from "./ClientConfigurationService";
 
     export class {{options.clientName}}{{#if options.generateInterface}} implements I{{options.clientName}}{{/if}} {
     private baseUri: string;
@@ -11,10 +11,10 @@ import {IClientConfigurationService, ClientConfigurationService} from "./clientC
         private {{name}}: {{type}},
     {{/options.inject}}
     private $http: angular.IHttpService,
-    private clientConfigurationService: ClientConfigurationService
+    private ClientConfigurationService: ClientConfigurationService
     ) {
     this.hostName = {{#options.host.override}}'{{.}}'{{/options.host.override}}{{#unless
-            options.host.override}}this.clientConfigurationService.getApiHostname(){{/unless}};
+            options.host.override}}this.ClientConfigurationService.getApiHostname(){{/unless}};
     this.scheme = '{{#options.scheme.override}}{{.}}{{/options.scheme.override}}{{#unless
             options.scheme.override}}http{{/unless}}';
     {{#options.scheme.set}}
@@ -91,10 +91,10 @@ import {IClientConfigurationService, ClientConfigurationService} from "./clientC
     {{/mapLookup}}
 
         {{#if security}}
-        httpRequestParams = this.clientConfigurationService.authenticateRequest(httpRequestParams);
+        httpRequestParams = this.ClientConfigurationService.authenticateRequest(httpRequestParams);
         {{/if}}
 
-        httpRequestParams = this.clientConfigurationService.requestParamsGlobalHook(httpRequestParams);
+        httpRequestParams = this.ClientConfigurationService.requestParamsGlobalHook(httpRequestParams);
 
         if (requestParamsHook) {
             httpRequestParams = requestParamsHook(httpRequestParams);
