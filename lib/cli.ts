@@ -13,6 +13,8 @@ export function run() {
         argv.schema, fs.readJSONSync(argv.options), {
             push: (name: string, content: string): void => {
                 var targetPath = path.join(outputPath, name);
+                var directory = path.dirname(targetPath);
+                fs.ensureDirSync(directory);
                 console.log('writing : ' + targetPath);
                 fs.writeFileSync(targetPath, content, { encoding: 'utf8' });
             },

@@ -1,0 +1,35 @@
+{
+  "name": "{{options.packageName}}",
+  "version": "0.0.1",
+  "dependencies": {
+{{#api.dependencies}}
+    "{{name}}": "{{version}}"{{#unless @last}},{{/unless}}
+{{/api.dependencies}}
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "scripts": {
+    "build:lib": "ng-packagr"
+  },
+  "devDependencies": {
+    "ng-packagr": "1.2.0",
+    "@angular/common": "^4.3.0",
+    "@angular/compiler": "^4.3.0",
+    "@angular/compiler-cli": "^4.3.0",
+    "@angular/core": "^4.3.0",
+    "@angular/platform-browser": "^4.3.0",
+    "@angular/platform-browser-dynamic": "^4.3.0",
+    "@types/node": "~6.0.60",
+    "core-js": "^2.4.1",
+    "rxjs": "^5.4.2",
+    "zone.js": "^0.8.14",
+    "typescript": "~2.3.3"{{#if api.devDependencies}},{{/if}}
+{{#api.devDependencies}}
+    "{{name}}": "{{version}}"{{#unless @last}},{{/unless}}
+{{/api.devDependencies}}
+  }{{#if options.projectProperties}},{{/if}}
+{{#options.projectProperties}}
+  "{{name}}": {{json value}}{{#unless @last}},{{/unless}}
+{{/options.projectProperties}}
+}

@@ -31,8 +31,28 @@
           "selector": ""
         },
         {
+          "template": "tsconfig.hbs",
+          "naming": "tsconfig.json",
+          "selector": ""
+        },
+        {
+          "template": "angular-cli.hbs",
+          "naming": ".angular-cli.json",
+          "selector": ""
+        },
+        {
+          "template": "ng-package.hbs",
+          "naming": "ng-package.json",
+          "selector": ""
+        },
+        {
           "template": "singleFile.hbs",
-          "naming": "{{options.clientName}}.ts",
+          "naming": "src/{{options.packageName}}/{{options.clientName}}.ts",
+          "selector": ""
+        },
+        {
+          "template": "lib-package.hbs",
+          "naming": "src/{{options.packageName}}/package.json",
           "selector": ""
         }
       ]
