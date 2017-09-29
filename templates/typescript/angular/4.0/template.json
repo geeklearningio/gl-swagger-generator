@@ -46,8 +46,23 @@
           "selector": ""
         },
         {
-          "template": "singleFile.hbs",
+          "template": "index.hbs",
+          "naming": "src/{{options.packageName}}/index.ts",
+          "selector": ""
+        },
+        {
+          "template": "definitions.hbs",
+          "naming": "src/{{options.packageName}}/definitions.ts",
+          "selector": ""
+        },
+        {
+          "template": "client.hbs",
           "naming": "src/{{options.packageName}}/{{options.clientName}}.ts",
+          "selector": ""
+        },
+        {
+          "template": "clientOptions.hbs",
+          "naming": "src/{{options.packageName}}/{{options.clientName}}Options.ts",
           "selector": ""
         },
         {
@@ -57,5 +72,17 @@
         }
       ]
     }
+  },
+  "templateOptions": {
+    "versions" : {
+      "angular": "4.4.4",
+      "angularCli": "1.4.4",
+      "ngPackagr": "1.2.0",
+      "coreJs": "2.5.1",
+      "zoneJs": "0.8.18",
+      "rxJs": "5.4.3",
+      "typescript": "2.3.4"
+    },
+    "version" : "0.0.1"
   }
 }

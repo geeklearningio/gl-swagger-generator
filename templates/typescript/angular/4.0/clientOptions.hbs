@@ -1,0 +1,14 @@
+export interface IClientOptions {
+  scheme: string,
+  hostName: string
+  port: number
+}
+
+export class {{options.clientName}}Options implements IClientOptions
+{
+    public scheme: string = "{{#options.scheme.override}}{{.}}{{/options.scheme.override}}{{#unless options.scheme}}http{{/unless}}";
+
+    public hostName: string = "{{#options.host.override}}{{.}}{{/options.host.override}}{{#unless options.host.override}}{{api.host}}{{/unless}}";
+
+    public port: number = {{#options.port.override}}{{.}}{{/options.port.override}}{{#unless options.port.override}}null{{/unless}};
+}

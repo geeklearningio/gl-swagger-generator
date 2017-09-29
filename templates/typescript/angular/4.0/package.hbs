@@ -1,7 +1,19 @@
 {
   "name": "{{options.packageName}}",
-  "version": "0.0.1",
+  "version": "{{options.version}}",
   "dependencies": {
+    "@angular/animations": "{{options.versions.angular}}",
+    "@angular/common": "{{options.versions.angular}}",
+    "@angular/compiler": "{{options.versions.angular}}",
+    "@angular/core": "{{options.versions.angular}}",
+    "@angular/forms": "{{options.versions.angular}}",
+    "@angular/http": "{{options.versions.angular}}",
+    "@angular/platform-browser": "{{options.versions.angular}}",
+    "@angular/platform-browser-dynamic": "{{options.versions.angular}}",
+    "@angular/router": "{{options.versions.angular}}",
+    "core-js": "{{options.versions.coreJs}}",
+    "rxjs": "{{options.versions.rxJs}}",
+    "zone.js": "{{options.versions.zoneJs}}"
 {{#api.dependencies}}
     "{{name}}": "{{version}}"{{#unless @last}},{{/unless}}
 {{/api.dependencies}}
@@ -13,18 +25,11 @@
     "build:lib": "ng-packagr"
   },
   "devDependencies": {
-    "ng-packagr": "1.2.0",
-    "@angular/common": "^4.3.0",
-    "@angular/compiler": "^4.3.0",
-    "@angular/compiler-cli": "^4.3.0",
-    "@angular/core": "^4.3.0",
-    "@angular/platform-browser": "^4.3.0",
-    "@angular/platform-browser-dynamic": "^4.3.0",
-    "@types/node": "~6.0.60",
-    "core-js": "^2.4.1",
-    "rxjs": "^5.4.2",
-    "zone.js": "^0.8.14",
-    "typescript": "~2.3.3"{{#if api.devDependencies}},{{/if}}
+    "@angular/cli": "{{options.versions.angularCli}}",
+    "@angular/compiler-cli": "{{options.versions.angular}}",
+    "@angular/language-service": "{{options.versions.angular}}",
+    "ng-packagr": "{{options.versions.ngPackagr}}",
+    "typescript": "{{options.versions.typescript}}"{{#if api.devDependencies}},{{/if}}
 {{#api.devDependencies}}
     "{{name}}": "{{version}}"{{#unless @last}},{{/unless}}
 {{/api.devDependencies}}

@@ -33,6 +33,7 @@ export interface ITemplate extends IProvideGenerationFilters, IProvideDependenci
     language: ITemplateLanguage;
     modes: { [key: string]: ITemplateMode };
     handlebars: typeof handlebars;
+    templateOptions?: any;
 }
 
 export class TemplateStore {
@@ -105,6 +106,7 @@ export class TemplateStore {
                     handlebars: environement,
                     operationFilters: manifest.operationFilters ? manifest.operationFilters.map((name: string) => filtersLoader.getOperationFilter(name)) : [],
                     definitionFilters: manifest.definitionFilters ? manifest.definitionFilters.map((name: string) => filtersLoader.getDefinitionFilter(name)) : [],
+                    templateOptions : manifest.templateOptions
                 };
             }
         }

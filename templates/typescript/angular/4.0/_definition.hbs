@@ -1,16 +1,16 @@
 
 {{#if description}}
 /**
-*{{description}}
+* {{description}}
 */
 {{/if}}
 export interface {{name}} {{#ancestor}}extends {{name}}{{/ancestor}} {
 
 {{#properties}}
   {{#if description}}
-    /**
-    *{{description}}
-    */
+  /**
+  * {{description}}
+  */
   {{/if}}
   {{name}} : {{> type }};
 

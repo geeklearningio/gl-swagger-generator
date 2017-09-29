@@ -120,8 +120,15 @@ export class Generator {
         var mode = template.modes[options.mode];
         var language: ILanguageFilter = template.language.filter;
         var mergedFilters = this.mergeFilters([template, mode, options]);
-        // console.log('merged filters');
-        // console.log(mergedFilters);
+
+        var mergedOptions = {};
+
+        if (template.templateOptions){
+            mergedOptions = _.merge(template.templateOptions, mergedOptions)
+        }
+
+        mergedOptions = _.merge(options.templateOptions, mergedOptions);
+
         var mergedDependencies = _.transform(_.merge(options.dependencies, template.dependencies), (result, value, key) => {
             var dep = _.clone(value);
             dep.name = key;
@@ -159,7 +166,7 @@ export class Generator {
             for (var m = 0; m < matches.length; m++) {
                 var match = matches[m];
                 var handlebarsContext = {
-                    options: options.templateOptions,
+                    options: mergedOptions,
                     api: context,
                     data: match
                 };
