@@ -124,10 +124,10 @@ export class Generator {
         var mergedOptions = {};
 
         if (template.templateOptions){
-            mergedOptions = _.merge(template.templateOptions, mergedOptions)
+            mergedOptions = _.merge(mergedOptions, template.templateOptions)
         }
 
-        mergedOptions = _.merge(options.templateOptions, mergedOptions);
+        mergedOptions = _.merge(mergedOptions, options.templateOptions);
 
         var mergedDependencies = _.transform(_.merge(options.dependencies, template.dependencies), (result, value, key) => {
             var dep = _.clone(value);
