@@ -150,6 +150,7 @@ declare module "swagger-parser" {
         properties?: { [propertyName: string]: IProperty };
         additionalProperties?: any;
         required?: string[]
+        description?: string;
     }
 
     export interface IHeader extends IHasTypeInformation {

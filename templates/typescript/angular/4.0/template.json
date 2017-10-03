@@ -1,0 +1,93 @@
+{
+  "name": "typescript-angular-2.0",
+  "language": {
+    "name": "typescript",
+    "defaultExtension": ".ts"
+  },
+  "dependencies": {},
+  "definitionFilters": [
+    "arrayName",
+    "pascalCaseName"
+  ],
+  "operationFilters": [
+    "camlCaseName",
+    "camlCaseArgumentName"
+  ],
+  "modes": {
+    "singleFile": {
+      "entries": [
+        {
+          "template": "singleFile.hbs",
+          "naming": "{{options.clientName}}.ts",
+          "selector": ""
+        }
+      ]
+    },
+    "package": {
+      "entries": [
+        {
+          "template": "package.hbs",
+          "naming": "package.json",
+          "selector": ""
+        },
+        {
+          "template": "tsconfig.hbs",
+          "naming": "tsconfig.json",
+          "selector": ""
+        },
+        {
+          "template": "angular-cli.hbs",
+          "naming": ".angular-cli.json",
+          "selector": ""
+        },
+        {
+          "template": "ng-package.hbs",
+          "naming": "ng-package.json",
+          "selector": ""
+        },
+        {
+          "template": "index.hbs",
+          "naming": "src/{{options.packageName}}/index.ts",
+          "selector": ""
+        },
+        {
+          "template": "definitions.hbs",
+          "naming": "src/{{options.packageName}}/definitions.ts",
+          "selector": ""
+        },
+        {
+          "template": "client.hbs",
+          "naming": "src/{{options.packageName}}/{{options.clientName}}.ts",
+          "selector": ""
+        },
+        {
+          "template": "clientOptions.hbs",
+          "naming": "src/{{options.packageName}}/{{options.clientName}}Options.ts",
+          "selector": ""
+        },
+        {
+          "template": "module.hbs",
+          "naming": "src/{{options.packageName}}/{{options.clientName}}Module.ts",
+          "selector": ""
+        },
+        {
+          "template": "lib-package.hbs",
+          "naming": "src/{{options.packageName}}/package.json",
+          "selector": ""
+        }
+      ]
+    }
+  },
+  "templateOptions": {
+    "versions" : {
+      "angular": "4.4.4",
+      "angularCli": "1.4.4",
+      "ngPackagr": "1.2.0",
+      "coreJs": "2.5.1",
+      "zoneJs": "0.8.18",
+      "rxJs": "5.4.3",
+      "typescript": "2.3.4"
+    },
+    "version" : "0.0.1"
+  }
+}

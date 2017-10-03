@@ -1,0 +1,75 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { {{options.clientName}}Options, IRequestOptions } from "./{{options.clientName}}Options"
+import * as dto from "./definitions";
+
+@Injectable()
+export class {{options.clientName}}{{#if options.generateInterface}} implements I{{options.clientName}}{{/if}} {
+  private baseUri: string;
+
+  constructor(
+      private options: {{options.clientName}}Options,
+      private http: HttpClient
+  ) {
+      this.baseUri = `${options.scheme}://${options.hostName}${options.port ? `:${options.port}` : ''}`;
+  }
+
+{{#api.operations}}
+  /**
+  {{#if summary}}
+  * {{summary}}
+  {{/if}}
+  {{#args}}
+  * @param { {{> type import="dto" }} } {{camlCase name}} {{description}}
+  {{/args}}
+  * @return { Observable<{{> type successResponse.[0] import="dto" }}> } {{successResponse.title}}
+  */
+  {{pascalCase name}}(
+    {{#args}}
+    {{camlCase name}}: {{> type import="dto" }}{{#if optional}} = undefined{{/if}}{{#unless @last}},{{/unless}}
+    {{/args}}
+  ) : Observable<{{> type successResponse.[0] import="dto" }}> {
+
+    let gl$uri = this.baseUri + {{#pathSegments}}{{#isParam}}{{#unless @first}}" + {{/unless}}String({{name}}){{#unless @last}} + "{{/unless}}{{/isParam}}{{#unless isParam}}{{#if @first}}"{{/if}}{{name}}{{#if @last}}"{{/if}}{{/unless}}{{/pathSegments}};
+
+    let gl$headers = new HttpHeaders({
+      {{#if hasRequestContent}}
+      'Content-Type': '{{consumes.[0]}}',
+      {{/if}}
+      'Accept': '{{produces.[0]}}'
+    });
+
+    let gl$options = {
+      {{#requestBody}}
+      body: {{camlCase name}},
+      {{/requestBody}}
+      headers: gl$headers
+    };
+
+    let gl$optionsObservable = Observable.of<{ url: string, options: IRequestOptions }>({ 
+      url: gl$uri,
+      options: gl$options
+    });
+
+    if (this.options.requestFilters) {
+      for (var index = 0; index < this.options.requestFilters.length; index++) {
+        let filter = this.options.requestFilters[index];
+        gl$optionsObservable = gl$optionsObservable.flatMap((request) => filter(request.url, request.options))
+      }
+    }
+
+    let gl$request = gl$optionsObservable.flatMap((request) => this.http.request<{{> type successResponse.[0] import="dto" }}>("{{upperCase verb}}", request.url, request.options));
+
+    if (this.options.responseFilters) {
+      for (var index = 0; index < this.options.responseFilters.length; index++) {
+        let responseFilter = this.options.responseFilters[index];
+        gl$request = gl$request.flatMap((response) => responseFilter(<any>response));
+      }
+    }
+
+    return gl$request;
+  }
+{{/api.operations}}
+
+}

@@ -147,6 +147,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
 
         operationContext.rawPath = path.name;
         operationContext.verb = verb;
+        operationContext.summary = operation.summary;
         operationContext.description = operation.description;
         operationContext.hasUniqueResponseType = true;
 
@@ -179,7 +180,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
     }
 
     visitOperationPost(verb: string, operation: swagger.IOperation): void {
-        try{
+        try {
             var operationContext = this.get<Operation>("operation");
 
             _.forEach(this.operationFilters, (filter) => {
@@ -188,7 +189,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
 
             this.context.operations.push(operationContext);
         }
-        catch(err){
+        catch (err) {
             console.log(err);
             console.log(err.stack);
         }
@@ -299,19 +300,6 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
 
         // execute custom generation context visitor
 
-
-
-
-        // _.forEach(this.api.paths, (path: swagger.IPath, pathName: string) => {
-        //     for (var i = 0; i < verbs.length; i++) {
-        //         var verb = verbs[i];
-        //         let operation: swagger.IOperation = (<any>path)[verb];
-        //         if (operation) {
-
-        //         }
-        //     }
-        // });
-
         if (this.languageFilter.supportsGenerics()) {
             console.log("Mapping generics (limited support)");
             this.context.visit(new GenericTypeMapper(this));
@@ -396,6 +384,7 @@ export class Operation extends Extensible {
     public isFormDataRequest: boolean;
 
     public description: string;
+    public summary: string;
     public consumes: string[];
     public produces: string[];
     public successSamples: { [contentType: string]: any };
@@ -464,6 +453,7 @@ export class Definition extends Extensible implements IDefinition {
     public rawName: string;
     public nameParts: string[];
 
+    public description: string;
     public properties: IProperty[];
     public ancestorRef: string;
     public ancestor: IDefinition;
@@ -482,6 +472,10 @@ export class Definition extends Extensible implements IDefinition {
             this.name = name;
             this.rawName = name;
             this.nameParts = name.split(/[^\w]/g);
+        }
+
+        if (schema.description) {
+            this.description = schema.description;
         }
 
         if (schema) {
