@@ -34,10 +34,11 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
     let gl$uri = this.baseUri + {{#pathSegments}}{{#isParam}}{{#unless @first}}" + {{/unless}}String({{name}}){{#unless @last}} + "{{/unless}}{{/isParam}}{{#unless isParam}}{{#if @first}}"{{/if}}{{name}}{{#if @last}}"{{/if}}{{/unless}}{{/pathSegments}};
 
     let gl$headers = new HttpHeaders({
-      'Content-Type': '{{produces.[0]}};charset=UTF-8',
-      'Accept': 'application/json, text/plain, */*'
+      {{#if hasRequestContent}}
+      'Content-Type': '{{consumes.[0]}}',
+      {{/if}}
+      'Accept': '{{produces.[0]}}'
     });
-
 
     let gl$options = {
       {{#requestBody}}
