@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { {{options.clientName}}Options } from "./{{options.clientName}}Options"
+import { {{options.clientName}}Options, IRequestOptions } from "./{{options.clientName}}Options"
 import * as dto from "./definitions";
 
 @Injectable()
@@ -38,13 +38,34 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
       'Accept': 'application/json, text/plain, */*'
     });
 
-    let gl$request = this.http.request<{{> type successResponse.[0] import="dto" }}>("{{upperCase verb}}", gl$uri, {
+
+    let gl$options = {
       {{#requestBody}}
       body: {{camlCase name}},
       {{/requestBody}}
       headers: gl$headers
+    };
+
+    let gl$optionsObservable = Observable.of<{ url: string, options: IRequestOptions }>({ 
+      url: gl$uri,
+      options: gl$options
     });
-    
+
+    if (this.options.requestFilters) {
+      for (var index = 0; index < this.options.requestFilters.length; index++) {
+        let filter = this.options.requestFilters[index];
+        gl$optionsObservable = gl$optionsObservable.flatMap((request) => filter(request.url, request.options))
+      }
+    }
+
+    let gl$request = gl$optionsObservable.flatMap((request) => this.http.request<{{> type successResponse.[0] import="dto" }}>("{{upperCase verb}}", request.url, request.options));
+
+    if (this.options.responseFilters) {
+      for (var index = 0; index < this.options.responseFilters.length; index++) {
+        let responseFilter = this.options.responseFilters[index];
+        gl$request = gl$request.flatMap((response) => responseFilter(<any>response));
+      }
+    }
 
     return gl$request;
   }

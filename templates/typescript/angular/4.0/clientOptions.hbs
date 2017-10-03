@@ -1,8 +1,25 @@
+import { Observable } from 'rxjs/Observable';
+import { HttpHeaders } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
+
 export interface IClientOptions {
   scheme: string,
   hostName: string
-  port: number
+  port: number,
+  requestFilters: Array<(url: string, options: IRequestOptions) => Observable<{url: string, options: IRequestOptions}>>
+  responseFilters: Array<(source: Observable<any>) => Observable<any>>;
 }
+
+export interface IRequestOptions {
+    body?: any;
+    headers?: HttpHeaders;
+    observe?: 'body';
+    params?: HttpParams;
+    responseType?: 'json';
+    reportProgress?: boolean;
+    withCredentials?: boolean;
+}
+
 
 export class {{options.clientName}}Options implements IClientOptions
 {
@@ -11,4 +28,8 @@ export class {{options.clientName}}Options implements IClientOptions
     public hostName: string = "{{#options.host.override}}{{.}}{{/options.host.override}}{{#unless options.host.override}}{{api.host}}{{/unless}}";
 
     public port: number = {{#options.port.override}}{{.}}{{/options.port.override}}{{#unless options.port.override}}null{{/unless}};
+
+    public requestFilters: Array<(url: string, options: IRequestOptions) => Observable<{url: string, options: IRequestOptions}>> = [];
+  
+    public responseFilters: Array<(source: Observable<any>) => Observable<any>> = [];
 }
