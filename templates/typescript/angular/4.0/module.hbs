@@ -1,0 +1,12 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { {{options.clientName}} } from "./{{options.clientName}}";
+
+@NgModule({
+  imports: [
+    CommonModule
+  ],
+  providers: [{{options.clientName}}],
+  exports: []
+})
+export class {{options.clientName}}Module { }

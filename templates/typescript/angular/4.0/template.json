@@ -66,6 +66,11 @@
           "selector": ""
         },
         {
+          "template": "module.hbs",
+          "naming": "src/{{options.packageName}}/{{options.clientName}}Module.ts",
+          "selector": ""
+        },
+        {
           "template": "lib-package.hbs",
           "naming": "src/{{options.packageName}}/package.json",
           "selector": ""
