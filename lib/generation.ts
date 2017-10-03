@@ -300,19 +300,6 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
 
         // execute custom generation context visitor
 
-
-
-
-        // _.forEach(this.api.paths, (path: swagger.IPath, pathName: string) => {
-        //     for (var i = 0; i < verbs.length; i++) {
-        //         var verb = verbs[i];
-        //         let operation: swagger.IOperation = (<any>path)[verb];
-        //         if (operation) {
-
-        //         }
-        //     }
-        // });
-
         if (this.languageFilter.supportsGenerics()) {
             console.log("Mapping generics (limited support)");
             this.context.visit(new GenericTypeMapper(this));
