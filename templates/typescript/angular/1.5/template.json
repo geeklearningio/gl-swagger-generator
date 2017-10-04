@@ -16,8 +16,8 @@
     "modes": {
         "normal": {
             "entries": [{
-                    "template": "clientConfigurationService.hbs",
-                    "naming": "clientConfigurationService.ts",
+                    "template": "ClientConfigurationService.hbs",
+                    "naming": "ClientConfigurationService.ts",
                     "selector": ""
                 },
                 {
@@ -29,7 +29,7 @@
         },
         "package": {
             "entries": [{
-                    "template": "clientConfigurationService.hbs",
+                    "template": "ClientConfigurationService.hbs",
                     "naming": "ClientConfigurationService.ts",
                     "selector": ""
                 },
