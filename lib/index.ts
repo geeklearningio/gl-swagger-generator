@@ -11,6 +11,7 @@ import camlCaseFilters = require('./filters/camlCaseFilters');
 import pascalCaseFilters = require('./filters/pascalCaseFilters');
 import arrayNameFilters = require('./filters/arrayNameFilter');
 import optionalArgsOrderFilters = require('./filters/optionalArgsOrderFilter');
+import { AppenGenericMetadataVisitor } from './genericHelper';
 
 camlCaseFilters.register();
 pascalCaseFilters.register();
@@ -144,6 +145,9 @@ export class Generator {
         var visitable = visitor.get(swaggerJson.api);
 
         visitable.visit(new LoggerVisitor());
+
+        visitable.visit(new AppenGenericMetadataVisitor());
+        
 
         console.log("Preparing Generation Context");
         var contextBuilder = new ContextBuilder(

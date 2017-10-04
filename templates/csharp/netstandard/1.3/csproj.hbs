@@ -5,7 +5,7 @@
     <AssemblyName>{{options.rootNamespace}}</AssemblyName>
     <PackageId>{{options.rootNamespace}}</PackageId>
     <RootNamespace>{{options.rootNamespace}}</RootNamespace>
-    <VersionPrefix>0.0.1</VersionPrefix>
+    <VersionPrefix>{{#if options.version}}{{options.version}}{{/if}}{{#unless options.version}}0.0.1{{/unless}}</VersionPrefix>
    {{#options.projectProperties}}
     <{{name}}>{{value}}</{{name}}>
    {{/options.projectProperties}}  
