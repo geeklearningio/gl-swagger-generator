@@ -1,6 +1,7 @@
 import generator = require('./index');
 import path = require('path');
 import fs = require('fs-extra');
+import { merge } from 'lodash';
 
 export function run() {
     var argv = require('yargs').argv;
@@ -10,7 +11,7 @@ export function run() {
     fs.ensureDirSync(outputPath);
 
     generator.generateFromJsonOrYaml(
-        argv.schema, fs.readJSONSync(argv.options), {
+        argv.schema, merge(fs.readJSONSync(argv.options), argv.def), {
             push: (name: string, content: string): void => {
                 var targetPath = path.join(outputPath, name);
                 var directory = path.dirname(targetPath);
