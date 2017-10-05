@@ -44,7 +44,8 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
       {{#requestBody}}
       body: {{camlCase name}},
       {{/requestBody}}
-      headers: gl$headers
+      headers: gl$headers,
+      withCredentials: this.options.withCredentials
     };
 
     let gl$optionsObservable = Observable.of<{ url: string, options: IRequestOptions }>({ 
