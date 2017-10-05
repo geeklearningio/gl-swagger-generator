@@ -12,7 +12,7 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
       private options: {{options.clientName}}Options,
       private http: HttpClient
   ) {
-      this.baseUri = `${options.scheme}://${options.hostName}${options.port ? `:${options.port}` : ''}`;
+      this.baseUri = `${this.options.scheme}://${this.options.hostName}${this.options.port ? `:${this.options.port}` : ''}`;
   }
 
 {{#api.operations}}
