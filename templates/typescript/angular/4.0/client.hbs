@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { {{options.clientName}}Options, IRequestOptions } from "./{{options.clientName}}Options"
 import * as dto from "./definitions";
@@ -40,12 +40,18 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
       'Accept': '{{produces.[0]}}'
     });
 
+    let gl$params = new HttpParams();
+    {{#query}}
+    gl$params.set('{{name}}', String({{camlCase name}}));
+    {{/query}}
+
     let gl$options = {
       {{#requestBody}}
       body: {{camlCase name}},
       {{/requestBody}}
       headers: gl$headers,
-      withCredentials: this.options.withCredentials
+      withCredentials: this.options.withCredentials,
+      params: gl$params
     };
 
     let gl$optionsObservable = Observable.of<{ url: string, options: IRequestOptions }>({ 
