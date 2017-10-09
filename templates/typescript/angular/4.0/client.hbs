@@ -65,7 +65,7 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
     if (this.options.responseFilters) {
       for (var index = 0; index < this.options.responseFilters.length; index++) {
         let responseFilter = this.options.responseFilters[index];
-        gl$request = gl$request.flatMap((response) => responseFilter(<any>response));
+        gl$request = responseFilter(gl$request);
       }
     }
 
