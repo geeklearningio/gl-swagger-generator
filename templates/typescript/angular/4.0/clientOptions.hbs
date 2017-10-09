@@ -31,12 +31,12 @@ export class {{options.clientName}}Options implements IClientOptions
 
     /**
     * Scheme: protocol used for communication with the server. Can be http or https. Defaults to {{#options.scheme.override}}{{.}}{{/options.scheme.override}}{{#unless options.scheme}}http{{/unless}}
-    * / 
+    */ 
     public scheme: string = "{{#options.scheme.override}}{{.}}{{/options.scheme.override}}{{#unless options.scheme}}http{{/unless}}";
 
     /**
     * Host name. Defaults to {{#options.host.override}}{{.}}{{/options.host.override}}{{#unless options.host.override}}{{api.host}}{{/unless}}
-    * / 
+    */ 
     public hostName: string = "{{#options.host.override}}{{.}}{{/options.host.override}}{{#unless options.host.override}}{{api.host}}{{/unless}}";
 
     /**
