@@ -42,7 +42,7 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
 
     let gl$params = new HttpParams();
     {{#query}}
-    gl$params.set('{{name}}', String({{camlCase name}}));
+    gl$params = gl$params.set('{{name}}', String({{camlCase name}}));
     {{/query}}
 
     let gl$options = {
