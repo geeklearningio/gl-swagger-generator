@@ -24,7 +24,7 @@ namespace {{options.rootNamespace}}
     {{/getLines}}
         /// </summary>
         [JsonProperty("{{name}}")]
-        public {{> type }} {{pascalCase name}} {get; set;}
+        public {{> type }} {{pascalCase name}} { get; set; }
 
     {{/properties}}
     }
