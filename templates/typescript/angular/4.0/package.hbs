@@ -1,6 +1,9 @@
 {
   "name": "{{options.packageName}}",
   "version": "{{options.version}}",
+  "resolutions" : {
+     "**/typescript": "{{options.versions.typescript}}"
+  },
   "dependencies": {
     "@angular/animations": "{{options.versions.angular}}",
     "@angular/common": "{{options.versions.angular}}",
