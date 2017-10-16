@@ -18,13 +18,13 @@
             "version": "1.1.2"
         },
         "GeekLearning.RestKit.Core": {
-            "version": "1.2.0-*"
+            "version": "1.2.0"
         },
         "GeekLearning.RestKit.Json": {
-            "version": "1.2.0-*"
+            "version": "1.2.0"
         },
         "GeekLearning.RestKit.FormData": {
-            "version": "1.2.0-*"
+            "version": "1.2.0"
         }
     },
     "definitionFilters": [
