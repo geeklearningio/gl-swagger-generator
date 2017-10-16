@@ -4,7 +4,7 @@ import {
     IAbstractedType, IType, ITyped, IImportedType,
     IDefinition, IProperty,
     IAbstractedTypeConverter,
-    SchemaLessAbstractedType, ArrayAbstractedType, BuiltinAbstractedType, CustomAbstractedType, FileAbstractedType, MapAbstractedType, GenericAbstractedType, ImportedAbstractedType
+    SchemaLessAbstractedType, EnumAbstractedType, ArrayAbstractedType, BuiltinAbstractedType, CustomAbstractedType, FileAbstractedType, MapAbstractedType, GenericAbstractedType, ImportedAbstractedType
 } from '../typing';
 import swagger = require('swagger-parser');
 import _ = require('lodash');
@@ -60,6 +60,10 @@ class TypescriptAbstractedTypeConverter implements IAbstractedTypeConverter<ITyp
         return TypescriptType.any;
     }
 
+    enumTypeConvert(type: EnumAbstractedType): TypescriptType {
+        return TypescriptType.enum(this.builtinTypeConvert(type.backingType), type.values);
+    }
+
     customTypeConvert(type: CustomAbstractedType): TypescriptType {
         return TypescriptType.fromDefinition(type.definition);
     }
@@ -84,6 +88,7 @@ class TypescriptAbstractedTypeConverter implements IAbstractedTypeConverter<ITyp
 }
 
 class TypescriptType implements IType {
+   
     isLanguageType: boolean;
     name: () => string;
     namespace: string;
@@ -99,6 +104,8 @@ class TypescriptType implements IType {
     isDictionary: boolean;
     keyType: TypescriptType;
     valueType: TypescriptType;
+    isEnum: boolean;
+    enumValues: any[];
 
 
      constructor(name: string, definition: IDefinition, isBuiltin: boolean, isDefinition: boolean, isAnonymous: boolean, isArray: boolean, isFile: boolean) {
@@ -130,6 +137,15 @@ class TypescriptType implements IType {
         return type;
     }
 
+    public static enum(backingType: TypescriptType, values: any[]): any {
+        var type = new TypescriptType(null, null, false, false, false, false, false);
+        type.isEnum = true;
+        type.valueType = backingType;
+        type.keyType = backingType;
+        type.enumValues = values;
+        return type;
+    }
+
     public static fromDefinition(definition: IDefinition): TypescriptType {
         var type = new TypescriptType(null, definition, false, true, false, false, false);
         type.namespace = null;
@@ -146,7 +162,6 @@ class TypescriptType implements IType {
         type.keyType = keyType;
         type.valueType = valueType;
         type.name = () => 'Dictionary';
-        type.namespace = 'System.Collections.Generic';
         return type;
     }
 

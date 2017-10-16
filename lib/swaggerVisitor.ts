@@ -1,4 +1,4 @@
-import * as swagger from 'swagger-parser'
+import * as swagger from '../typings/swagger-doc2'
 import _ = require('lodash');
 
 var verbs: string[] = ["get", "head", "options", "delete", "post", "patch", "put"];

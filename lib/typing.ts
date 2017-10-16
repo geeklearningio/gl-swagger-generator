@@ -19,6 +19,7 @@ export interface IAbstractedTypeConverter<T> {
     schemaLessTypeConvert(type: SchemaLessAbstractedType): T;
     mapTypeConvert(type: MapAbstractedType): T;
     builtinTypeConvert(type: BuiltinAbstractedType): T;
+    enumTypeConvert(type: EnumAbstractedType): T;
     customTypeConvert(type: CustomAbstractedType): T;
     arrayTypeConvert(type: ArrayAbstractedType): T;
     fileTypeConvert(type: FileAbstractedType): T;
@@ -102,6 +103,16 @@ export class BuiltinAbstractedType implements IAbstractedType {
 
     convert<T>(converter: IAbstractedTypeConverter<T>): T {
         return converter.builtinTypeConvert(this);
+    }
+}
+
+export class EnumAbstractedType implements IAbstractedType {
+    constructor(public backingType: BuiltinAbstractedType, public values: any[]) {
+
+    }
+
+    convert<T>(converter: IAbstractedTypeConverter<T>): T {
+        return converter.enumTypeConvert(this);
     }
 }
 

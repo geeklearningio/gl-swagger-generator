@@ -4,7 +4,7 @@ import {
     IAbstractedType, IType, ITyped, IImportedType,
     IDefinition, IProperty,
     IAbstractedTypeConverter,
-    SchemaLessAbstractedType, ArrayAbstractedType, BuiltinAbstractedType, CustomAbstractedType, FileAbstractedType, MapAbstractedType, GenericAbstractedType, ImportedAbstractedType
+    SchemaLessAbstractedType, EnumAbstractedType, ArrayAbstractedType, BuiltinAbstractedType, CustomAbstractedType, FileAbstractedType, MapAbstractedType, GenericAbstractedType, ImportedAbstractedType
 } from '../typing';
 import swagger = require('swagger-parser');
 import _ = require('lodash');
@@ -65,6 +65,10 @@ class CSharpAbstractedTypeConverter implements IAbstractedTypeConverter<IType> {
         return CSharpType.fromDefinition(type.definition);
     }
 
+    enumTypeConvert(type: EnumAbstractedType): CSharpType {
+        return CSharpType.enum(this.builtinTypeConvert(type.backingType), type.values);
+    }
+
     arrayTypeConvert(type: ArrayAbstractedType): CSharpType {
         var innerType = type.itemType.convert(this);
         return CSharpType.array(innerType);
@@ -99,6 +103,8 @@ class CSharpType implements IType {
     isDictionary: boolean;
     keyType: CSharpType;
     valueType: CSharpType;
+    isEnum: boolean;
+    enumValues: any[];
 
     constructor(name: string, definition: IDefinition, isBuiltin: boolean, isDefinition: boolean, isAnonymous: boolean, isArray: boolean, isFile: boolean) {
         if (name) {
@@ -139,6 +145,15 @@ class CSharpType implements IType {
 
     public static anonymous(definition: Definition): CSharpType {
         return new CSharpType(null, definition, false, false, true, false, false);
+    }
+
+    public static enum(backingType: CSharpType, values: any[]): any {
+        var type = new CSharpType(null, null, false, false, false, false, false);
+        type.isEnum = true;
+        type.valueType = backingType;
+        type.keyType = backingType;
+        type.enumValues = values;
+        return type;
     }
 
     public static dictionary(keyType: CSharpType, valueType: CSharpType): CSharpType {

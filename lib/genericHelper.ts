@@ -1,5 +1,5 @@
 import { ScopedSwaggerVisitorBase, ISwaggerVisitor } from "./swaggerVisitor";
-import { ISchema, IHasTypeInformation, IOperation } from "swagger-parser";
+import { ISchema, IHasTypeInformation, IOperation } from "../typings/swagger-doc2";
 import XRegExp = require('xregexp');
 
 export class AppenGenericMetadataVisitor extends ScopedSwaggerVisitorBase {

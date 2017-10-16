@@ -2,6 +2,7 @@ import {ISink} from './sink';
 import {IOperationFilter, ILanguageFilter, IDefinitionFilter, IProvideGenerationFilters, IProvideDependencies, ContextBuilder, IGenerationContext} from './generation';
 import {TemplateStore} from './templates';
 import parser = require('swagger-parser');
+import * as swaggerDoc from '../typings/swagger-doc2';
 import path = require('path');
 import {wrapArray} from './collection';
 import _ = require('lodash');
@@ -49,8 +50,7 @@ export interface ISwaggerGeneratorOptions extends IProvideGenerationFilters, IPr
 }
 
 export interface IParserResult {
-    api: parser.IApi,
-    metadata: parser.IMetadata
+    api: swaggerDoc.IApi
 }
 
 export async function generateFromJsonOrYaml(swaggerJsonOrYaml: string, options: ISwaggerGeneratorOptions, sink: ISink, templateStores?: string[]): Promise<void> {
@@ -60,13 +60,13 @@ export async function generateFromJsonOrYaml(swaggerJsonOrYaml: string, options:
 
 function parse(swaggerJsonOrYaml: string): Promise<IParserResult> {
     var deferral = bluebird.defer();
-    parser.parse(swaggerJsonOrYaml, {
+    parser.bundle(swaggerJsonOrYaml, {
        
-    }, (err, api, metadata) => {
+    }, (err, api) => {
         if (err) {
             deferral.reject(err);
         } else {
-            deferral.resolve({ api: api, metadata: metadata });
+            deferral.resolve({ api: api});
         }
     });
     return deferral.promise;
@@ -74,15 +74,15 @@ function parse(swaggerJsonOrYaml: string): Promise<IParserResult> {
 
 class LoggerVisitor extends visitor.ScopedSwaggerVisitorBase implements visitor.ISwaggerVisitor {
 
-    visitDefinition(name: string, schema: parser.ISchema) {
+    visitDefinition(name: string, schema: swaggerDoc.ISchema) {
         console.log('Definition : ' + name + ', ' + this.stack.map(x => x.name).join('/'));
     }
 
-    visitAnonymousDefinition(schema: parser.IHasTypeInformation) {
+    visitAnonymousDefinition(schema: swaggerDoc.IHasTypeInformation) {
         console.log('Anonymous : ' + this.stack.map(x => x.name).join('/'));
     }
 
-    visitOperation(verb: string, operation: parser.IOperation) {
+    visitOperation(verb: string, operation: swaggerDoc.IOperation) {
         console.log(verb.toUpperCase() + ' : ' + this.stack.map(x => x.name).join('/'));
     }
 }

@@ -2,16 +2,17 @@
  * Created by autex on 5/20/2016.
  */
 import * as swaggerVisitor from './swaggerVisitor';
-import * as swagger from 'swagger-parser';
+//import * as swagger from 'swagger-parser';
 import _ = require('lodash');
 import XRegExp = require('xregexp');
+import * as swaggerDoc from '../typings/swagger-doc2';
 
 import {
     IExtensible,
     IAbstractedType, IType, ITyped, IImportedType,
     IDefinition, IProperty,
     IAbstractedTypeConverter,
-    SchemaLessAbstractedType, ArrayAbstractedType, BuiltinAbstractedType, CustomAbstractedType, FileAbstractedType, MapAbstractedType, GenericAbstractedType, ImportedAbstractedType
+    SchemaLessAbstractedType, EnumAbstractedType, ArrayAbstractedType, BuiltinAbstractedType, CustomAbstractedType, FileAbstractedType, MapAbstractedType, GenericAbstractedType, ImportedAbstractedType
 } from './typing';
 
 //import servicesVersion = ts.servicesVersion;
@@ -43,7 +44,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
     context: IGenerationContext;
 
     constructor(
-        private api: swagger.IApi,
+        private api: swaggerDoc.IApi,
         private languageFilter: ILanguageFilter,
         private operationFilters: IOperationFilter[],
         private definitionFilters: IDefinitionFilter[],
@@ -68,7 +69,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         return definition;
     }
 
-    GetOrCreateDefinitionFromSchema(definitionName: string, schema: swagger.ISchema) {
+    GetOrCreateDefinitionFromSchema(definitionName: string, schema: swaggerDoc.ISchema) {
         var ref = '#\/definitions\/' + definitionName.replace(/\//g, '~1');
 
         let definition = this.context.definitionsMap[ref];
@@ -93,7 +94,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         return definition;
     }
 
-    GetTypeAbstraction(source: swagger.IHasTypeInformation): IAbstractedType {
+    GetTypeAbstraction(source: swaggerDoc.IHasTypeInformation): IAbstractedType {
         if (!source) {
             return new SchemaLessAbstractedType();
         }
@@ -112,6 +113,8 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
                 } else {
                     return new SchemaLessAbstractedType();
                 }
+            } else if (source.enum) {
+                return new EnumAbstractedType(new BuiltinAbstractedType(type, source.format), source.enum);
             } else if (type === 'array') {
                 return new ArrayAbstractedType(this.GetTypeAbstraction(source.items));
             } else if (type === 'file') {
@@ -124,7 +127,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         }
     }
 
-    visitRoot(root: swagger.IApi): void {
+    visitRoot(root: swaggerDoc.IApi): void {
         this.context.definitions = [];
         this.context.definitionsMap = {};
         this.context.operations = [];
@@ -137,10 +140,10 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
 
     }
 
-    // visitApiInfo?(apiInfo: swagger.IApiInfo): void;
-    // visitPath?(pathTemplate: string, path: swagger.IPath): void;
+    // visitApiInfo?(apiInfo: swaggerDoc.IApiInfo): void;
+    // visitPath?(pathTemplate: string, path: swaggerDoc.IPath): void;
 
-    visitOperation(verb: string, operation: swagger.IOperation): void {
+    visitOperation(verb: string, operation: swaggerDoc.IOperation): void {
         var path = this.stack[this.stack.length - 1];
         var operationContext = new Operation();
 
@@ -179,7 +182,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         this.push("operation", operationContext);
     }
 
-    visitOperationPost(verb: string, operation: swagger.IOperation): void {
+    visitOperationPost(verb: string, operation: swaggerDoc.IOperation): void {
         try {
             var operationContext = this.get<Operation>("operation");
 
@@ -195,7 +198,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         }
     }
 
-    visitOperationParameter(parameter: swagger.IParameterOrReference, index: number): void {
+    visitOperationParameter(parameter: swaggerDoc.IParameterOrReference, index: number): void {
         var operation = this.get<Operation>("operation");
         var argument = new Argument();
         argument.rawName = parameter.name;
@@ -228,17 +231,17 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
     }
 
 
-    // visitAnonymousDefinition?(schema: swagger.IHasTypeInformation): void;
-    visitDefinition(name: string, schema: swagger.ISchema): void {
+    // visitAnonymousDefinition?(schema: swaggerDoc.IHasTypeInformation): void;
+    visitDefinition(name: string, schema: swaggerDoc.ISchema): void {
         //console.log("Preparing :" + name);
         this.GetOrCreateDefinitionFromSchema(name, schema);
     }
 
     // visitDefinitionAncestor?(ref: string): void;
-    // visitProperty?(name: string, schema: swagger.IProperty): void{
+    // visitProperty?(name: string, schema: swaggerDoc.IProperty): void{
     // }
-    // visitSecurityDefinition?(name: string, definition: swagger.ISecurityScheme): void;
-    visitOperationResponse(status: string, response: swagger.IResponse): void {
+    // visitSecurityDefinition?(name: string, definition: swaggerDoc.ISecurityScheme): void;
+    visitOperationResponse(status: string, response: swaggerDoc.IResponse): void {
         var operation = this.get<Operation>("operation");
         var responseContext = new Response();
 
@@ -354,7 +357,7 @@ export class Response extends Extensible {
     public type: IType;
     public abstractedType: IAbstractedType;
     public status: number;
-    public sourceResponse: swagger.IResponse;
+    public sourceResponse: swaggerDoc.IResponse;
 
     constructor() {
         super();
@@ -441,7 +444,7 @@ export class Argument extends Extensible implements ITyped {
     optional: boolean;
     abstractedType: IAbstractedType;
     type: IType;
-    sourceParameter: swagger.IParameterOrReference
+    sourceParameter: swaggerDoc.IParameterOrReference
 
     constructor() {
         super();
@@ -467,7 +470,7 @@ export class Definition extends Extensible implements IDefinition {
         this.shouldIgnore = false;
     }
 
-    initFromSchema(name: string, schema: swagger.ISchema, contextBuilder: ContextBuilder) {
+    initFromSchema(name: string, schema: swaggerDoc.ISchema, contextBuilder: ContextBuilder) {
         if (name) {
             this.name = name;
             this.rawName = name;
@@ -483,7 +486,7 @@ export class Definition extends Extensible implements IDefinition {
 
             var injectProperties = (schemaProperties: any) => {
                 if (schemaProperties) {
-                    _.forEach(schemaProperties, (property: swagger.IProperty, propertyName: string) => {
+                    _.forEach(schemaProperties, (property: swaggerDoc.IProperty, propertyName: string) => {
                         let propertyContext = new Property(propertyName, property, contextBuilder);
                         propertyContext.abstractedType = contextBuilder.GetTypeAbstraction(property);
                         this.properties.push(propertyContext);
@@ -515,9 +518,9 @@ export class Property extends Extensible implements IProperty {
     public abstractedType: IAbstractedType;
     public description: string;
 
-    public sourceSchema: swagger.IProperty;
+    public sourceSchema: swaggerDoc.IProperty;
 
-    constructor(name: string, schema: swagger.IProperty, contextBuilder: ContextBuilder) {
+    constructor(name: string, schema: swaggerDoc.IProperty, contextBuilder: ContextBuilder) {
         super();
         this.name = name;
         this.description = schema.description;
@@ -688,6 +691,11 @@ class GenericTypeConverter implements IAbstractedTypeConverter<IAbstractedType>{
     builtinTypeConvert(type: BuiltinAbstractedType): IAbstractedType {
         return type;
     }
+
+    enumTypeConvert(type: EnumAbstractedType): IAbstractedType {
+        return type;
+    }
+
     customTypeConvert(type: CustomAbstractedType): IAbstractedType {
         var parts = <any>XRegExp.exec(type.definition.rawName, genericRegex);
         if (parts) {
