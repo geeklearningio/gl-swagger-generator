@@ -150,8 +150,8 @@ class CSharpType implements IType {
     public static enum(backingType: CSharpType, values: any[]): any {
         var type = new CSharpType(null, null, false, false, false, false, false);
         type.isEnum = true;
-        type.valueType = backingType;
         type.keyType = backingType;
+        type.valueType = backingType;
         type.enumValues = values;
         return type;
     }
