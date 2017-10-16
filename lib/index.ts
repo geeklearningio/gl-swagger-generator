@@ -1,10 +1,10 @@
-import {ISink} from './sink';
-import {IOperationFilter, ILanguageFilter, IDefinitionFilter, IProvideGenerationFilters, IProvideDependencies, ContextBuilder, IGenerationContext} from './generation';
-import {TemplateStore} from './templates';
+import { ISink } from './sink';
+import { IOperationFilter, ILanguageFilter, IDefinitionFilter, IProvideGenerationFilters, IProvideDependencies, ContextBuilder, IGenerationContext } from './generation';
+import { TemplateStore } from './templates';
 import parser = require('swagger-parser');
 import * as swaggerDoc from '../typings/swagger-doc2';
 import path = require('path');
-import {wrapArray} from './collection';
+import { wrapArray } from './collection';
 import _ = require('lodash');
 import * as visitor from './swaggerVisitor';
 
@@ -61,12 +61,12 @@ export async function generateFromJsonOrYaml(swaggerJsonOrYaml: string, options:
 function parse(swaggerJsonOrYaml: string): Promise<IParserResult> {
     var deferral = bluebird.defer();
     parser.bundle(swaggerJsonOrYaml, {
-       
+
     }, (err, api) => {
         if (err) {
             deferral.reject(err);
         } else {
-            deferral.resolve({ api: api});
+            deferral.resolve({ api: api });
         }
     });
     return deferral.promise;
@@ -119,12 +119,17 @@ export class Generator {
     async generate(swaggerJson: IParserResult, options: ISwaggerGeneratorOptions, sink: ISink): Promise<void> {
         var template = await this.templateStore.FindTemplate(options.language, options.framework, options.version);
         var mode = template.modes[options.mode];
+
+        if (!mode) {
+            throw new Error("This template does not have a mode: " + options.mode);
+        }
+
         var language: ILanguageFilter = template.language.filter;
         var mergedFilters = this.mergeFilters([template, mode, options]);
 
         var mergedOptions = {};
 
-        if (template.templateOptions){
+        if (template.templateOptions) {
             mergedOptions = _.merge(mergedOptions, template.templateOptions)
         }
 
@@ -147,7 +152,7 @@ export class Generator {
         visitable.visit(new LoggerVisitor());
 
         visitable.visit(new AppenGenericMetadataVisitor());
-        
+
 
         console.log("Preparing Generation Context");
         var contextBuilder = new ContextBuilder(

@@ -1,0 +1,136 @@
+namespace {{options.rootNamespace}}
+{
+    using GeekLearning.RestKit.Core;
+    using Microsoft.Extensions.Options;
+    using Newtonsoft.Json;
+    using Polly;
+    using System;
+    using System.Collections.Generic;
+    using System.Net;
+    using System.Net.Http;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
+    {{> using}}
+
+    public class {{options.clientName}}: ClientBase<{{options.clientName}}Options>{{#if options.generateInterface}}, I{{options.clientName}}{{/if}}
+    {
+        private string baseUri;
+        private HttpClient httpClient;
+        private JsonSerializerSettings settings;
+    {{#options.inject}}
+        private {{type}} {{name}};
+    {{/options.inject}}
+
+        public {{options.clientName}}(
+            IOptions<{{options.clientName}}Options> options,
+            IHttpClientFactory httpClientFactory,
+            IMediaFormatterProvider mediaFormatterProvider,
+            IServiceProvider serviceProvider
+        {{#options.inject}},
+            {{type}} {{name}}
+        {{/options.inject}}
+        ) : base(options, httpClientFactory, mediaFormatterProvider, serviceProvider) {
+        {{#options.inject}}
+            this.{{name}} = {{name}};
+        {{/options.inject}}
+            this.httpClient = base.GetClient();
+            this.baseUri = $"{this.Options.Scheme}://{this.Options.HostName}{(this.Options.Port.HasValue ? $":{this.Options.Port}" : "")}{{#api.basePath}}{ {{.}} }{{/api.basePath}}";
+            this.settings = new JsonSerializerSettings();
+            this.settings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+        }
+
+    {{#api.operations}}
+        /// <summary>
+        /// {{description}}
+        {{#args}}
+        /// <param name="{{camlCase name}}">{{description}}</param>  
+        {{/args}}
+        /// <returns>{{successResponse.title}}</returns>
+        /// </summary>
+        public async Task<{{> type successResponse.[0]}}> {{pascalCase name}}(
+        {{#args}}
+            {{> type}} {{camlCase name}}{{#if optional}} = default({{> type}}){{/if}},
+        {{/args}}
+            CancellationToken cancellationToken = default(CancellationToken),
+            Policy policy = null)
+        {
+            var uri = this.baseUri + {{#pathSegments}}{{#isParam}}{{#unless @first}}" + {{/unless}}{{name}}.ToString(){{#unless @last}} + "{{/unless}}{{/isParam}}{{#unless isParam}}{{#if @first}}"{{/if}}{{name}}{{#if @last}}"{{/if}}{{/unless}}{{/pathSegments}};
+        {{#if query}}
+            uri = AddQueryString(uri, new Dictionary<string, object>() {
+            {{#query}}
+                ["{{name}}"] = {{camlCase name}}{{#unless @last}},{{/unless}}
+            {{/query}}
+            });
+        {{/if}}
+
+            Func<CancellationToken, Task<{{> type successResponse.[0]}}>> executeRequest = async (ct) =>
+            {
+                var message = new HttpRequestMessage();
+                message.RequestUri = new Uri(uri, UriKind.Absolute);
+                message.Method = new HttpMethod("{{verb}}");
+                message.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("{{produces.[0]}}"));
+            {{#if hasRequestContent}}
+                Dictionary<string, IFormData> formData = null; 
+                {{#if formData}}
+                formData = new Dictionary<string, IFormData>() {
+                    {{#formData}}
+                        ["{{name}}"] = this.GetFormData({{camlCase name}}){{#unless @last}},{{/unless}}
+                    {{/formData}}
+                };
+                {{/if}}
+
+                message.Content = this.TransformRequestBody(
+                    {{#if requestBody}}{{camlCase requestBody.name}}{{/if}}{{#unless requestBody}}null{{/unless}}, 
+                    formData, 
+                    "{{consumes.[0]}}"
+                );
+            {{/if}}
+
+            {{#headers}}
+                message.Headers.Add("{{rawName}}", SafeToString({{camlCase name}}));
+            {{/headers}}
+                message = this.ApplyFilters(message{{#security}}, "{{this}}"{{/security}});
+
+                var response = await httpClient.SendAsync(message, ct);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return await this.TransformResponseAsync<{{> type successResponse.[0]}}>(response);
+                } 
+                else 
+                {
+                {{#if @root.options.operation.onError.useOKSchema}}
+                    throw await this.MapToException<{{> type successResponse.[0]}}>(response);
+                {{/if}}
+                {{#unless @root.options.operation.onError.useOKSchema}}
+                    {{#errorResponse}}
+                    {{#unless @first}}else {{/unless}}if (this.MatchStatus(response, {{intOrString status}}))
+                    {
+                        throw await this.MapToException<{{> type .}}>(response);
+                    }
+                    {{/errorResponse}}
+                    throw this.MapToException(response);
+                {{/unless}} 
+                }
+            };
+
+            var finalPolicy = policy ?? this.Options.Policy;
+
+            if (finalPolicy != null)
+            {
+                return await finalPolicy.ExecuteAsync(
+                    executeRequest,
+                    continueOnCapturedContext: true, 
+                    cancellationToken: cancellationToken
+                );
+            }
+            else
+            {
+                return await executeRequest(cancellationToken);
+            }
+        }
+
+    {{/api.operations}}
+    }
+}

@@ -1,0 +1,6 @@
+{{#isBuiltin}}{{name}}{{/isBuiltin}}{{#isDefinition}}{{name}}{{/isDefinition}}{{#isAnonymous}} {
+    {{#definition.properties}}
+        /*{{description}}*/
+        {{name}} : {{> typeCore type }};
+    {{/definition.properties}}
+    }{{/isAnonymous}}{{#isArray}}{{> typeCore itemType}}[]{{/isArray}}{{#isDictionary}}{{name}}<{{> typeCore keyType}},{{> typeCore valueType}}>{{/isDictionary}}{{#if isGeneric}}{{> typeCore itemType}}<{{#genericArguments}}{{> typeCore}}{{#unless @last}},{{/unless}}{{/genericArguments}}>{{/if}}{{#isEnum}}{{> typeCore keyType}}{{/isEnum}}

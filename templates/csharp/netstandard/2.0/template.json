@@ -1,0 +1,80 @@
+{
+    "name": "csharp-netstandard-2.0",
+    "language": {
+        "name": "csharp",
+        "defaultExtension": ".cs"
+    },
+    "dependencies": {
+        "GeekLearning.RestKit.Core": {
+            "version": "2.0.0-*"
+        },
+        "GeekLearning.RestKit.Json": {
+            "version": "2.0.0-*"
+        },
+        "GeekLearning.RestKit.FormData": {
+            "version": "2.0.0-*"
+        }
+    },
+    "definitionFilters": [
+        "arrayName",
+        "pascalCaseName"
+    ],
+    "operationFilters": [
+        "pascalCaseName",
+        "camlCaseArgumentName",
+        "optionalArgsOrder"
+    ],
+    "modes": {
+        "project": {
+            "entries": [{
+                    "template": "csproj.hbs",
+                    "naming": "{{options.rootNamespace}}.csproj",
+                    "selector": ""
+                },
+                {
+                    "template": "client.hbs",
+                    "naming": "{{options.clientName}}.cs",
+                    "selector": ""
+                },
+                {
+                    "template": "clientOptions.hbs",
+                    "naming": "{{options.clientName}}Options.cs",
+                    "selector": ""
+                },
+                {
+                    "template": "clientExtensions.hbs",
+                    "naming": "{{options.clientName}}Extensions.cs",
+                    "selector": ""
+                },
+                {
+                    "template": "definition.hbs",
+                    "naming": "{{data.name}}.cs",
+                    "selector": "definitions"
+                }
+            ]
+        },
+        "classes-only": {
+            "entries": [{
+                    "template": "client.hbs",
+                    "naming": "{{options.clientName}}.cs",
+                    "selector": ""
+                },
+                {
+                    "template": "clientOptions.hbs",
+                    "naming": "{{options.clientName}}Options.cs",
+                    "selector": ""
+                },
+                {
+                    "template": "clientExtensions.hbs",
+                    "naming": "{{options.clientName}}Extensions.cs",
+                    "selector": ""
+                },
+                {
+                    "template": "definition.hbs",
+                    "naming": "{{data.name}}.cs",
+                    "selector": "definitions"
+                }
+            ]
+        }
+    }
+}
