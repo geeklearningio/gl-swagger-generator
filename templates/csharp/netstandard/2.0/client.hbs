@@ -50,7 +50,7 @@ namespace {{options.rootNamespace}}
         /// </summary>
         public async Task<{{> type successResponse.[0]}}> {{pascalCase name}}(
         {{#args}}
-            {{> type}} {{camlCase name}}{{#if optional}} = default({{> type}}){{/if}},
+            {{> type optional=optional}} {{camlCase name}}{{#if optional}} = default({{> type optional=optional}}){{/if}},
         {{/args}}
             CancellationToken cancellationToken = default(CancellationToken),
             Policy policy = null)

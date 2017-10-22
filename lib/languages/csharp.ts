@@ -92,6 +92,7 @@ class CSharpType implements IType {
     name: () => string;
     namespace: string;
     definition: IDefinition;
+    isValueType: boolean;
     isAnonymous: boolean;
     isBuiltin: boolean;
     isDefinition: boolean;
@@ -106,7 +107,15 @@ class CSharpType implements IType {
     isEnum: boolean;
     enumValues: any[];
 
-    constructor(name: string, definition: IDefinition, isBuiltin: boolean, isDefinition: boolean, isAnonymous: boolean, isArray: boolean, isFile: boolean) {
+    constructor(
+        name: string, 
+        definition: IDefinition, 
+        isBuiltin: boolean, 
+        isDefinition: boolean, 
+        isAnonymous: boolean, 
+        isArray: boolean, 
+        isFile: boolean, 
+        isValueType: boolean = false) {
         if (name) {
             this.name = () => name;
         } else if (definition) {
@@ -121,15 +130,16 @@ class CSharpType implements IType {
         this.isFile = isFile;
         this.isLanguageType = true;
         this.namespace = "System";
+        this.isValueType = isValueType;
     }
 
     public static string: CSharpType = new CSharpType('string', null, true, false, false, false, false);
-    public static byte: CSharpType = new CSharpType('byte', null, true, false, false, false, false);
-    public static guid: CSharpType = new CSharpType('Guid', null, true, false, false, false, false);
-    public static boolean: CSharpType = new CSharpType('bool', null, true, false, false, false, false);
+    public static byte: CSharpType = new CSharpType('byte', null, true, false, false, false, false, true);
+    public static guid: CSharpType = new CSharpType('Guid', null, true, false, false, false, false, true);
+    public static boolean: CSharpType = new CSharpType('bool', null, true, false, false, false, false, true);
     public static any: CSharpType = new CSharpType('object', null, true, false, false, false, false);
     public static file: CSharpType = new CSharpType('IFile', null, true, false, false, false, true);
-    public static dateTimeOffset: CSharpType = new CSharpType('DateTimeOffset', null, true, false, false, false, false);
+    public static dateTimeOffset: CSharpType = new CSharpType('DateTimeOffset', null, true, false, false, false, false, true);
 
     public static ambient(name: string, namespace: string): CSharpType {
         var type = new CSharpType(name.replace('<>', ""), null, true, false, false, false, false);
@@ -148,7 +158,7 @@ class CSharpType implements IType {
     }
 
     public static enum(backingType: CSharpType, values: any[]): any {
-        var type = new CSharpType(null, null, false, false, false, false, false);
+        var type = new CSharpType(null, null, false, false, false, false, false, true);
         type.isEnum = true;
         type.keyType = backingType;
         type.valueType = backingType;
@@ -168,13 +178,13 @@ class CSharpType implements IType {
 
     public static number(format: string): CSharpType {
         if (format === "int32") {
-            return new CSharpType('int', null, true, false, false, false, false);
+            return new CSharpType('int', null, true, false, false, false, false, true);
         } else if (format === "int64") {
-            return new CSharpType('long', null, true, false, false, false, false);
+            return new CSharpType('long', null, true, false, false, false, false, true);
         } else if (format === "float") {
-            return new CSharpType('float', null, true, false, false, false, false);
+            return new CSharpType('float', null, true, false, false, false, false, true);
         } else if (format === "double") {
-            return new CSharpType('double', null, true, false, false, false, false);
+            return new CSharpType('double', null, true, false, false, false, false, true);
         }
     }
 
