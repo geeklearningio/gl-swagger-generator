@@ -1,5 +1,8 @@
 {{#with api}}
   {{#definitions}}
 {{> definition}}
+  {{#if @root.options.generateClasses}}
+{{> class}}
+  {{/if}}
   {{/definitions}}
 {{/with}}
