@@ -12,7 +12,7 @@ export class {{name}}Class {{#ancestor}}extends {{name}}{{/ancestor}} implements
   * {{description}}
   */
   {{/if}}
-  {{name}} : {{> type }};
+  {{name}} : {{> type }} {{#if @root.options.class.initializeFieldsToNull}}= null{{/if}};
 
 {{/properties}}
 }
