@@ -97,8 +97,8 @@ export class GenericAbstractedType implements IAbstractedType {
 }
 
 export class BuiltinAbstractedType implements IAbstractedType {
-    constructor(public name: string, public format?: string) {
-
+    constructor(public name: string, public format?: string, public isNullable? : boolean) {
+        
     }
 
     convert<T>(converter: IAbstractedTypeConverter<T>): T {

@@ -45,18 +45,18 @@ class CSharpAbstractedTypeConverter implements IAbstractedTypeConverter<IType> {
 
     builtinTypeConvert(type: BuiltinAbstractedType): CSharpType {
         if (type.name === 'integer' || type.name === 'number') {
-            return CSharpType.number(type.format);
+            return CSharpType.number(type.format).asNullable(type.isNullable);
         } else if (type.name === 'string') {
             if (type.format === "date" || type.format === "date-time") {
-                return CSharpType.dateTimeOffset;
+                return CSharpType.dateTimeOffset.asNullable(type.isNullable);
             } else if (type.format === "uuid") {
-                return CSharpType.guid;
+                return CSharpType.guid.asNullable(type.isNullable);
             }
             return CSharpType.string;
         } else if (type.name === 'boolean') {
-            return CSharpType.boolean;
+            return CSharpType.boolean.asNullable(type.isNullable);
         } else if (type.name === 'date') {
-            return CSharpType.dateTimeOffset;
+            return CSharpType.dateTimeOffset.asNullable(type.isNullable);
         }
         return CSharpType.any;
     }
@@ -92,6 +92,7 @@ class CSharpType implements IType {
     name: () => string;
     namespace: string;
     definition: IDefinition;
+    isNullable: boolean;
     isValueType: boolean;
     isAnonymous: boolean;
     isBuiltin: boolean;
@@ -195,8 +196,23 @@ class CSharpType implements IType {
         return arrayType;
     }
 
+    public static nullable(type: CSharpType): CSharpType {
+        let nullableType = new CSharpType(null, null, false, false, false, false, false, false);
+        nullableType.itemType = type;
+        nullableType.isNullable = true;
+        return nullableType;
+    }
+
     public asArray(): IType {
         return CSharpType.array(this);
+    }
+
+    public asNullable(isNullable: boolean): CSharpType {
+        if (isNullable) {
+            return CSharpType.nullable(this);
+        } else {
+            return this;
+        }
     }
 
     public static generic(type: CSharpType, args: CSharpType[]): CSharpType {
