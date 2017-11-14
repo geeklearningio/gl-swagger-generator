@@ -1,4 +1,4 @@
-{{#isBuiltin}}{{name}}{{#optional}}{{#isValueType}}?{{/isValueType}}{{/optional}}{{/isBuiltin}}{{#isDefinition}}{{name}}{{/isDefinition}}{{#isAnonymous}} {
+{{#isNullable}}{{> typeCore itemType}}?{{/isNullable}}{{#isBuiltin}}{{name}}{{#optional}}{{#isValueType}}?{{/isValueType}}{{/optional}}{{/isBuiltin}}{{#isDefinition}}{{name}}{{/isDefinition}}{{#isAnonymous}} {
     {{#definition.properties}}
         /*{{description}}*/
         {{name}} : {{> typeCore type }};

@@ -120,7 +120,7 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
             } else if (type === 'file') {
                 return new FileAbstractedType();
             } else if (type) {
-                return new BuiltinAbstractedType(type, source.format);
+                return new BuiltinAbstractedType(type, source.format, (<any>source)['x-nullable']);
             } else {
                 return new SchemaLessAbstractedType();
             }
