@@ -47,7 +47,7 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
     gl$params = gl$params.set('{{name}}', String({{camlCase name}}));
     {{/query}}
 
-    let gl$options = {
+    let gl$options: any = {
       {{#requestBody}}
       body: {{camlCase name}},
       {{/requestBody}}
