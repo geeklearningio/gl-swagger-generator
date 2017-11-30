@@ -67,12 +67,7 @@ import {IClientConfigurationService, ClientConfigurationService} from "./ClientC
             var formData = new FormData();
         {{#formData}}
             {{#getType this}}
-                {{#if isFile}}
-                        formData.append('{{../name}}', new Blob([ args.{{camlCase ../name }} ], {type: 'application/octet-stream'}));
-                {{/if}}
-                {{#unless isFile}}
-                        formData.append('{{../name}}', args.{{camlCase ../name}});
-                {{/unless}}
+                formData.append('{{../name}}', args.{{camlCase ../name}});
             {{/getType}}
         {{/formData}}
             httpRequestParams.data = formData;

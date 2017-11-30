@@ -60,14 +60,10 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
       {{#if formData}}
     var formData = new FormData();
         {{#formData}}
-          {{#if type.isFile}}
-    formData.append('{{name}}', new Blob([ {{camlCase name }} ], {type: 'application/octet-stream'}));
-          {{/if}}
-          {{#unless type.isFile}}
     formData.append('{{name}}', {{camlCase name}});
-          {{/unless}}
         {{/formData}}
     gl$options.body = formData;
+    gl$options.headers.set('Content-Type', undefined);
       {{/if}}
     {{/if}}
 
