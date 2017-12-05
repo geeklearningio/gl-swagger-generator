@@ -63,7 +63,7 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
     formData.append('{{name}}', {{camlCase name}});
         {{/formData}}
     gl$options.body = formData;
-    gl$options.headers.set('Content-Type', undefined);
+    gl$options.headers = gl$options.headers.delete('Content-Type');
       {{/if}}
     {{/if}}
 
