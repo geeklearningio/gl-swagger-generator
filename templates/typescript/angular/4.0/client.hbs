@@ -44,7 +44,9 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
 
     let gl$params = new HttpParams();
     {{#query}}
-    gl$params = gl$params.set('{{name}}', String({{camlCase name}}));
+    if ({{camlCase name}} !== undefined) {
+      gl$params = gl$params.set('{{name}}', String({{camlCase name}}));
+    }
     {{/query}}
 
     let gl$options: any = {
