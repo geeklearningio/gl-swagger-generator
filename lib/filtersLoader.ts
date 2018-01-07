@@ -1,5 +1,6 @@
-import {IOperationFilter, IProvideDependencies, ILanguageFilter, IDefinitionFilter} from './generation';
-
+import { IOperationFilter, IProvideDependencies, ILanguageFilter, IDefinitionFilter } from './generation';
+import { IDefinition } from './typing';
+import { isString } from 'lodash';
 
 export interface IFilterLoader {
     registerDefinitionFilter(name: string, filter: IDefinitionFilter): void;
@@ -7,6 +8,9 @@ export interface IFilterLoader {
 
     getDefinitionFilter(name: string): IDefinitionFilter;
     getOperationFilter(name: string): IOperationFilter;
+
+    resolveDefinitionFilters(source: (string | IDefinitionFilter)[]): IDefinitionFilter[];
+    resolveOperationFilters(source: (string | IOperationFilter)[]): IOperationFilter[];
 }
 
 class FilterLoader implements IFilterLoader {
@@ -27,6 +31,35 @@ class FilterLoader implements IFilterLoader {
 
     getOperationFilter(name: string): IOperationFilter {
         return this.operationFilters[name];
+    }
+
+    resolveDefinitionFilters(source: (string | IDefinitionFilter)[]): IDefinitionFilter[] {
+        return source.map(x=> {
+            if (isString(x)) {
+                var filter = this.definitionFilters[x];
+                if (filter) {
+                    return filter;
+                }
+                return <IDefinitionFilter>eval(x)();
+            } else  {
+                return <IDefinitionFilter>x;
+            }
+        });
+    }
+
+    resolveOperationFilters(source: (string | IOperationFilter)[]): IOperationFilter[] {
+        return source.map(x=> {
+            if (isString(x)) {
+                var filter = this.operationFilters[x];
+                if (filter) {
+                    return filter;
+                }
+                return <IOperationFilter>eval(x)();
+            } else  {
+                (x);
+                return <IOperationFilter>x;
+            }
+        });
     }
 }
 

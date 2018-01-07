@@ -35,16 +35,21 @@ namespace {{options.rootNamespace}}
             this.{{name}} = {{name}};
         {{/options.inject}}
             this.httpClient = base.GetClient();
-            this.baseUri = $"{this.Options.Scheme}://{this.Options.HostName}{(this.Options.Port.HasValue ? $":{this.Options.Port}" : "")}{{#api.basePath}}{ {{.}} }{{/api.basePath}}";
+            this.baseUri = $"{this.Options.Scheme}://{this.Options.HostName}{(this.Options.Port.HasValue ? $":{this.Options.Port}" : "")}{{#api.basePath}}{ "{{.}}" }{{/api.basePath}}";
             this.settings = new JsonSerializerSettings();
             this.settings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
         }
 
     {{#api.operations}}
         /// <summary>
-        /// {{description}}
+    {{#getLines description}}
+        {{#each .}}
+        /// {{.}}
+        {{/each}}
+    {{/getLines}}
         {{#args}}
-        /// <param name="{{camlCase name}}">{{description}}</param>  
+        /// <param name="{{camlCase name}}">{{#getLines description}}{{#each .}}{{#unless @first}}
+        /// {{/unless}}{{.}}{{/each}}{{/getLines}}</param>  
         {{/args}}
         /// <returns>{{successResponse.title}}</returns>
         /// </summary>

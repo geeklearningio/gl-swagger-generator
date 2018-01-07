@@ -104,8 +104,8 @@ export class TemplateStore {
                     devDependencies: manifest.devDependencies,
                     modes: modes,
                     handlebars: environement,
-                    operationFilters: manifest.operationFilters ? manifest.operationFilters.map((name: string) => filtersLoader.getOperationFilter(name)) : [],
-                    definitionFilters: manifest.definitionFilters ? manifest.definitionFilters.map((name: string) => filtersLoader.getDefinitionFilter(name)) : [],
+                    operationFilters: manifest.operationFilters ? manifest.operationFilters/*.map((name: string) => filtersLoader.getOperationFilter(name)) */: [],
+                    definitionFilters: manifest.definitionFilters ? manifest.definitionFilters/*.map((name: string) => filtersLoader.getDefinitionFilter(name))*/ : [],
                     templateOptions : manifest.templateOptions
                 };
             }

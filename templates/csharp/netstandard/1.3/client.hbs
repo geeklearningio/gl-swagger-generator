@@ -35,7 +35,7 @@ namespace {{options.rootNamespace}}
             this.{{name}} = {{name}};
         {{/options.inject}}
             this.httpClient = base.GetClient();
-            this.baseUri = $"{this.Options.Scheme}://{this.Options.HostName}{(this.Options.Port.HasValue ? $":{this.Options.Port}" : "")}{{#api.basePath}}{ {{.}} }{{/api.basePath}}";
+            this.baseUri = $"{this.Options.Scheme}://{this.Options.HostName}{(this.Options.Port.HasValue ? $":{this.Options.Port}" : "")}{{#api.basePath}}{ "{{.}}" }{{/api.basePath}}";
             this.settings = new JsonSerializerSettings();
             this.settings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
         }
