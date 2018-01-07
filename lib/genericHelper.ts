@@ -10,8 +10,8 @@ export class AppenGenericMetadataVisitor extends ScopedSwaggerVisitorBase {
         let genericInfo = this.matchGenerics(name);
         (<any>schema)['x-generic-info'] = genericInfo;
 
-        console.log(name);
-        console.log(JSON.stringify(genericInfo));
+        // console.log(name);
+        // console.log(JSON.stringify(genericInfo));
     }
 
     visitAnonymousDefinition(schema: IHasTypeInformation) {

@@ -198,8 +198,15 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         }
     }
 
+    private getNameFromRef($ref: string) : string {
+        return $ref.substring($ref.lastIndexOf('/') + 1).replace(/~1/g, '/');
+    }
+
     visitOperationParameter(parameter: swaggerDoc.IParameterOrReference, index: number): void {
         var operation = this.get<Operation>("operation");
+        if (parameter.$ref){
+            parameter = this.api.parameters[this.getNameFromRef(parameter.$ref)];
+        }
         var argument = new Argument();
         argument.rawName = parameter.name;
         argument.name = parameter.name;
@@ -254,6 +261,8 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
 
         if (status.indexOf('20') === 0) {
             operation.successResponse.push(responseContext);
+        } else if (status === 'default') {
+            operation.defaultResponse = responseContext;
         } else {
             operation.errorResponse.push(responseContext);
         }
@@ -373,6 +382,7 @@ export class Operation extends Extensible {
     public hasRequestContent: boolean;
     public successResponse: Response[];
     public errorResponse: Response[];
+    public defaultResponse: Response;
     public headers: Argument[];
     public query: Argument[];
     public formData: Argument[];

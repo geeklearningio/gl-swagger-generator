@@ -53,7 +53,11 @@ class CamlCaseArgumentNameFilter implements IOperationFilter {
 
     apply(operation: Operation): Operation {
         _.forEach(operation.args, (arg) => {
-            arg.name = this.pascalCase(splitString(arg.rawName));
+            if (arg.rawName){
+                arg.name = this.pascalCase(splitString(arg.rawName));
+            } else {
+                console.error("Couldn't camlCase argument:", arg, operation);
+            }
         });
         return operation;
     }
