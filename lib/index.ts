@@ -54,8 +54,14 @@ export interface IParserResult {
 }
 
 export async function generateFromJsonOrYaml(swaggerJsonOrYaml: string, options: ISwaggerGeneratorOptions, sink: ISink, templateStores?: string[]): Promise<void> {
-    var generator = new Generator(templateStores);
-    await generator.generate(await parse(swaggerJsonOrYaml), options, sink);
+    try {
+        var generator = new Generator(templateStores);
+        await generator.generate(await parse(swaggerJsonOrYaml), options, sink);
+    }
+    catch (error) {
+        console.error('an unknown error has occured: ', error);
+        throw error;
+    }
 }
 
 function parse(swaggerJsonOrYaml: string): Promise<IParserResult> {

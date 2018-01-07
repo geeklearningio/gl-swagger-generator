@@ -44,8 +44,10 @@ class CSharpAbstractedTypeConverter implements IAbstractedTypeConverter<IType> {
     }
 
     builtinTypeConvert(type: BuiltinAbstractedType): CSharpType {
-        if (type.name === 'integer' || type.name === 'number') {
-            return CSharpType.number(type.format).asNullable(type.isNullable);
+        if (type.name === 'integer') {
+            return CSharpType.number(type.format ? type.format : 'int32').asNullable(type.isNullable);
+        } else if (type.name === 'number') { 
+            return CSharpType.number(type.format ? type.format : 'double').asNullable(type.isNullable);
         } else if (type.name === 'string') {
             if (type.format === "date" || type.format === "date-time") {
                 return CSharpType.dateTimeOffset.asNullable(type.isNullable);
@@ -180,11 +182,14 @@ class CSharpType implements IType {
     public static number(format: string): CSharpType {
         if (format === "int32") {
             return new CSharpType('int', null, true, false, false, false, false, true);
-        } else if (format === "int64") {
+        } else if (format === "int64" || format == "long") {
             return new CSharpType('long', null, true, false, false, false, false, true);
         } else if (format === "float") {
             return new CSharpType('float', null, true, false, false, false, false, true);
         } else if (format === "double") {
+            return new CSharpType('double', null, true, false, false, false, false, true);
+        } else {
+            console.warn('format unknown :', format);
             return new CSharpType('double', null, true, false, false, false, false, true);
         }
     }

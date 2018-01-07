@@ -198,8 +198,15 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         }
     }
 
+    private getNameFromRef($ref: string) : string {
+        return $ref.substring($ref.lastIndexOf('/') + 1).replace(/~1/g, '/');
+    }
+
     visitOperationParameter(parameter: swaggerDoc.IParameterOrReference, index: number): void {
         var operation = this.get<Operation>("operation");
+        if (parameter.$ref){
+            parameter = this.api.parameters[this.getNameFromRef(parameter.$ref)];
+        }
         var argument = new Argument();
         argument.rawName = parameter.name;
         argument.name = parameter.name;
