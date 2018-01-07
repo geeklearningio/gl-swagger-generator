@@ -113,7 +113,7 @@ namespace {{options.rootNamespace}}
                     {{#if defaultResponse}}
                     throw await this.MapToException<{{> type defaultResponse}}>(response);
                     {{/if}}
-                    {{#unless defaultReponse}}
+                    {{#unless defaultResponse}}
                     throw this.MapToException(response);
                     {{/unless}}
                 {{/unless}} 
