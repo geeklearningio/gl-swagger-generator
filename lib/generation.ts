@@ -254,6 +254,8 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
 
         if (status.indexOf('20') === 0) {
             operation.successResponse.push(responseContext);
+        } else if (status === 'default') {
+            operation.defaultResponse = responseContext;
         } else {
             operation.errorResponse.push(responseContext);
         }
@@ -373,6 +375,7 @@ export class Operation extends Extensible {
     public hasRequestContent: boolean;
     public successResponse: Response[];
     public errorResponse: Response[];
+    public defaultResponse: Response;
     public headers: Argument[];
     public query: Argument[];
     public formData: Argument[];
