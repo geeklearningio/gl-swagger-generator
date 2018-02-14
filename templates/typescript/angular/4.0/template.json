@@ -82,7 +82,7 @@
     "versions" : {
       "angular": "4.4.4",
       "angularCli": "1.4.4",
-      "ngPackagr": "1.2.0",
+      "ngPackagr": "2.0.0",
       "coreJs": "2.5.1",
       "zoneJs": "0.8.18",
       "rxJs": "5.4.3",
