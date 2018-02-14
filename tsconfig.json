@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "target": "es6",
+        "sourceMap": false,
+        "declaration": true
+    },
+    "filesGlob": [
+        "./lib/*.ts",
+        "./tests/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "templates"
+    ]
+}

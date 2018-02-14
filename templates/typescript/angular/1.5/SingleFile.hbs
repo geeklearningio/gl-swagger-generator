@@ -1,0 +1,14 @@
+"use strict";
+
+{{#api.definitions}}
+{{> definition }}
+{{/api.definitions}}
+
+{{#if options.generateInterface}}
+{{> interface }}
+{{/if}}
+
+{{> argumentInterface }}
+
+{{> client }}
+

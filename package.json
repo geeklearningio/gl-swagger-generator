@@ -1,0 +1,83 @@
+{
+    "name": "node-swagger-generator",
+    "version": "0.0.1",
+    "scripts": {
+        "build": "tsc",
+        "test:build": "tsc -p ./tests",
+        "test:chutzpah": "chutzpah.console ./tests/",
+        "test": "jasmine JASMINE_CONFIG_PATH=./tests/jasmine.json",
+        "build:test": "run-s build test",
+        "spec:swagger-2:download" :"download --out ./lib/specs --filename swagger-2.0.json https://raw.githubusercontent.com/OAI/OpenAPI-Specification/88cd94419e117b154b67b834fa8e471bb98bd346/schemas/v2.0/schema.json",
+        "spec:swagger-2:convert" :"json2ts --input  lib/specs/swagger-2.0.json --output lib/specs/swagger-2.0.d.ts",
+        "spec:swagger-2" : "run-s spec:swagger-2:download spec:swagger-2:convert",
+        "spec:openapi-3:download" :"download --out ./lib/specs --filename openapi-3.0.json https://raw.githubusercontent.com/Mermade/swagger2openapi/master/schemas/openapi-3.0.json",
+        "spec:openapi-3:convert" :"json2ts --input  lib/specs/openapi-3.0.json --output lib/specs/openapi-3.0.d.ts",
+        "spec:openapi-3" : "run-s spec:openapi-3:download spec:openapi-3:convert"
+    },
+    "dependencies": {
+        "async": "2.0.1",
+        "bluebird": "3.4.6",
+        "chalk": "^1.1.3",
+        "fs-extra": "^0.30.0",
+        "handlebars": "4.0.5",
+        "lodash": "4.16.1",
+        "swagger-parser": "3.4.2",
+        "xregexp": "^3.2.0"
+    },
+    "main": "lib/index.js",
+    "bin": {
+        "swaggen": "./run/swaggen"
+    },
+    "devDependencies": {
+        "@types/fs-extra": "^4.0.0",
+        "@types/handlebars": "^4.0.36",
+        "@types/jasmine": "^2.5.54",
+        "@types/lodash": "4.14.74",
+        "@types/node": "^6.0.0",
+        "@types/swagger-parser": "4.0.2",
+        "@types/xregexp": "^3.0.29",
+        "download-cli": "^1.0.5",
+        "jasmine": "2.5.2",
+        "json-schema-to-typescript": "^4.6.5",
+        "npm-run-all": "3.1.0",
+        "typescript": "2.4.2",
+        "typings": "1.4.0",
+        "yargs": "^5.0.0"
+    },
+    "description": "An OpenAPI Specification (formerly Swagger) Client Generator. It uses templates written in Handlebars to generate a client code base in various languages.",
+    "keywords": [
+        "swagger",
+        "openapi",
+        "codegen",
+        "generator",
+        "handlebars"
+    ],
+    "homepage": "https://github.com/geeklearningio/gl-swagger-generator",
+    "bugs": "https://github.com/geeklearningio/gl-swagger-generator/issues",
+    "license": "MIT",
+    "author": {
+        "name": "Geek Learning",
+        "url": "http://geeklearning.io/"
+    },
+    "contributors": [
+        {
+            "name": "Cyprien Autexier",
+            "url": "http://geeklearning.io/author/cyprien/"
+        },
+        {
+            "name": "Adrien Siffermann",
+            "url": "http://geeklearning.io/author/adrien/"
+        },
+        {
+            "name": "Michel Vidailhet",
+            "url": "http://geeklearning.io/author/michel/"
+        }
+    ],
+    "repository": "geeklearningio/gl-swagger-generator",
+    "files": [
+        "lib/**/*.d.ts",
+        "lib/**/*.js",
+        "templates",
+        "run"
+    ]
+}

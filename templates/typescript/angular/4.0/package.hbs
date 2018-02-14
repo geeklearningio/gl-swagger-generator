@@ -1,0 +1,43 @@
+{
+  "name": "{{options.packageName}}",
+  "version": "{{options.version}}",
+  "resolutions" : {
+     "**/typescript": "{{options.versions.typescript}}"
+  },
+  "dependencies": {
+    "@angular/animations": "{{options.versions.angular}}",
+    "@angular/common": "{{options.versions.angular}}",
+    "@angular/compiler": "{{options.versions.angular}}",
+    "@angular/core": "{{options.versions.angular}}",
+    "@angular/forms": "{{options.versions.angular}}",
+    "@angular/http": "{{options.versions.angular}}",
+    "@angular/platform-browser": "{{options.versions.angular}}",
+    "@angular/platform-browser-dynamic": "{{options.versions.angular}}",
+    "@angular/router": "{{options.versions.angular}}",
+    "core-js": "{{options.versions.coreJs}}",
+    "rxjs": "{{options.versions.rxJs}}",
+    "zone.js": "{{options.versions.zoneJs}}"
+{{#api.dependencies}}
+    "{{name}}": "{{version}}"{{#unless @last}},{{/unless}}
+{{/api.dependencies}}
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "scripts": {
+    "build:lib": "ng-packagr"
+  },
+  "devDependencies": {
+    "@angular/cli": "{{options.versions.angularCli}}",
+    "@angular/compiler-cli": "{{options.versions.angular}}",
+    "@angular/language-service": "{{options.versions.angular}}",
+    "ng-packagr": "{{options.versions.ngPackagr}}",
+    "typescript": "{{options.versions.typescript}}"{{#if api.devDependencies}},{{/if}}
+{{#api.devDependencies}}
+    "{{name}}": "{{version}}"{{#unless @last}},{{/unless}}
+{{/api.devDependencies}}
+  }{{#if options.projectProperties}},{{/if}}
+{{#options.projectProperties}}
+  "{{name}}": {{json value}}{{#unless @last}},{{/unless}}
+{{/options.projectProperties}}
+}

@@ -1,0 +1,10 @@
+
+/*{{pascalCase rawName}}*/
+export interface {{name}} {{#ancestor}}extends {{name}}{{/ancestor}} {
+
+{{#properties}}
+    /*{{description}}*/
+    {{name}}: {{> type }};
+
+{{/properties}}
+}

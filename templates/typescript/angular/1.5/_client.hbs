@@ -1,0 +1,102 @@
+import {IClientConfigurationService, ClientConfigurationService} from "./ClientConfigurationService";
+
+    export class {{options.clientName}}{{#if options.generateInterface}} implements I{{options.clientName}}{{/if}} {
+    private baseUri: string;
+    private hostName: string;
+    private scheme: string;
+
+    /* @ngInject */
+    constructor(
+    {{#options.inject}}
+        private {{name}}: {{type}},
+    {{/options.inject}}
+    private $http: angular.IHttpService,
+    private ClientConfigurationService: ClientConfigurationService
+    ) {
+    this.hostName = {{#options.host.override}}'{{.}}'{{/options.host.override}}{{#unless
+            options.host.override}}this.ClientConfigurationService.getApiHostname(){{/unless}};
+    this.scheme = '{{#options.scheme.override}}{{.}}{{/options.scheme.override}}{{#unless
+            options.scheme.override}}http{{/unless}}';
+    {{#options.scheme.set}}
+        if ({{.}}) {
+        this.scheme = {{.}};
+        }
+    {{/options.scheme.set}}
+    this.baseUri = this.scheme + '://' + this.hostName {{#api.basePath}}+ '{{.}}'{{/api.basePath}};
+    }
+
+{{#api.operations}}
+    /**
+    *{{#if description}} {{description}}{{/if}}
+    {{#args}}
+        * @param { {{> type}} } {{camlCase name}}{{#if description}} {{description}}{{/if}}
+    {{/args}}
+    * @return { {{> type successsResponse}} }{{#if successResponse.title}} {{successResponse.title}}{{/if}}
+    */
+    {{lowerCase verb}}{{#pathSegments}}{{pascalCase name}}{{/pathSegments}}(
+    args: I{{pascalCase name}}Args,
+    requestParamsHook?: (httpParams: any) => any,
+    canceller?: angular.IDeferred<any>
+        ): angular.IHttpPromise<{{> type successResponse.[0]}}> {
+
+        var uri = this.baseUri + {{#pathSegments}}{{#isParam}}{{#if @first}}'/' + {{/if}}{{#unless @first}}' + {{/unless}}String(args.{{camlCase name}}){{#unless @last}} + '{{/unless}}{{/isParam}}{{#unless isParam}}{{#if @first}}'{{/if}}{{name}}{{#unless @last}}{{/unless}}{{#if @last}}'{{/if}}{{/unless}}{{/pathSegments}};
+
+        var httpRequestParams: any = {
+            method: '{{verb}}',
+            url: uri,
+            json: true,
+        {{#requestBody}}
+            data: args.{{camlCase name}},
+        {{/requestBody}}
+        {{#if @root.options.defaultTimeout}}
+            timeout: {{@root.options.defaultTimeout}},
+        {{/if}}
+            params: {
+        {{#query}}
+                '{{name}}': args.{{camlCase name}}{{#unless @last}},{{/unless}}
+        {{/query}}
+            },
+            headers: {
+        {{#headers}}
+                '{{name}}': args.{{camlCase name}}{{#unless @last}},{{/unless}}
+        {{/headers}}
+            }
+        };
+
+    {{#isFormDataRequest}}
+            var formData = new FormData();
+        {{#formData}}
+            {{#getType this}}
+                formData.append('{{../name}}', args.{{camlCase ../name}});
+            {{/getType}}
+        {{/formData}}
+            httpRequestParams.data = formData;
+            httpRequestParams.transformRequest = data => data;
+            httpRequestParams.headers['Content-Type'] = undefined;
+    {{/isFormDataRequest}}
+
+        if (canceller) {
+            httpRequestParams.timeout = canceller.promise;
+        }
+
+    {{#mapLookup @root.options.security security}}
+        {{#configure}}
+        httpRequestParams = this.{{.}}(httpRequestParams);
+        {{/configure}}
+    {{/mapLookup}}
+
+        {{#if security}}
+        httpRequestParams = this.ClientConfigurationService.authenticateRequest(httpRequestParams);
+        {{/if}}
+
+        httpRequestParams = this.ClientConfigurationService.requestParamsGlobalHook(httpRequestParams);
+
+        if (requestParamsHook) {
+            httpRequestParams = requestParamsHook(httpRequestParams);
+        }
+
+        return this.$http(httpRequestParams);
+    }
+
+{{/api.operations}}
+}
