@@ -12,7 +12,7 @@ export interface IRequestOptions {
     withCredentials?: boolean;
 }
 
-export interface IRequestFilter {
+export interface IRequestMessage {
     url: string; 
     options: IRequestOptions;
 }
@@ -21,7 +21,7 @@ export interface IClientOptions {
   scheme: string,
   hostName: string
   port: number,
-  requestFilters: Array<(url: string, options: IRequestOptions, state?: any) => Observable<{url: string, options: IRequestOptions}>>
+  requestFilters: Array<(url: string, options: IRequestOptions, state?: any) => Observable<IRequestMessage>>
   responseFilters: Array<(source: Observable<any>) => Observable<any>>;
 }
 
@@ -52,7 +52,7 @@ export class {{options.clientName}}Options implements IClientOptions
     * Allows you to intercept request for this this specific client (unlike HttpClientInterceptors which are global).
     * The state allows you to add/override behavior directly on the caller of the function.
     */
-    public requestFilters: Array<(url: string, options: IRequestOptions, state?: any) => Observable<{url: string, options: IRequestOptions}>> = [];
+    public requestFilters: Array<(url: string, options: IRequestOptions, state?: any) => Observable<IRequestMessage>> = [];
   
     /**
     * Allows you to intercept responses for this specific client (unlike HttpClientInterceptors which are global)

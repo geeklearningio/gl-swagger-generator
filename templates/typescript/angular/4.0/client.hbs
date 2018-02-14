@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs/Observable";
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/mergeMap';
-import { {{options.clientName}}Options, IRequestOptions, IRequestFilter } from "./{{options.clientName}}Options";
+import { {{options.clientName}}Options, IRequestOptions, IRequestMessage } from "./{{options.clientName}}Options";
 import * as dto from "./definitions";
 
 @Injectable()
@@ -69,7 +69,7 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
     gl$options.headers = gl$options.headers.delete('Content-Type');
       {{/if}}
     {{/if}}
-    let gl$optionsObservable = Observable.of<IRequestFilter>({ 
+    let gl$optionsObservable = Observable.of<IRequestMessage>({ 
       url: gl$uri,
       options: gl$options
     });
