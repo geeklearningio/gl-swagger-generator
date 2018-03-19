@@ -203,6 +203,11 @@ export class Generator {
                 console.log("Starting Generation (" + entry.selector + "): " + name);
                 //console.log(handlebarsContext.data);
                 var content = entry.template(handlebarsContext);
+                
+                if (language.prettyfy && name.endsWith(language.extension)) {
+                    content = language.prettyfy(content, name, mergedOptions);
+                } 
+
                 sink.push(name, content);
             }
         }

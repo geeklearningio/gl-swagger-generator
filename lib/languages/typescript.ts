@@ -14,8 +14,11 @@ export function create(): ILanguageFilter {
     return new TypescriptFilter();
 }
 
+import prettier = require('prettier');
+
 export class TypescriptFilter implements ILanguageFilter {
     genericRegex: RegExp;
+    extension = '.ts';
 
     constructor() {
         this.genericRegex = XRegExp('^(?<genericType>\\w+)\\[(?<arguments>.*?)\\]$', '');
@@ -27,6 +30,15 @@ export class TypescriptFilter implements ILanguageFilter {
 
     supportsGenerics(): boolean {
         return false;
+    }
+
+    prettyfy(content: string, path: string, options: any) : string {
+        if(options && options.prettier && options.prettier.enabled) {
+            const finalOptions = _.merge({
+                "filepath" : path,
+            }, options.prettier.options)
+            return prettier.format(content, finalOptions);
+        } 
     }
 }
 

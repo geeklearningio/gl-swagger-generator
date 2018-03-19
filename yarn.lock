@@ -28,6 +28,10 @@
   version "6.0.88"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-6.0.88.tgz#f618f11a944f6a18d92b5c472028728a3e3d4b66"
 
+"@types/prettier@1.10.0":
+  version "1.10.0"
+  resolved "https://lucsan.pkgs.visualstudio.com/_packaging/node-feed/npm/registry/@types/prettier/-/prettier-1.10.0.tgz#5abf1ec0a6e904fe2490cc2068f36a38e4a63c42"
+
 "@types/swagger-parser@4.0.2":
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/@types/swagger-parser/-/swagger-parser-4.0.2.tgz#d181f6e6a3b7e6492808b37173b06f027af2cff0"
@@ -1513,6 +1517,10 @@ popsicle@^8.0.2:
 prepend-http@^1.0.1:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/prepend-http/-/prepend-http-1.0.4.tgz#d4f4562b0ce3696e41ac52d0e002e57a635dc6dc"
+
+prettier@1.11.1:
+  version "1.11.1"
+  resolved "https://lucsan.pkgs.visualstudio.com/_packaging/node-feed/npm/registry/prettier/-/prettier-1.11.1.tgz#61e43fc4cd44e68f2b0dfc2c38cd4bb0fccdcc75"
 
 process-nextick-args@~1.0.6:
   version "1.0.7"
