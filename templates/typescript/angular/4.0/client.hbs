@@ -16,8 +16,8 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
   ) {
       this.baseUri = `${this.options.scheme}://${this.options.hostName}${this.options.port ? `:${this.options.port}` : ''}`;
   }
-
 {{#api.operations}}
+
   /**
   {{#if summary}}
   * {{summary}}

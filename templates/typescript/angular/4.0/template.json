@@ -88,6 +88,11 @@
       "rxJs": "5.4.3",
       "typescript": "2.3.4"
     },
-    "version" : "0.0.1"
+    "version" : "0.0.1",
+    "prettier" : {
+      "enabled" : true,
+      "options" : {
+      }
+    }
   }
 }
