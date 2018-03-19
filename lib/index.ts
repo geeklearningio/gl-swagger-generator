@@ -8,12 +8,16 @@ import { wrapArray } from './collection';
 import _ = require('lodash');
 import * as visitor from './swaggerVisitor';
 
+import classSuffixFilters = require('./filters/classSuffix');
 import camlCaseFilters = require('./filters/camlCaseFilters');
 import pascalCaseFilters = require('./filters/pascalCaseFilters');
 import arrayNameFilters = require('./filters/arrayNameFilter');
 import optionalArgsOrderFilters = require('./filters/optionalArgsOrderFilter');
 import { AppenGenericMetadataVisitor } from './genericHelper';
+import { ISwaggerVisitor } from './swaggerVisitor';
+import { filtersLoader } from './filtersLoader';
 
+classSuffixFilters.register();
 camlCaseFilters.register();
 pascalCaseFilters.register();
 arrayNameFilters.register();
@@ -42,6 +46,8 @@ export interface ISwaggerGeneratorOptions extends IProvideGenerationFilters, IPr
 
     clientName?: string;
 
+    customSchemaVisitors?: (string | ISwaggerVisitor)[];
+
     templateOptions: any;
     handlerbarsExtensions?: any
     renameDefinitions?: { [from: string]: string };
@@ -54,8 +60,14 @@ export interface IParserResult {
 }
 
 export async function generateFromJsonOrYaml(swaggerJsonOrYaml: string, options: ISwaggerGeneratorOptions, sink: ISink, templateStores?: string[]): Promise<void> {
-    var generator = new Generator(templateStores);
-    await generator.generate(await parse(swaggerJsonOrYaml), options, sink);
+    try {
+        var generator = new Generator(templateStores);
+        await generator.generate(await parse(swaggerJsonOrYaml), options, sink);
+    }
+    catch (error) {
+        console.error('an unknown error has occured: ', error);
+        throw error;
+    }
 }
 
 function parse(swaggerJsonOrYaml: string): Promise<IParserResult> {
@@ -149,7 +161,14 @@ export class Generator {
 
         var visitable = visitor.get(swaggerJson.api);
 
-        visitable.visit(new LoggerVisitor());
+        if (options.customSchemaVisitors) {
+            _.forEach(options.customSchemaVisitors, customVisitor => {
+                var visitor = _.isString(customVisitor) ? eval(customVisitor)() : customVisitor;
+                visitable.visit(visitor);
+            })
+        }
+
+        //visitable.visit(new LoggerVisitor());
 
         visitable.visit(new AppenGenericMetadataVisitor());
 
@@ -158,8 +177,8 @@ export class Generator {
         var contextBuilder = new ContextBuilder(
             swaggerJson.api,
             language,
-            mergedFilters.operationFilters,
-            mergedFilters.definitionFilters,
+            filtersLoader.resolveOperationFilters(mergedFilters.operationFilters),
+            filtersLoader.resolveDefinitionFilters(mergedFilters.definitionFilters),
             mergedDependencies,
             mergedDevDependencies,
             options.ambientTypes,
