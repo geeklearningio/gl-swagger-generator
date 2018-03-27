@@ -14,7 +14,7 @@ describe("Sample Apis", () => {
     var specs = ["minimal.yaml", "petStore.yaml"].map((spec) => {
         return {
             name: spec,
-            path: path.join(__dirname, 'apis', spec)
+            path: path.join(__dirname, '../../../tests/integration/apis', spec)
         };
     });
 
@@ -49,7 +49,7 @@ describe("Sample Apis", () => {
                     templateOptions: {
                         clientName: "client"
                     },
-                }, sink);
+                }, sink, [path.join(__dirname, '../../../templates')]);
 
                 expect(outputedFiles).toBeGreaterThan(0);
                 done();
