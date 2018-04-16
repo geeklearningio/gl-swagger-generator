@@ -41,7 +41,6 @@
         "json-schema-to-typescript": "5.4.0",
         "npm-run-all": "4.1.2",
         "typescript": "2.8.1",
-        "typings": "2.1.1",
         "yargs": "11.0.0"
     },
     "description": "An OpenAPI Specification (formerly Swagger) Client Generator. It uses templates written in Handlebars to generate a client code base in various languages.",
