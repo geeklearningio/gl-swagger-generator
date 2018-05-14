@@ -5,3 +5,5 @@ lib/**/*.js
 tests/**/*.d.ts
 tests/**/*.js
 test
+dist
+.scannerwork

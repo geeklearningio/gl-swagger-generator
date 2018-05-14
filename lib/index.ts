@@ -106,7 +106,7 @@ export class Generator {
     constructor(templateStores: string[]) {
         this.templatePaths = templateStores;
         if (!templateStores) this.templatePaths = [];
-        this.templatePaths.push(path.join(__dirname, '../templates'));
+        this.templatePaths.push(path.join(__dirname, '../../templates'));
         this.templateStore = new TemplateStore(this.templatePaths);
     }
 
