@@ -63,7 +63,7 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
       {{#if formData}}
     var formData = new FormData();
         {{#formData}}
-    formData.append('{{name}}', {{camlCase name}});
+    WorkbenchApiClient.convertModelToFormData({{camlCase name}}, '{{name}}', formData)
         {{/formData}}
     gl$options.body = formData;
     gl$options.headers = gl$options.headers.delete('Content-Type');
@@ -93,5 +93,38 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
     return gl$request;
   }
 {{/api.operations}}
+
+  private static convertModelToFormData(
+    model: any,
+    path: string,
+    form: FormData = null,
+  ): FormData {
+
+    let formData = form || new FormData();
+
+    if (model instanceof Date) {
+      formData.append(path, model.toISOString());
+    } else if (model instanceof Array) {
+      model.forEach((element: any, index: number) => {
+        this.convertModelToFormData(element, `${path}[${index}]` ,formData);
+      });
+    } else if (model instanceof Blob){
+      formData.append(path, model);
+    } else if (typeof model === "object") {
+      for (let propertyName in model) {
+        let value = model[propertyName];
+        if (
+          model.hasOwnProperty(propertyName) &&
+          value !== undefined && value !== null
+        ){
+          this.convertModelToFormData(value, `${path}.${propertyName}`, formData);
+        }
+    } 
+    } else {
+      formData.append(path, model.toString());
+    }
+    
+    return formData;
+  }
 
 }
