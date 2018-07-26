@@ -8,6 +8,7 @@ import * as fs from "./filesystem";
 
 import * as handlebars from  "handlebars";
 import { filtersLoader } from './filtersLoader';
+import * as sanitizeFilename from 'sanitize-filename';
 
 import path = require('path');
 
@@ -117,6 +118,14 @@ export class TemplateStore {
 
 
 function registerBuiltinHelpers(environment: typeof handlebars) {
+
+    environment.registerHelper('json', (context: any) => {
+        return JSON.stringify(context, null, 4);
+    });
+
+    environment.registerHelper('sanitizeFilename', (context: any) => {
+        return sanitizeFilename(context);
+    });
 
     environment.registerHelper('json', (context: any) => {
         return JSON.stringify(context, null, 4);

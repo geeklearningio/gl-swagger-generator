@@ -47,32 +47,32 @@
         },
         {
           "template": "index.hbs",
-          "naming": "src/{{options.packageName}}/index.ts",
+          "naming": "src/{{sanitizeFilename options.packageName}}/index.ts",
           "selector": ""
         },
         {
           "template": "definitions.hbs",
-          "naming": "src/{{options.packageName}}/definitions.ts",
+          "naming": "src/{{sanitizeFilename options.packageName}}/definitions.ts",
           "selector": ""
         },
         {
           "template": "client.hbs",
-          "naming": "src/{{options.packageName}}/{{options.clientName}}.ts",
+          "naming": "src/{{sanitizeFilename options.packageName}}/{{options.clientName}}.ts",
           "selector": ""
         },
         {
           "template": "clientOptions.hbs",
-          "naming": "src/{{options.packageName}}/{{options.clientName}}Options.ts",
+          "naming": "src/{{sanitizeFilename options.packageName}}/{{options.clientName}}Options.ts",
           "selector": ""
         },
         {
           "template": "module.hbs",
-          "naming": "src/{{options.packageName}}/{{options.clientName}}Module.ts",
+          "naming": "src/{{sanitizeFilename options.packageName}}/{{options.clientName}}Module.ts",
           "selector": ""
         },
         {
           "template": "lib-package.hbs",
-          "naming": "src/{{options.packageName}}/package.json",
+          "naming": "src/{{sanitizeFilename options.packageName}}/package.json",
           "selector": ""
         }
       ]
