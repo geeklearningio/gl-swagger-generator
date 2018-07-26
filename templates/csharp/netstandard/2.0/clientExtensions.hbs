@@ -14,13 +14,5 @@ namespace {{options.rootNamespace}}
             services.AddTransient<{{options.clientName}}>();
             return services;
         }
-
-        public static IServiceCollection Add{{options.clientName}}<THttpClientFactory>(this IServiceCollection services) 
-            where THttpClientFactory : class, IHttpClientFactory
-        {
-            services.AddRestKit<THttpClientFactory>().AddJson().AddFormData();
-            services.AddTransient<{{options.clientName}}>();
-            return services;
-        }
     }
 }
