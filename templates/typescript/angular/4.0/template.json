@@ -42,7 +42,7 @@
         },
         {
           "template": "ng-package.hbs",
-          "naming": "ng-package.json",
+          "naming": "src/{{sanitizeFilename options.packageName}}/ng-package.json",
           "selector": ""
         },
         {

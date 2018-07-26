@@ -1,9 +1,8 @@
 {
     "$schema": "./node_modules/ng-packagr/ng-package.schema.json",
-    "src": "src/{{sanitizeFilename options.packageName}}",
-    "dest": "dist/{{sanitizeFilename options.packageName}}",
+    "dest": "../../dist/{{sanitizeFilename options.packageName}}",
     "workingDirectory": ".ng_build",
     "lib": {
-        "entryFile": "src/{{sanitizeFilename options.packageName}}/index.ts"
+        "entryFile": "index.ts"
     }
 }
