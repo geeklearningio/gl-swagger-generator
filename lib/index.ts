@@ -106,7 +106,7 @@ export class Generator {
     constructor(templateStores: string[]) {
         this.templatePaths = templateStores;
         if (!templateStores) this.templatePaths = [];
-        this.templatePaths.push(path.join(__dirname, '../templates'));
+        this.templatePaths.push(path.join(__dirname, '../../templates'));
         this.templateStore = new TemplateStore(this.templatePaths);
     }
 
@@ -203,6 +203,11 @@ export class Generator {
                 console.log("Starting Generation (" + entry.selector + "): " + name);
                 //console.log(handlebarsContext.data);
                 var content = entry.template(handlebarsContext);
+                
+                if (language.prettyfy && name.endsWith(language.extension)) {
+                    content = language.prettyfy(content, name, mergedOptions);
+                } 
+
                 sink.push(name, content);
             }
         }

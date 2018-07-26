@@ -16,6 +16,7 @@ export function create(): ILanguageFilter {
 
 export class CsharpFilter implements ILanguageFilter {
     genericRegex: RegExp;
+    extension = '.cs';
 
     constructor() {
         this.genericRegex = XRegExp('^(?<genericType>\\w+)\\[(?<arguments>.*?)\\]$', '');

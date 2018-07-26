@@ -335,8 +335,10 @@ export interface IDefinitionFilter {
 }
 
 export interface ILanguageFilter {
+    extension: string;
     createAbstractedTypeConverter(generationContext: IGenerationContext): IAbstractedTypeConverter<IType>;
     supportsGenerics(): boolean;
+    prettyfy?(content: string, path: string, options: any): string;
 }
 
 export interface IProvideGenerationFilters {

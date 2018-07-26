@@ -2,14 +2,6 @@ import { Observable } from 'rxjs/Observable';
 import { HttpHeaders } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
 
-export interface IClientOptions {
-  scheme: string,
-  hostName: string
-  port: number,
-  requestFilters: Array<(url: string, options: IRequestOptions) => Observable<{url: string, options: IRequestOptions}>>
-  responseFilters: Array<(source: Observable<any>) => Observable<any>>;
-}
-
 export interface IRequestOptions {
     body?: any;
     headers?: HttpHeaders;
@@ -20,6 +12,18 @@ export interface IRequestOptions {
     withCredentials?: boolean;
 }
 
+export interface IRequestMessage {
+    url: string; 
+    options: IRequestOptions;
+}
+
+export interface IClientOptions {
+  scheme: string,
+  hostName: string
+  port: number,
+  requestFilters: Array<(url: string, options: IRequestOptions, state?: any) => Observable<IRequestMessage>>
+  responseFilters: Array<(source: Observable<any>) => Observable<any>>;
+}
 
 export class {{options.clientName}}Options implements IClientOptions
 {
@@ -45,12 +49,14 @@ export class {{options.clientName}}Options implements IClientOptions
     public port: number = {{#options.port.override}}{{.}}{{/options.port.override}}{{#unless options.port.override}}null{{/unless}};
 
     /**
-    * Allows you to intercept request for this this specific client (unlike HttpClientInterceptors which are global)
+    * Allows you to intercept request for this this specific client (unlike HttpClientInterceptors which are global).
+    * The state allows you to add/override behavior directly on the caller of the function.
     */
-    public requestFilters: Array<(url: string, options: IRequestOptions) => Observable<{url: string, options: IRequestOptions}>> = [];
+    public requestFilters: Array<(url: string, options: IRequestOptions, state?: any) => Observable<IRequestMessage>> = [];
   
     /**
     * Allows you to intercept responses for this specific client (unlike HttpClientInterceptors which are global)
+    * The state allows you to add/override behavior directly on the caller of the function.
     */
-    public responseFilters: Array<(source: Observable<any>) => Observable<any>> = [];
+    public responseFilters: Array<(source: Observable<any>, state?: any) => Observable<any>> = [];
 }
