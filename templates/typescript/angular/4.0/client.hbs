@@ -23,9 +23,9 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
   * {{summary}}
   {{/if}}
   {{#args}}
-  * @param { {{> type import="dto" }} } {{camlCase name}} {{description}}
+  * @param {{camlCase name}} - {{description}}
   {{/args}}
-  * @return { Observable<{{> type successResponse.[0] import="dto" }}> } {{successResponse.title}}
+  * @return {{successResponse.title}}
   */
   {{pascalCase name}}(
     {{#args}}
