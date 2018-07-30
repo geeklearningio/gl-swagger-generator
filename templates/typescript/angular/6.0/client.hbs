@@ -1,0 +1,129 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { Observable, of } from "rxjs";
+import { mergeMap } from "rxjs/operators";
+import { {{options.clientName}}Options, IRequestOptions, IRequestMessage } from "./{{options.clientName}}Options";
+import * as dto from "./definitions";
+
+@Injectable()
+export class {{options.clientName}}{{#if options.generateInterface}} implements I{{options.clientName}}{{/if}} {
+  private baseUri: string;
+
+  constructor(
+      private options: {{options.clientName}}Options,
+      private http: HttpClient
+  ) {
+      this.baseUri = `${this.options.scheme}://${this.options.hostName}${this.options.port ? `:${this.options.port}` : ''}`;
+  }
+{{#api.operations}}
+
+  /**
+  {{#if summary}}
+  * {{summary}}
+  {{/if}}
+  {{#args}}
+  * @param {{camlCase name}} - {{description}}
+  {{/args}}
+  * @return {{successResponse.title}}
+  */
+  {{pascalCase name}}(
+    {{#args}}
+    {{camlCase name}}: {{> type import="dto" }}{{#if optional}} = undefined{{/if}}{{#unless @last}},
+{{/unless}}{{/args}}{{#if @root.options.state}}{{#if args}},{{/if}}
+    {{@root.options.state.argName}}: any = undefined {{/if}}
+  ) : Observable<{{> type successResponse.[0] import="dto" }}> {
+
+    let gl$uri = this.baseUri + {{#pathSegments}}{{#isParam}}{{#unless @first}}" + {{/unless}}String({{name}}){{#unless @last}} + "{{/unless}}{{/isParam}}{{#unless isParam}}{{#if @first}}"{{/if}}{{name}}{{#if @last}}"{{/if}}{{/unless}}{{/pathSegments}};
+
+    let gl$headers = new HttpHeaders({
+      {{#if hasRequestContent}}
+      'Content-Type': '{{consumes.[0]}}',
+      {{/if}}
+      'Accept': '{{produces.[0]}}'
+    });
+
+    let gl$params = new HttpParams();
+    {{#query}}
+    if ({{camlCase name}} !== undefined) {
+      gl$params = gl$params.set('{{name}}', String({{camlCase name}}));
+    }
+    {{/query}}
+
+    let gl$options: any = {
+      {{#requestBody}}
+      body: {{camlCase name}},
+      {{/requestBody}}
+      headers: gl$headers,
+      withCredentials: this.options.withCredentials,
+      params: gl$params
+    };
+
+   {{#if hasRequestContent}}
+      {{#if formData}}
+    var formData = new FormData();
+        {{#formData}}
+    {{@root.options.clientName}}.convertModelToFormData({{camlCase name}}, '{{name}}', formData)
+        {{/formData}}
+    gl$options.body = formData;
+    gl$options.headers = gl$options.headers.delete('Content-Type');
+      {{/if}}
+    {{/if}}
+    let gl$optionsObservable = of<IRequestMessage>({ 
+      url: gl$uri,
+      options: gl$options
+    });
+
+    if (this.options.requestFilters) {
+      for (var index = 0; index < this.options.requestFilters.length; index++) {
+        let filter = this.options.requestFilters[index];
+        gl$optionsObservable = gl$optionsObservable.pipe(mergeMap((request) => filter(request.url, request.options, {{@root.options.state.argName}})))
+      }
+    }
+
+    let gl$request = gl$optionsObservable.pipe(mergeMap((request) => this.http.request<{{> type successResponse.[0] import="dto" }}>("{{upperCase verb}}", request.url, request.options)));
+
+    if (this.options.responseFilters) {
+      for (var index = 0; index < this.options.responseFilters.length; index++) {
+        let responseFilter = this.options.responseFilters[index];
+        gl$request = responseFilter(gl$request, {{@root.options.state.argName}});
+      }
+    }
+
+    return gl$request;
+  }
+{{/api.operations}}
+
+  private static convertModelToFormData(
+    model: any,
+    path: string,
+    form: FormData = null,
+  ): FormData {
+
+    let formData = form || new FormData();
+
+    if (model instanceof Date) {
+      formData.append(path, model.toISOString());
+    } else if (model instanceof Array) {
+      model.forEach((element: any, index: number) => {
+        this.convertModelToFormData(element, `${path}[${index}]` ,formData);
+      });
+    } else if (model instanceof Blob){
+      formData.append(path, model);
+    } else if (typeof model === "object") {
+      for (let propertyName in model) {
+        let value = model[propertyName];
+        if (
+          model.hasOwnProperty(propertyName) &&
+          value !== undefined && value !== null
+        ){
+          this.convertModelToFormData(value, `${path}.${propertyName}`, formData);
+        }
+    } 
+    } else {
+      formData.append(path, model.toString());
+    }
+    
+    return formData;
+  }
+
+}

@@ -1,0 +1,62 @@
+import { Observable } from 'rxjs';
+import { HttpHeaders } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
+
+export interface IRequestOptions {
+    body?: any;
+    headers?: HttpHeaders;
+    observe?: 'body';
+    params?: HttpParams;
+    responseType?: 'json';
+    reportProgress?: boolean;
+    withCredentials?: boolean;
+}
+
+export interface IRequestMessage {
+    url: string; 
+    options: IRequestOptions;
+}
+
+export interface IClientOptions {
+  scheme: string,
+  hostName: string
+  port: number,
+  requestFilters: Array<(url: string, options: IRequestOptions, state?: any) => Observable<IRequestMessage>>
+  responseFilters: Array<(source: Observable<any>) => Observable<any>>;
+}
+
+export class {{options.clientName}}Options implements IClientOptions
+{
+    /**
+    * This Boolean indicates whether or not cross-site Access-Control requests should be made using credentials such as cookies or authorization headers. The default is false.
+    * Note: This never affects same-site requests.
+    */
+    public withCredentials: boolean = false;
+
+    /**
+    * Scheme: protocol used for communication with the server. Can be http or https. Defaults to {{#options.scheme.override}}{{.}}{{/options.scheme.override}}{{#unless options.scheme}}http{{/unless}}
+    */ 
+    public scheme: string = "{{#options.scheme.override}}{{.}}{{/options.scheme.override}}{{#unless options.scheme}}http{{/unless}}";
+
+    /**
+    * Host name. Defaults to {{#options.host.override}}{{.}}{{/options.host.override}}{{#unless options.host.override}}{{api.host}}{{/unless}}
+    */ 
+    public hostName: string = "{{#options.host.override}}{{.}}{{/options.host.override}}{{#unless options.host.override}}{{api.host}}{{/unless}}";
+
+    /**
+    * Port, if set to null it uses the default port for the specified scheme. Defaults to {{#options.port.override}}{{.}}{{/options.port.override}}{{#unless options.port.override}}null{{/unless}}
+    */
+    public port: number = {{#options.port.override}}{{.}}{{/options.port.override}}{{#unless options.port.override}}null{{/unless}};
+
+    /**
+    * Allows you to intercept request for this this specific client (unlike HttpClientInterceptors which are global).
+    * The state allows you to add/override behavior directly on the caller of the function.
+    */
+    public requestFilters: Array<(url: string, options: IRequestOptions, state?: any) => Observable<IRequestMessage>> = [];
+  
+    /**
+    * Allows you to intercept responses for this specific client (unlike HttpClientInterceptors which are global)
+    * The state allows you to add/override behavior directly on the caller of the function.
+    */
+    public responseFilters: Array<(source: Observable<any>, state?: any) => Observable<any>> = [];
+}
