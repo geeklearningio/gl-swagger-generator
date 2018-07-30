@@ -63,7 +63,7 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
       {{#if formData}}
     var formData = new FormData();
         {{#formData}}
-    WorkbenchApiClient.convertModelToFormData({{camlCase name}}, '{{name}}', formData)
+    {{@root.options.clientName}}.convertModelToFormData({{camlCase name}}, '{{name}}', formData)
         {{/formData}}
     gl$options.body = formData;
     gl$options.headers = gl$options.headers.delete('Content-Type');
