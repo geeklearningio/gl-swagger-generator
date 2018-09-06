@@ -82,6 +82,7 @@
     "versions" : {
       "angular": "4.4.4",
       "angularCli": "1.4.4",
+      "tsickle": "0.25.5",
       "ngPackagr": "2.4.5",
       "coreJs": "2.5.1",
       "zoneJs": "0.8.18",
