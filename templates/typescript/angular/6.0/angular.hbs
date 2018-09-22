@@ -1,0 +1,40 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "{{#if options.packageName}}{{options.packageName}}{{else}}{{options.clientName}}Package{{/if}}": {
+      "root": "projects/{{#if options.packageName}}{{options.packageName}}{{else}}{{options.clientName}}Package{{/if}}",
+      "sourceRoot": "projects/{{#if options.packageName}}{{options.packageName}}{{else}}{{options.clientName}}Package{{/if}}/src",
+      "projectType": "library",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/{{#if options.packageName}}{{options.packageName}}{{else}}{{options.clientName}}Package{{/if}}/tsconfig.lib.json",
+            "project": "projects/{{#if options.packageName}}{{options.packageName}}{{else}}{{options.clientName}}Package{{/if}}/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "project": "projects/{{#if options.packageName}}{{options.packageName}}{{else}}{{options.clientName}}Package{{/if}}/ng-package.prod.json"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/{{#if options.packageName}}{{options.packageName}}{{else}}{{options.clientName}}Package{{/if}}/tsconfig.lib.json",
+              "projects/{{#if options.packageName}}{{options.packageName}}{{else}}{{options.clientName}}Package{{/if}}/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "{{#if options.packageName}}{{options.packageName}}{{else}}{{options.clientName}}Package{{/if}}"
+}

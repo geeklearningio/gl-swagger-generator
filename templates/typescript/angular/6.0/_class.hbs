@@ -1,0 +1,18 @@
+
+{{#if description}}
+/**
+* {{description}}
+*/
+{{/if}}
+export class {{name}}Class {{#ancestor}}extends {{name}}{{/ancestor}} implements {{name}} {
+
+{{#properties}}
+  {{#if description}}
+  /**
+  * {{description}}
+  */
+  {{/if}}
+  {{name}} : {{> type }} {{#if @root.options.class.initializeFieldsToNull}}= null{{/if}};
+
+{{/properties}}
+}

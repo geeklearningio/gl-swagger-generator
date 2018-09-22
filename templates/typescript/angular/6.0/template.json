@@ -1,0 +1,100 @@
+{
+  "name": "typescript-angular-6.0",
+  "language": {
+    "name": "typescript",
+    "defaultExtension": ".ts"
+  },
+  "dependencies": {},
+  "definitionFilters": [
+    "arrayName",
+    "pascalCaseName"
+  ],
+  "operationFilters": [
+    "camlCaseName",
+    "camlCaseArgumentName"
+  ],
+  "modes": {
+    "package": {
+      "entries": [
+        {
+          "template": "package.hbs",
+          "naming": "package.json",
+          "selector": ""
+        },
+        {
+          "template": "tsconfig.hbs",
+          "naming": "tsconfig.json",
+          "selector": ""
+        },
+        {
+          "template": "angular.hbs",
+          "naming": "angular.json",
+          "selector": ""
+        },
+        {
+          "template": "ng-package.hbs",
+          "naming": "projects/{{sanitizeFilename options.packageName}}/ng-package.json",
+          "selector": ""
+        },
+        {
+          "template": "tsconfig.lib.hbs",
+          "naming": "projects/{{sanitizeFilename options.packageName}}/tsconfig.lib.json",
+          "selector": ""
+        },
+        {
+          "template": "ng-package.prod.hbs",
+          "naming": "projects/{{sanitizeFilename options.packageName}}/ng-package.prod.json",
+          "selector": ""
+        },
+        {
+          "template": "index.hbs",
+          "naming": "projects/{{sanitizeFilename options.packageName}}/index.ts",
+          "selector": ""
+        },
+        {
+          "template": "definitions.hbs",
+          "naming": "projects/{{sanitizeFilename options.packageName}}/definitions.ts",
+          "selector": ""
+        },
+        {
+          "template": "client.hbs",
+          "naming": "projects/{{sanitizeFilename options.packageName}}/{{options.clientName}}.ts",
+          "selector": ""
+        },
+        {
+          "template": "clientOptions.hbs",
+          "naming": "projects/{{sanitizeFilename options.packageName}}/{{options.clientName}}Options.ts",
+          "selector": ""
+        },
+        {
+          "template": "module.hbs",
+          "naming": "projects/{{sanitizeFilename options.packageName}}/{{options.clientName}}Module.ts",
+          "selector": ""
+        },
+        {
+          "template": "lib-package.hbs",
+          "naming": "projects/{{sanitizeFilename options.packageName}}/package.json",
+          "selector": ""
+        }
+      ]
+    }
+  },
+  "templateOptions": {
+    "versions" : {
+      "angularDevkit": "~0.7.0",
+      "angular": "~6.1.0",
+      "angularCli": "~6.1.1",
+      "ngPackagr": "^3.0.0",
+      "coreJs": "^2.5.4",
+      "zoneJs": "^0.8.26",
+      "rxJs": "^6.0.0",
+      "typescript": "~2.7.2"
+    },
+    "version" : "0.0.1",
+    "prettier" : {
+      "enabled" : true,
+      "options" : {
+      }
+    }
+  }
+}
