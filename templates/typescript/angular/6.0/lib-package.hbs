@@ -1,0 +1,15 @@
+{
+    "name": "{{options.packageName}}",
+    "version": "{{options.version}}",
+    "license": "MIT",
+    "private": false,
+    "peerDependencies": {
+      "@angular/core": "{{options.versions.angular}}",
+      "@angular/common": "{{options.versions.angular}}",
+      "rxjs": "{{options.versions.rxJs}}"
+    }{{#if options.registry}},
+    "publishConfig": {
+      "registry": "{{options.registry}}"
+    }
+    {{/if}}
+  }
