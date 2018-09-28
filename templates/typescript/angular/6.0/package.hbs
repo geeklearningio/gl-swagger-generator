@@ -5,6 +5,8 @@
      "**/typescript": "{{options.versions.typescript}}"
   },
   "dependencies": {
+    "@angular-devkit/build-angular": "{{options.versions.angularDevkit}}",
+    "@angular-devkit/build-ng-packagr": "{{options.versions.angularDevkit}}",
     "@angular/animations": "{{options.versions.angular}}",
     "@angular/common": "{{options.versions.angular}}",
     "@angular/compiler": "{{options.versions.angular}}",
@@ -25,7 +27,7 @@
     "node": ">=6.0.0"
   },
   "scripts": {
-    "build:lib": "cd src/{{sanitizeFilename options.packageName}} && ng-packagr"
+    "build:lib": "ng build --prod"
   },
   "devDependencies": {
     "@angular/cli": "{{options.versions.angularCli}}",

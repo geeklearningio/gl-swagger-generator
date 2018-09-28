@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
-import { Observable } from "rxjs/Observable";
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/mergeMap';
+import { Observable, of } from "rxjs";
+import { mergeMap } from "rxjs/operators";
 import { {{options.clientName}}Options, IRequestOptions, IRequestMessage } from "./{{options.clientName}}Options";
 import * as dto from "./definitions";
 
@@ -69,7 +68,7 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
     gl$options.headers = gl$options.headers.delete('Content-Type');
       {{/if}}
     {{/if}}
-    let gl$optionsObservable = Observable.of<IRequestMessage>({ 
+    let gl$optionsObservable = of<IRequestMessage>({ 
       url: gl$uri,
       options: gl$options
     });
@@ -77,11 +76,11 @@ export class {{options.clientName}}{{#if options.generateInterface}} implements 
     if (this.options.requestFilters) {
       for (var index = 0; index < this.options.requestFilters.length; index++) {
         let filter = this.options.requestFilters[index];
-        gl$optionsObservable = gl$optionsObservable.flatMap((request) => filter(request.url, request.options, {{@root.options.state.argName}}))
+        gl$optionsObservable = gl$optionsObservable.pipe(mergeMap((request) => filter(request.url, request.options, {{@root.options.state.argName}})))
       }
     }
 
-    let gl$request = gl$optionsObservable.flatMap((request) => this.http.request<{{> type successResponse.[0] import="dto" }}>("{{upperCase verb}}", request.url, request.options));
+    let gl$request = gl$optionsObservable.pipe(mergeMap((request) => this.http.request<{{> type successResponse.[0] import="dto" }}>("{{upperCase verb}}", request.url, request.options)));
 
     if (this.options.responseFilters) {
       for (var index = 0; index < this.options.responseFilters.length; index++) {

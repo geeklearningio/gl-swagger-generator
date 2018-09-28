@@ -1,5 +1,5 @@
 {
-  "name": "typescript-angular-2.0",
+  "name": "typescript-angular-4.0",
   "language": {
     "name": "typescript",
     "defaultExtension": ".ts"
@@ -42,37 +42,37 @@
         },
         {
           "template": "ng-package.hbs",
-          "naming": "ng-package.json",
+          "naming": "src/{{sanitizeFilename options.packageName}}/ng-package.json",
           "selector": ""
         },
         {
           "template": "index.hbs",
-          "naming": "src/{{options.packageName}}/index.ts",
+          "naming": "src/{{sanitizeFilename options.packageName}}/index.ts",
           "selector": ""
         },
         {
           "template": "definitions.hbs",
-          "naming": "src/{{options.packageName}}/definitions.ts",
+          "naming": "src/{{sanitizeFilename options.packageName}}/definitions.ts",
           "selector": ""
         },
         {
           "template": "client.hbs",
-          "naming": "src/{{options.packageName}}/{{options.clientName}}.ts",
+          "naming": "src/{{sanitizeFilename options.packageName}}/{{options.clientName}}.ts",
           "selector": ""
         },
         {
           "template": "clientOptions.hbs",
-          "naming": "src/{{options.packageName}}/{{options.clientName}}Options.ts",
+          "naming": "src/{{sanitizeFilename options.packageName}}/{{options.clientName}}Options.ts",
           "selector": ""
         },
         {
           "template": "module.hbs",
-          "naming": "src/{{options.packageName}}/{{options.clientName}}Module.ts",
+          "naming": "src/{{sanitizeFilename options.packageName}}/{{options.clientName}}Module.ts",
           "selector": ""
         },
         {
           "template": "lib-package.hbs",
-          "naming": "src/{{options.packageName}}/package.json",
+          "naming": "src/{{sanitizeFilename options.packageName}}/package.json",
           "selector": ""
         }
       ]
@@ -82,7 +82,7 @@
     "versions" : {
       "angular": "4.4.4",
       "angularCli": "1.4.4",
-      "ngPackagr": "1.7.0",
+      "ngPackagr": "2.4.5",
       "coreJs": "2.5.1",
       "zoneJs": "0.8.18",
       "rxJs": "5.4.3",

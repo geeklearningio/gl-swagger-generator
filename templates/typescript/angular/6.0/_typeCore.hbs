@@ -1,0 +1,6 @@
+{{#isBuiltin}}{{name}}{{/isBuiltin}}{{#isDefinition}}{{#if import}}{{import}}.{{/if}}{{name}}{{/isDefinition}}{{#isAnonymous}} {
+    {{#definition.properties}}
+        /*{{description}}*/
+        {{name}} : {{> typeCore type import=import }};
+    {{/definition.properties}}
+    }{{/isAnonymous}}{{#isArray}}{{~> typeCore itemType import=import ~}}[]{{/isArray}}{{#isDictionary}}{ [key: {{> typeCore keyType}}]: {{> typeCore valueType}} }{{/isDictionary}}{{#isEnum}}{{#enumValues}}{{intOrString .}}{{#unless @last}} | {{/unless}}{{/enumValues}}{{/isEnum}}
