@@ -6,13 +6,13 @@
     },
     "dependencies": {
         "GeekLearning.RestKit.Core": {
-            "version": "2.0.0-*"
+            "version": "2.1.0-*"
         },
         "GeekLearning.RestKit.Json": {
-            "version": "2.0.0-*"
+            "version": "2.1.0-*"
         },
         "GeekLearning.RestKit.FormData": {
-            "version": "2.0.0-*"
+            "version": "2.1.0-*"
         }
     },
     "definitionFilters": [
