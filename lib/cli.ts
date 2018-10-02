@@ -10,6 +10,8 @@ export function run() {
 
     fs.ensureDirSync(outputPath);
 
+    console.log('def', argv.def);
+
     generator.generateFromJsonOrYaml(
         argv.schema, merge(fs.readJSONSync(argv.options), argv.def), {
             push: (name: string, content: string): void => {
