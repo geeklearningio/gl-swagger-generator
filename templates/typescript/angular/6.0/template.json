@@ -84,6 +84,8 @@
       "angularDevkit": "~0.7.0",
       "angular": "~6.1.0",
       "angularCli": "~6.1.1",
+      "tstickle": ">=0.27.3",
+      "tslib": "^1.7.1",
       "ngPackagr": "^3.0.0",
       "coreJs": "^2.5.4",
       "zoneJs": "^0.8.26",
