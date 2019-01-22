@@ -316,14 +316,14 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
         }
 
         this.context.definitions.sort((a, b) =>{
-            const ancestorOrder = (ancestorCount(a) - ancestorCount(b)) *10
+            const ancestorOrder = (ancestorCount(a) - ancestorCount(b)) * 10;
             if (a.name < b.name) {
-                return ancestorOrder - 2;
+                return ancestorOrder - 1;
             } else if (a.name > b.name) {
-                return ancestorOrder;
+                return ancestorOrder + 1;
             }
 
-            return ancestorOrder - 1;
+            return ancestorOrder;
         });
 
         // execute type mapper
