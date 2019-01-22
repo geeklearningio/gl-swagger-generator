@@ -307,6 +307,25 @@ export class ContextBuilder extends swaggerVisitor.ScopedSwaggerVisitorBase {
                 definition.ancestor = this.context.definitionsMap[definition.ancestorRef];
             }
         });
+
+        const ancestorCount = (root: IDefinition) => {
+            let count = -1;
+            for(let node:IDefinition = root; !!node; node = node.ancestor, count++) {
+            }
+            return count;
+        }
+
+        this.context.definitions.sort((a, b) =>{
+            const ancestorOrder = (ancestorCount(a) - ancestorCount(b)) *10
+            if (a.name < b.name) {
+                return ancestorOrder - 2;
+            } else if (a.name > b.name) {
+                return ancestorOrder;
+            }
+
+            return ancestorOrder - 1;
+        });
+
         // execute type mapper
 
 
