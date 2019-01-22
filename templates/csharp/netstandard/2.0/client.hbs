@@ -78,11 +78,10 @@ namespace {{options.rootNamespace}}
             {{#if hasRequestContent}}
                 Dictionary<string, IFormData> formData = null; 
                 {{#if formData}}
-                formData = new Dictionary<string, IFormData>() {
+                formData = new Dictionary<string, IFormData>();
                     {{#formData}}
-                        ["{{name}}"] = this.GetFormData({{camlCase name}}){{#unless @last}},{{/unless}}
+                formData.SetFormData("{{name}}", {{camlCase name}});
                     {{/formData}}
-                };
                 {{/if}}
 
                 message.Content = this.TransformRequestBody(
