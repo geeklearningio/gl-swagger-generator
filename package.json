@@ -22,7 +22,7 @@
     "bluebird": "^3.5.5",
     "chalk": "^2.4.2",
     "fs-extra": "^8.0.1",
-    "handlebars": "^4.1.2",
+    "handlebars": "^4.0.14",
     "lodash": "^4.17.11",
     "prettier": "^1.17.1",
     "sanitize-filename": "^1.6.1",
