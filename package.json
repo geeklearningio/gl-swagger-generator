@@ -2,56 +2,57 @@
   "name": "node-swagger-generator",
   "version": "0.0.1",
   "scripts": {
-    "build": "tsc -P",
+    "build": "tsc",
     "test": "jasmine JASMINE_CONFIG_PATH=./jasmine.json",
     "build:test": "run-s build test",
-    "spec:swagger-2:download":
-      "download --out ./lib/specs --filename swagger-2.0.json https://raw.githubusercontent.com/OAI/OpenAPI-Specification/88cd94419e117b154b67b834fa8e471bb98bd346/schemas/v2.0/schema.json",
-    "spec:swagger-2:convert":
-      "json2ts --input  lib/specs/swagger-2.0.json --output lib/specs/swagger-2.0.d.ts",
+    "spec:swagger-2:download": "download --out ./lib/specs --filename swagger-2.0.json https://raw.githubusercontent.com/OAI/OpenAPI-Specification/88cd94419e117b154b67b834fa8e471bb98bd346/schemas/v2.0/schema.json",
+    "spec:swagger-2:convert": "json2ts --input  lib/specs/swagger-2.0.json --output lib/specs/swagger-2.0.d.ts",
     "spec:swagger-2": "run-s spec:swagger-2:download spec:swagger-2:convert",
-    "spec:openapi-3:download":
-      "download --out ./lib/specs --filename openapi-3.0.json https://raw.githubusercontent.com/Mermade/swagger2openapi/master/schemas/openapi-3.0.json",
-    "spec:openapi-3:convert":
-      "json2ts --input  lib/specs/openapi-3.0.json --output lib/specs/openapi-3.0.d.ts",
+    "spec:openapi-3:download": "download --out ./lib/specs --filename openapi-3.0.json https://raw.githubusercontent.com/Mermade/swagger2openapi/master/schemas/openapi-3.0.json",
+    "spec:openapi-3:convert": "json2ts --input  lib/specs/openapi-3.0.json --output lib/specs/openapi-3.0.d.ts",
     "spec:openapi-3": "run-s spec:openapi-3:download spec:openapi-3:convert"
   },
   "dependencies": {
-    "@types/sanitize-filename": "^1.1.28",
-    "async": "^3.0.1",
-    "bluebird": "^3.5.5",
-    "chalk": "^2.4.2",
+    "@types/sanitize-filename": "^1.6.3",
+    "async": "^3.2.0",
+    "bluebird": "^3.7.2",
+    "chalk": "^3.0.0",
     "fs-extra": "^8.1.0",
-    "handlebars": "^4.1.2",
-    "lodash": "^4.17.11",
-    "prettier": "^1.18.2",
-    "sanitize-filename": "^1.6.2",
+    "handlebars": "^4.7.3",
+    "lodash": "^4.17.15",
+    "prettier": "^1.19.1",
+    "sanitize-filename": "^1.6.3",
     "swagger-parser": "^6.0.5",
-    "xregexp": "^4.2.4"
+    "xregexp": "^4.3.0"
   },
   "main": "dist/lib/index.js",
   "bin": {
     "swaggen": "./run/swaggen"
   },
   "devDependencies": {
-    "@types/fs-extra": "^8.0.0",
+    "@types/fs-extra": "^8.1.0",
     "@types/handlebars": "^4.1.0",
-    "@types/jasmine": "^3.4.0",
-    "@types/lodash": "^4.14.137",
+    "@types/jasmine": "^3.5.8",
+    "@types/lodash": "^4.14.149",
     "@types/node": "^12.7.2",
-    "@types/prettier": "^1.18.2",
+    "@types/prettier": "^1.19.0",
     "@types/swagger-parser": "^4.0.3",
     "@types/xregexp": "^3.0.30",
     "download-cli": "^1.1.1",
-    "jasmine": "^3.4.0",
-    "json-schema-to-typescript": "^7.0.0",
+    "jasmine": "^3.5.0",
+    "json-schema-to-typescript": "^8.1.0",
     "npm-run-all": "^4.1.5",
-    "typescript": "^3.5.3",
-    "yargs": "^13.2.4"
+    "typescript": "^3.8.3",
+    "yargs": "^15.1.0"
   },
-  "description":
-    "An OpenAPI Specification (formerly Swagger) Client Generator. It uses templates written in Handlebars to generate a client code base in various languages.",
-  "keywords": ["swagger", "openapi", "codegen", "generator", "handlebars"],
+  "description": "An OpenAPI Specification (formerly Swagger) Client Generator. It uses templates written in Handlebars to generate a client code base in various languages.",
+  "keywords": [
+    "swagger",
+    "openapi",
+    "codegen",
+    "generator",
+    "handlebars"
+  ],
   "homepage": "https://github.com/geeklearningio/gl-swagger-generator",
   "bugs": "https://github.com/geeklearningio/gl-swagger-generator/issues",
   "license": "MIT",
@@ -74,5 +75,10 @@
     }
   ],
   "repository": "geeklearningio/gl-swagger-generator",
-  "files": ["dist/**/*.d.ts", "dist/**/*.js", "templates", "run"]
+  "files": [
+    "dist/**/*.d.ts",
+    "dist/**/*.js",
+    "templates",
+    "run"
+  ]
 }
