@@ -1,0 +1,148 @@
+import { Observable, of, from } from "rxjs";
+import { mergeMap, map } from "rxjs/operators";
+import { fromFetch } from 'rxjs/fetch'
+import { {{options.clientName}}Options, IClientOptions, IRequestData, IResponseData } from "./{{options.clientName}}Options";
+import * as dto from "./definitions";
+
+export type ValueOrFactory<T> = T | (() => T)
+
+function makeObservable<T>(source: ValueOrFactory<T>): Observable<T> {
+    if (typeof source === 'function') {
+        return new Observable<T>(observer => {
+            try {
+                const result = (source as () => T)()
+                observer.next(result)
+                observer.complete()
+            } catch (err) {
+                observer.error(err)
+                observer.complete()
+            }
+        })
+    } else {
+        return of(source)
+    }
+}
+
+function buildUrl(url: any, parameters: {[key:string]: string}) {
+    let qs = "";
+    for (const key in parameters) {
+        if (parameters.hasOwnProperty(key)) {
+            const value = parameters[key];
+            qs +=
+                encodeURIComponent(key) + "=" + encodeURIComponent(value) + "&";
+        }
+    }
+    if (qs.length > 0) {
+        qs = qs.substring(0, qs.length - 1); //chop off last "&"
+        url = url + "?" + qs;
+    }
+
+    return url;
+}
+
+{{#api.operations}}
+
+  /**
+  {{#if summary}}
+  * {{summary}}
+  {{/if}}
+  {{#args}}
+  * @param {{camlCase name}} - {{description}}
+  {{/args}}
+  * @return {{successResponse.title}}
+  */
+  export function {{pascalCase name}}(
+    options: IClientOptions,
+    args: ValueOrFactory<{
+    {{#args}}
+    {{camlCase name}}{{#if optional}}?{{/if}}: {{> type import="dto" }}{{#unless @last}},
+{{/unless}}{{/args}}{{#if @root.options.state}}{{#if args}},{{/if}}
+    {{@root.options.state.argName}}: any = undefined {{/if}}
+  }>) : Observable<{{> type successResponse.[0] import="dto" }}> {
+    return makeObservable(args).pipe(
+        map(val => {
+            const headers = new Headers({
+              {{#if hasRequestContent}}
+              'Content-Type': '{{consumes.[0]}}',
+              {{/if}}
+              'Accept': '{{produces.[0]}}'
+            })
+            const req: RequestInit = {
+                headers: headers,
+                method: '{{upperCase verb}}',
+                {{#requestBody}}
+                body: JSON.stringify(val.{{camlCase name}}),
+                {{/requestBody}}
+            }
+            const query: any = {};
+            {{#query}}
+            if (val.{{camlCase name}} !== undefined && val.{{camlCase name}} !== null) {
+              query['{{name}}'] = val.{{camlCase name}}.toString();
+            }
+            {{/query}}
+            {{#if hasRequestContent}}
+              {{#if formData}}
+                const formData = new FormData();
+                {{#formData}}
+              convertModelToFormData(val.{{camlCase name}}, '{{name}}', formData)
+                {{/formData}}
+              req.body = formData;
+              headers.delete('Content-Type');
+                {{/if}}
+            {{/if}}
+            return {
+                url: buildUrl(options.baseUri + {{#pathSegments}}{{#isParam}}{{#unless @first}}" + {{/unless}}val.{{name}}.toString(){{#unless @last}} + "{{/unless}}{{/isParam}}{{#unless isParam}}{{#if @first}}"{{/if}}{{name}}{{#if @last}}"{{/if}}{{/unless}}{{/pathSegments}},
+                  query),
+                req,
+            }
+        }),
+        options.requestFilter,
+        mergeMap(request =>
+            fromFetch(request.url, request.req).pipe(
+                map(response => ({
+                    response,
+                    request,
+                })),
+            ),
+        ),
+        options.responseFilter,
+        mergeMap(data => {
+            console.log('data', data)
+            return from(data.response.json() as Promise<{{> type successResponse.[0] import="dto" }}>)
+        }),
+    )
+  }
+{{/api.operations}}
+
+  function convertModelToFormData(
+    model: any,
+    path: string,
+    form?: FormData,
+  ): FormData {
+
+    let formData = form || new FormData();
+
+    if (model instanceof Date) {
+      formData.append(path, model.toISOString());
+    } else if (model instanceof Array) {
+      model.forEach((element: any, index: number) => {
+        convertModelToFormData(element, `${path}[${index}]` ,formData);
+      });
+    } else if (model instanceof Blob){
+      formData.append(path, model);
+    } else if (typeof model === "object") {
+      for (let propertyName in model) {
+        let value = model[propertyName];
+        if (
+          model.hasOwnProperty(propertyName) &&
+          value !== undefined && value !== null
+        ){
+          convertModelToFormData(value, `${path}.${propertyName}`, formData);
+        }
+    } 
+    } else {
+      formData.append(path, model.toString());
+    }
+    
+    return formData;
+  }

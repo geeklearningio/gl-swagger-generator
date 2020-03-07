@@ -141,7 +141,7 @@ class TypescriptType implements IType {
     public static number: TypescriptType = new TypescriptType('number', null, true, false, false, false, false);
     public static boolean: TypescriptType = new TypescriptType('boolean', null, true, false, false, false, false);
     public static any: TypescriptType = new TypescriptType('any', null, true, false, false, false, false);
-    public static file: TypescriptType = new TypescriptType('Blob | File', null, true, false, false, false, true);
+    public static file: TypescriptType = new TypescriptType('Blob', null, true, false, false, false, true);
 
     public static ambient(name: string, namespace: string): TypescriptType {
         var type = new TypescriptType(name.replace('<>', ""), null, true, false, false, false, false);

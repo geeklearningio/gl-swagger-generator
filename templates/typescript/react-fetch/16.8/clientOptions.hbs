@@ -1,0 +1,45 @@
+import { Observable, OperatorFunction } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+export interface IRequestData {
+    url: string
+    req: RequestInit
+    state?: any
+}
+
+export interface IResponseData {
+    request: IRequestData
+    response: Response
+}
+
+export interface IClientOptions {
+    baseUri: string
+    requestFilter: OperatorFunction<IRequestData, IRequestData>
+    responseFilter: OperatorFunction<IResponseData, IResponseData>
+}
+
+export class {{options.clientName}}Options implements IClientOptions
+{
+    /**
+    * This Boolean indicates whether or not cross-site Access-Control requests should be made using credentials such as cookies or authorization headers. The default is false.
+    * Note: This never affects same-site requests.
+    */
+    public withCredentials: boolean = false;
+    
+    /**
+    * BaseUri. Defaults to {{#options.host.override}}{{.}}{{/options.host.override}}{{#unless options.host.override}}{{api.host}}{{/unless}}
+    */ 
+    public baseUri: string = "{{#options.scheme.override}}{{.}}{{/options.scheme.override}}{{#unless options.scheme}}http{{/unless}}://{{#options.host.override}}{{.}}{{/options.host.override}}{{#unless options.host.override}}{{api.host}}{{/unless}}{{#options.port.override}}{{.}}{{/options.port.override}}{{#unless options.port.override}}{{/unless}}";
+
+    /**
+    * Allows you to intercept request for this this specific client (unlike HttpClientInterceptors which are global).
+    * The state allows you to add/override behavior directly on the caller of the function.
+    */
+    public requestFilter: OperatorFunction<IRequestData, IRequestData> = map(x => x);
+  
+    /**
+    * Allows you to intercept responses for this specific client (unlike HttpClientInterceptors which are global)
+    * The state allows you to add/override behavior directly on the caller of the function.
+    */
+    public responseFilter: OperatorFunction<IResponseData, IResponseData> = map(x => x);
+}

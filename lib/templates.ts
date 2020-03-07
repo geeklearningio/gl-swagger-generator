@@ -11,9 +11,9 @@ import { IProvideGenerationFilters } from "./generation";
 import { ILanguageProvider } from "./language";
 import * as fs from "./filesystem";
 
-import * as handlebars from "handlebars";
+import handlebars from "handlebars";
 import { filtersLoader } from "./filtersLoader";
-import * as sanitizeFilename from "sanitize-filename";
+import sanitizeFilename = require("sanitize-filename");
 
 import path = require("path");
 

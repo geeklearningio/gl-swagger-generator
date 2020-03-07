@@ -1,0 +1,52 @@
+{
+  "name": "typescript-react-fetch-16.8",
+  "language": {
+    "name": "typescript",
+    "defaultExtension": ".ts"
+  },
+  "dependencies": {},
+  "definitionFilters": [
+    "arrayName",
+    "pascalCaseName"
+  ],
+  "operationFilters": [
+    "camlCaseName",
+    "camlCaseArgumentName"
+  ],
+  "modes": {
+    "files": {
+      "entries": [
+        {
+          "template": "index.hbs",
+          "naming": "index.ts",
+          "selector": ""
+        },
+        {
+          "template": "definitions.hbs",
+          "naming": "definitions.ts",
+          "selector": ""
+        },
+        {
+          "template": "client.hbs",
+          "naming": "{{options.clientName}}.ts",
+          "selector": ""
+        },
+        {
+          "template": "clientOptions.hbs",
+          "naming": "{{options.clientName}}Options.ts",
+          "selector": ""
+        }
+      ]
+    }
+  },
+  "templateOptions": {
+    "versions" : {
+    },
+    "version" : "0.0.1",
+    "prettier" : {
+      "enabled" : true,
+      "options" : {
+      }
+    }
+  }
+}
